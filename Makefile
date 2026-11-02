@@ -1,4 +1,4 @@
-.PHONY: up down logs migrate test test-api test-web lint lint-api lint-web e2e fmt
+.PHONY: up down logs migrate demo demo-remove jobs test test-api test-web lint lint-api lint-web e2e fmt
 
 up:
 	docker compose up -d --build
@@ -11,6 +11,15 @@ logs:
 
 migrate:
 	docker compose exec api alembic upgrade head
+
+demo:
+	docker compose exec api python -m app.demo.seed
+
+demo-remove:
+	docker compose exec api python -m app.demo.seed --remove
+
+jobs:
+	docker compose exec api python -m app.workflow.jobs all
 
 test: test-api test-web
 

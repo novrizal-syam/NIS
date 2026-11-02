@@ -122,6 +122,10 @@
     "audit": {
       "title": "Audit Trail",
       "description": "Who changed what and when, across the system."
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "System configuration and demo data."
     }
   },
   "dashboard": {
@@ -437,5 +441,17 @@
     "markAll": "Mark all as read",
     "empty": "No notifications yet.",
     "unread": "Unread:"
+  },
+  "settings": {
+    "more": "Other settings (company profile, users, roles) arrive in phase 01a.",
+    "demoTitle": "Demo data",
+    "demoHelp": "Sample data to try the application. Every demo row is flagged and can be removed at once; configuration (COA, roles, DOA rules) stays.",
+    "demoPresent": "There are {{count}} demo rows.",
+    "demoNone": "No demo data.",
+    "demoRemove": "Remove all demo data",
+    "demoRemoved": "{{count}} demo rows removed.",
+    "demoConfirmTitle": "Remove all demo data?",
+    "demoConfirmHelp": "This cannot be undone and is recorded in the audit trail. Type {{word}} to continue.",
+    "demoConfirmLabel": "Type {{word}}"
   }
 }

@@ -27,6 +27,45 @@ make migrate     # alembic upgrade head
 - Mailpit: http://localhost:8025 · MinIO console: http://localhost:9001
 - Checks: `make test`, `make lint`, `make e2e` (Playwright: contrast in light/dark, 400 px width, focus ring)
 
+## Demo data
+`make demo` loads demo data (every row has `is_demo = true`): one user per role, 10 departments, 5 clients, 15 vendors (3 per category, 1 CSMS pending), 8 field + 6 office employees, 10 items, 2 warehouses, 6 assets, periods Jan–Dec 2026 (Jan–Sep closed, Oct open), 8 priced services, USD rate. Some certificates are expired or close to expiry so alerts can be tried. Company and person names are fictional.
+
+Remove it with `make demo-remove` or Settings › Pengaturan › "Hapus semua data demo" (Super Admin only). Configuration (chart of accounts, cost elements, roles, DOA rules) is not demo data and stays.
+
+Password for every demo user: `Demo-GEK-2026` (override with `DEMO_PASSWORD` before `make demo`). Roles marked 2FA must enrol an authenticator app at first sign-in.
+
+| Role | Email | Name | 2FA |
+|---|---|---|---|
+| Super Admin | `super.admin@demo.gek.co.id` | Andi Pratama | ya |
+| Admin | `admin@demo.gek.co.id` | Yoga Saputra | ya |
+| Director | `director@demo.gek.co.id` | Hendra Wijaksono | ya |
+| Shareholders (RUPS) | `shareholders@demo.gek.co.id` | Ratna Kusumawardani |  |
+| Head of Sales & Ext. Comm. | `head.of.sales@demo.gek.co.id` | Bayu Nugroho |  |
+| Account Executive | `account.executive@demo.gek.co.id` | Citra Lestari |  |
+| Tender Specialist | `tender.specialist@demo.gek.co.id` | Fajar Ramadhan |  |
+| Billing Admin | `billing.admin@demo.gek.co.id` | Indah Permatasari |  |
+| Legal & Liaison Officer | `legal.liaison@demo.gek.co.id` | Dimas Hutapea |  |
+| QHSE Coordinator | `qhse.coordinator@demo.gek.co.id` | Wulan Sari |  |
+| Head of Operation | `head.of.operation@demo.gek.co.id` | Rina Wijaya |  |
+| Lead Engineer (Planner) | `lead.engineer@demo.gek.co.id` | Teguh Santoso |  |
+| Engineer | `engineer@demo.gek.co.id` | Budi Hartono |  |
+| OFS Superintendent | `ofs.superintendent@demo.gek.co.id` | Rudi Simanjuntak |  |
+| EPCOM Superintendent | `epcom.superintendent@demo.gek.co.id` | Agung Prasetyo |  |
+| Field Engineer | `field.engineer@demo.gek.co.id` | Eko Firmansyah |  |
+| Operation Staff | `operation.staff@demo.gek.co.id` | Joko Susilo |  |
+| Asset & Inventory Coordinator | `asset.inventory.coordinator@demo.gek.co.id` | Sinta Maharani |  |
+| Warehouse Head | `warehouse.head@demo.gek.co.id` | Hadi Kurniawan |  |
+| Lead Controller | `lead.controller@demo.gek.co.id` | Maya Anggraini | ya |
+| Head of Finance & Support | `head.of.finance@demo.gek.co.id` | Siti Rahmawati | ya |
+| Finance Officer | `finance.officer@demo.gek.co.id` | Putri Handayani |  |
+| AP Accountant | `ap.accountant@demo.gek.co.id` | Lina Marlina | ya |
+| Cashier | `cashier@demo.gek.co.id` | Sari Puspitasari | ya |
+| Tax Specialist | `tax.specialist@demo.gek.co.id` | Arif Hidayat |  |
+| Procurement Officer | `procurement.officer@demo.gek.co.id` | Dewi Anggraeni |  |
+| HCBP Officer | `hcbp.officer@demo.gek.co.id` | Nadia Putri | ya |
+| Client Representative | `client.rep@demo.gek.co.id` | Thomas Siregar |  |
+| Vendor | `vendor@demo.gek.co.id` | Ahmad Fauzi |  |
+
 ## How to use
 1. Create an empty Git repository, copy the kit into its root, commit.
 2. Open a terminal in the repo and run `claude`.

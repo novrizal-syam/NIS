@@ -17,6 +17,7 @@ import { MasterListPage } from '@/features/master/MasterListPage';
 import { DoaRulesPage } from '@/features/workflow/DoaRulesPage';
 import { InboxPage } from '@/features/workflow/InboxPage';
 import { RequestDetailPage } from '@/features/workflow/RequestDetailPage';
+import { SettingsPage } from '@/features/settings/SettingsPage';
 import { ThemeProvider } from '@/theme/ThemeProvider';
 import { ROUTER_FUTURE } from './routerConfig';
 
@@ -50,6 +51,7 @@ export function AppRoutes() {
         <Route index element={<DashboardPage />} />
         <Route path="persetujuan" element={<InboxPage />} />
         <Route path="persetujuan/:id" element={<RequestDetailPage />} />
+        <Route path="pengaturan" element={<SettingsPage />} />
         <Route path="pengaturan/doa" element={<DoaRulesPage />} />
         <Route path="master" element={<MasterIndexPage />} />
         <Route path="master/:entity" element={<MasterListPage />} />

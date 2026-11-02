@@ -34,6 +34,9 @@ export function usePageMeta(): PageMeta {
       description: t('pages.approvalDetail.description'),
     };
   }
+  if (pathname === '/pengaturan') {
+    return { title: t('pages.settings.title'), description: t('pages.settings.description') };
+  }
   if (pathname === '/pengaturan/doa') {
     return { title: t('pages.doaRules.title'), description: t('pages.doaRules.description') };
   }

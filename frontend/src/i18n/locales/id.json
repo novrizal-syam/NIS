@@ -122,6 +122,10 @@
     "audit": {
       "title": "Jejak Audit",
       "description": "Siapa mengubah apa dan kapan, di seluruh sistem."
+    },
+    "settings": {
+      "title": "Pengaturan",
+      "description": "Konfigurasi sistem dan data demo."
     }
   },
   "dashboard": {
@@ -437,5 +441,17 @@
     "markAll": "Tandai semua dibaca",
     "empty": "Belum ada notifikasi.",
     "unread": "Belum dibaca:"
+  },
+  "settings": {
+    "more": "Pengaturan lain (profil perusahaan, pengguna, peran) dibangun di fase 01a.",
+    "demoTitle": "Data demo",
+    "demoHelp": "Data contoh untuk mencoba aplikasi. Semua baris demo ditandai dan dapat dihapus sekaligus; konfigurasi (COA, peran, aturan DOA) tidak ikut terhapus.",
+    "demoPresent": "Ada {{count}} baris data demo.",
+    "demoNone": "Tidak ada data demo.",
+    "demoRemove": "Hapus semua data demo",
+    "demoRemoved": "{{count}} baris data demo dihapus.",
+    "demoConfirmTitle": "Hapus semua data demo?",
+    "demoConfirmHelp": "Tindakan ini tidak dapat dibatalkan dan tercatat di jejak audit. Ketik {{word}} untuk melanjutkan.",
+    "demoConfirmLabel": "Ketik {{word}}"
   }
 }
