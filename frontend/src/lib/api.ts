@@ -104,6 +104,14 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
   return body as T;
 }
 
+/** Fetch a protected file as a Blob (previews). */
+export async function fetchBlob(path: string): Promise<Blob> {
+  let res = await send(path, {});
+  if (res.status === 401 && (await refreshAccessToken())) res = await send(path, {});
+  if (!res.ok) throw toError(res.status, await parse(res));
+  return res.blob();
+}
+
 /** Download a file (e.g. Excel export) with the user's session. */
 export async function downloadFile(path: string, fallbackName: string): Promise<void> {
   let res = await send(path, {});

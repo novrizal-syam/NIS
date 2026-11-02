@@ -103,6 +103,7 @@ export const NAV: NavGroup[] = [
       { key: 'masterData', path: '/master', icon: 'database', ready: true, module: 'master' },
       soon('users', 'manage_accounts', 'users'),
       { key: 'doaRules', path: '/pengaturan/doa', icon: 'rule', ready: true, module: 'workflow' },
+      { key: 'auditTrail', path: '/audit', icon: 'policy', ready: true, module: 'audit' },
       { key: 'components', path: '/dev/komponen', icon: 'widgets', ready: true, devOnly: true },
     ],
   },

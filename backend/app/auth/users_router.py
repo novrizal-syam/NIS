@@ -8,9 +8,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.models import User
 from app.auth.principal import CurrentUser
+from app.core import access
 from app.core.db import get_session
 
 router = APIRouter(prefix="/users", tags=["users"])
+access.register("user", access.module_checker("users", "users"))
 
 
 class UserLookup(BaseModel):

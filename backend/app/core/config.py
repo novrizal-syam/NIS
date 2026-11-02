@@ -48,6 +48,8 @@ class Settings(BaseSettings):
     smtp_password: str = ""
     smtp_starttls: bool = False
     mail_from: str = "Nustrad ERP <no-reply@nustrad.local>"
+    app_base_url: str = "http://localhost:5173"  # links in emails
+    email_interval_seconds: int = 30
 
     @field_validator("cors_origins", mode="before")
     @classmethod

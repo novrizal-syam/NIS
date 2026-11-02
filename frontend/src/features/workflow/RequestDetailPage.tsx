@@ -6,7 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Icon } from '@/components/ui/icon';
 import { Textarea } from '@/components/ui/input';
 import { TBody, TD, TH, THead, TR, Table } from '@/components/ui/table';
+import { HistoryPanel } from '@/features/audit/HistoryPanel';
 import { FormError } from '@/features/auth/AuthLayout';
+import { AttachmentsPanel } from '@/features/dms/AttachmentsPanel';
 import { ApiError } from '@/lib/api';
 import { formatDateTime, formatIDR } from '@/lib/format';
 import { useDecision, useRequest } from './api';
@@ -149,6 +151,29 @@ export function RequestDetailPage() {
           </ol>
         </CardContent>
       </Card>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('master.tabFiles')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <AttachmentsPanel
+              entityType="approval_request"
+              entityId={r.id}
+              canWrite={r.can_cancel || r.can_act}
+            />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('master.tabHistory')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <HistoryPanel entityType="approval_request" entityId={r.id} />
+          </CardContent>
+        </Card>
+      </div>
 
       {(r.can_act || r.can_cancel) && (
         <Card>

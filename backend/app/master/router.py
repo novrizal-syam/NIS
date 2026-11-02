@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.permissions import ACTION_LABELS, MODULES, Action
 from app.auth.principal import CurrentUser, Principal
+from app.core import access
 from app.core.db import get_session
 from app.core.errors import AppError, ForbiddenError, NotFoundError
 from app.core.pagination import PageParams, page_params
@@ -19,6 +20,9 @@ from app.services.export import Column, Kind, xlsx_response
 from app.services.numbering import today_jakarta
 
 router = APIRouter(prefix="/master", tags=["master"])
+
+for _s in SPECS:
+    access.register(_s.key, access.module_checker(_s.read_module, _s.write_module))
 Session = Annotated[AsyncSession, Depends(get_session)]
 Pages = Annotated[PageParams, Depends(page_params)]
 MAX_UPLOAD = 5 * 1024 * 1024

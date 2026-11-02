@@ -3,6 +3,9 @@ import { createPortal } from 'react-dom';
 import { cn } from '@/lib/utils';
 import { Icon } from './icon';
 
+// Open dialogs, innermost last: only the top one reacts to Escape/Tab.
+const stack: symbol[] = [];
+
 interface DialogProps {
   open: boolean;
   onClose: () => void;
@@ -32,6 +35,9 @@ export function Dialog({
 
   useEffect(() => {
     if (!open) return;
+    const me = Symbol('dialog');
+    stack.push(me);
+    const isTop = () => stack[stack.length - 1] === me;
     const previous = document.activeElement as HTMLElement | null;
     const focusables = () =>
       Array.from(
@@ -41,6 +47,7 @@ export function Dialog({
       );
     (focusables()[0] ?? panel.current)?.focus();
     const onKey = (e: KeyboardEvent) => {
+      if (!isTop()) return;
       if (e.key === 'Escape') {
         e.stopPropagation();
         onCloseRef.current();
@@ -61,6 +68,7 @@ export function Dialog({
     document.addEventListener('keydown', onKey);
     return () => {
       document.removeEventListener('keydown', onKey);
+      stack.splice(stack.indexOf(me), 1);
       previous?.focus();
     };
   }, [open]);

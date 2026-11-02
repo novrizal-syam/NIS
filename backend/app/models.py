@@ -2,6 +2,7 @@
 
 from app.auth.models import RefreshToken, Role, RolePermission, User, UserRole
 from app.core.models import Base
+from app.dms.models import Attachment
 from app.master.models import (
     Account,
     Asset,
@@ -18,6 +19,7 @@ from app.master.models import (
     Vendor,
     Warehouse,
 )
+from app.notifications.models import Notification
 from app.services.audit import AuditLog
 from app.services.numbering import DocCounter
 from app.workflow.models import (
@@ -34,6 +36,7 @@ __all__ = [
     "ApprovalRequest",
     "ApprovalStep",
     "Asset",
+    "Attachment",
     "AuditLog",
     "Base",
     "Client",
@@ -50,6 +53,7 @@ __all__ = [
     "FiscalPeriod",
     "FxRate",
     "Item",
+    "Notification",
     "PriceItem",
     "RefreshToken",
     "Role",

@@ -3,6 +3,7 @@ import { useState, type ReactNode } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AppShell } from '@/components/layout/AppShell';
 import { AuthProvider } from '@/features/auth/AuthProvider';
+import { AuditPage } from '@/features/audit/AuditPage';
 import { ChangePasswordPage } from '@/features/auth/ChangePasswordPage';
 import { LoginPage } from '@/features/auth/LoginPage';
 import { RequireAuth } from '@/features/auth/RequireAuth';
@@ -52,6 +53,7 @@ export function AppRoutes() {
         <Route path="pengaturan/doa" element={<DoaRulesPage />} />
         <Route path="master" element={<MasterIndexPage />} />
         <Route path="master/:entity" element={<MasterListPage />} />
+        <Route path="audit" element={<AuditPage />} />
         <Route path="segera/:key" element={<ComingSoonPage />} />
         {import.meta.env.DEV && <Route path="dev/komponen" element={<KomponenPage />} />}
         <Route path="*" element={<NotFoundPage />} />

@@ -12,13 +12,16 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import models as _models  # noqa: F401  (register every model before the first request)
+from app.audit.router import router as audit_router
 from app.auth.router import router as auth_router
 from app.auth.users_router import router as users_router
 from app.core.config import get_settings
 from app.core.db import get_session
 from app.core.errors import install_error_handlers
 from app.core.logging import configure_logging, request_logging_middleware
+from app.dms.router import router as dms_router
 from app.master.router import router as master_router
+from app.notifications.router import router as notifications_router
 from app.workflow.jobs import scheduler_loop
 from app.workflow.router import router as workflow_router
 
@@ -77,6 +80,9 @@ def create_app() -> FastAPI:
     api.include_router(users_router)
     api.include_router(workflow_router)
     api.include_router(master_router)
+    api.include_router(audit_router)
+    api.include_router(dms_router)
+    api.include_router(notifications_router)
     app.include_router(api)
     return app
 

@@ -62,7 +62,8 @@
       "users": "Pengguna & Peran",
       "components": "Komponen (dev)",
       "doaRules": "Aturan DOA",
-      "masterData": "Data Master"
+      "masterData": "Data Master",
+      "auditTrail": "Jejak Audit"
     }
   },
   "topbar": {
@@ -117,6 +118,10 @@
     "master": {
       "title": "Data Master",
       "description": "Data acuan yang dipakai semua modul."
+    },
+    "audit": {
+      "title": "Jejak Audit",
+      "description": "Siapa mengubah apa dan kapan, di seluruh sistem."
     }
   },
   "dashboard": {
@@ -387,6 +392,50 @@
       "operasi": "Operasi & aset",
       "komersial": "Komersial",
       "keuangan": "Keuangan"
-    }
+    },
+    "tabData": "Data",
+    "tabHistory": "Riwayat",
+    "tabFiles": "Lampiran"
+  },
+  "audit": {
+    "search": "Cari",
+    "searchPlaceholder": "Nama pengguna atau ID dokumen",
+    "entityType": "Jenis data",
+    "action": "Aksi",
+    "from": "Dari tanggal",
+    "to": "Sampai tanggal",
+    "caption": "Jejak audit",
+    "time": "Waktu",
+    "user": "Pengguna",
+    "changed": "Field berubah",
+    "details": "Lihat detail perubahan",
+    "empty": "Tidak ada catatan untuk filter ini.",
+    "noHistory": "Belum ada riwayat.",
+    "system": "Sistem",
+    "becomes": "menjadi"
+  },
+  "dms": {
+    "upload": "Unggah lampiran",
+    "uploading": "Mengunggah…",
+    "rules": "PDF, JPG, atau PNG, maks. 20 MB",
+    "empty": "Belum ada lampiran.",
+    "tooLarge": "Ukuran file maksimal 20 MB.",
+    "chooseFile": "Pilih file lampiran",
+    "download": "Unduh",
+    "downloadFile": "Unduh {{name}}",
+    "newVersionOf": "Unggah versi baru {{name}}",
+    "archiveFile": "Arsipkan {{name}}",
+    "versions": "Versi",
+    "versionOf": "Versi {{v}} dari {{n}}",
+    "file": "File",
+    "version": "Versi",
+    "size": "Ukuran (byte)"
+  },
+  "notifications": {
+    "bell": "Notifikasi, {{count}} belum dibaca",
+    "title": "Notifikasi",
+    "markAll": "Tandai semua dibaca",
+    "empty": "Belum ada notifikasi.",
+    "unread": "Belum dibaca:"
   }
 }

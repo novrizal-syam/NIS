@@ -5,6 +5,9 @@ import { Dialog } from '@/components/ui/dialog';
 import { Field } from '@/components/ui/field';
 import { Icon } from '@/components/ui/icon';
 import { Input, Select } from '@/components/ui/input';
+import { Tabs } from '@/components/ui/tabs';
+import { HistoryPanel } from '@/features/audit/HistoryPanel';
+import { AttachmentsPanel } from '@/features/dms/AttachmentsPanel';
 import { FormError } from '@/features/auth/AuthLayout';
 import { ApiError } from '@/lib/api';
 import {
@@ -143,6 +146,7 @@ export function RowForm({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [tab, setTab] = useState<'data' | 'history' | 'files'>('data');
 
   const set = (name: string, v: unknown) => setValues((all) => ({ ...all, [name]: v }));
 
@@ -207,7 +211,7 @@ export function RowForm({
           <Button variant="ghost" onClick={onClose}>
             {readOnly ? t('common.close') : t('common.cancel')}
           </Button>
-          {!readOnly && (
+          {!readOnly && tab === 'data' && (
             <Button variant="primary" disabled={save.isPending} onClick={() => void submit()}>
               {t('master.save')}
             </Button>
@@ -215,7 +219,37 @@ export function RowForm({
         </>
       }
     >
-      <div className="flex flex-col gap-4">
+      {editing && (
+        <div className="mb-4">
+          <Tabs
+            label={title}
+            value={tab}
+            onChange={setTab}
+            items={[
+              { value: 'data', label: t('master.tabData') },
+              { value: 'history', label: t('master.tabHistory') },
+              { value: 'files', label: t('master.tabFiles') },
+            ]}
+          />
+        </div>
+      )}
+      {editing && tab === 'history' && (
+        <HistoryPanel
+          entityType={meta.key}
+          entityId={row.id}
+          labels={{
+            ...Object.fromEntries(meta.fields.map((f) => [f.name, f.label])),
+            is_active: t('master.active'),
+            file: t('dms.file'),
+            version: t('dms.version'),
+            size: t('dms.size'),
+          }}
+        />
+      )}
+      {editing && tab === 'files' && (
+        <AttachmentsPanel entityType={meta.key} entityId={row.id} canWrite={meta.can.edit} />
+      )}
+      <div className={tab === 'data' ? 'flex flex-col gap-4' : 'hidden'}>
         <FormError message={formError} />
         <div className="grid gap-4 sm:grid-cols-2">
           {meta.fields.map((f) => {

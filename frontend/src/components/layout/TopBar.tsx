@@ -1,16 +1,10 @@
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { usePageMeta } from '@/app/pageMeta';
 import { Icon } from '@/components/ui/icon';
+import { NotificationBell } from '@/features/notifications/NotificationBell';
 import { UserMenu } from './UserMenu';
 
-export function TopBar({
-  onOpenMenu,
-  approvalsCount,
-}: {
-  onOpenMenu: () => void;
-  approvalsCount: number;
-}) {
+export function TopBar({ onOpenMenu }: { onOpenMenu: () => void }) {
   const { t } = useTranslation();
   const meta = usePageMeta();
 
@@ -48,19 +42,7 @@ export function TopBar({
           </label>
         </form>
 
-        <Link
-          to="/persetujuan"
-          aria-label={t('topbar.approvalsCount', { count: approvalsCount })}
-          title={t('topbar.approvals')}
-          className="relative grid h-10 w-10 place-items-center rounded-control text-fg hover:bg-surface-muted"
-        >
-          <Icon name="notifications" />
-          {approvalsCount > 0 && (
-            <span className="absolute right-1 top-1 min-w-4 rounded-pill bg-brand-gold px-1 text-center text-caption font-bold text-on-gold">
-              {approvalsCount}
-            </span>
-          )}
-        </Link>
+        <NotificationBell />
 
         <UserMenu />
       </div>

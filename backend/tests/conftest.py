@@ -2,12 +2,14 @@
 
 import os
 import uuid
-from collections.abc import AsyncIterator, Awaitable, Callable
+from collections.abc import AsyncIterator, Awaitable, Callable, Iterator
 
+import boto3
 import pytest
 from alembic import command
 from alembic.config import Config
 from httpx import ASGITransport, AsyncClient
+from moto import mock_aws
 from sqlalchemy import Connection, insert, text
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 
@@ -18,10 +20,13 @@ from app.core.config import get_settings
 from app.core.db import get_session, make_engine, make_sessionmaker
 from app.main import app
 from app.master.config_seed import ACCOUNTS, COST_ELEMENTS, CURRENCIES
+from app.services.storage import Storage, get_storage
 
 TEST_DB_URL = os.environ.get("TEST_DATABASE_URL", get_settings().test_database_url)
 # Seeded configuration (system roles and their permissions) survives between tests.
 TABLES = (
+    "notifications",
+    "attachments",
     "doc_counters",
     "audit_log",
     "refresh_tokens",
@@ -149,7 +154,7 @@ async def client(
     app.dependency_overrides[get_session] = _session
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
         yield c
-    app.dependency_overrides.clear()
+    app.dependency_overrides.pop(get_session, None)
 
 
 PASSWORD = "Rahasia-Kuat-2026"
@@ -217,3 +222,15 @@ def principal_of(
 
     _p.sessions = sessions  # type: ignore[attr-defined]
     return _p
+
+
+@pytest.fixture
+def storage() -> Iterator[Storage]:
+    """In-memory S3 (moto) wired into the API for the duration of a test."""
+    with mock_aws():
+        s3 = boto3.client("s3", region_name="us-east-1")
+        store = Storage(s3, "test-bucket")
+        s3.create_bucket(Bucket="test-bucket")
+        app.dependency_overrides[get_storage] = lambda: store
+        yield store
+        app.dependency_overrides.pop(get_storage, None)

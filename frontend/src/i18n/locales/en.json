@@ -62,7 +62,8 @@
       "users": "Users & Roles",
       "components": "Components (dev)",
       "doaRules": "DOA rules",
-      "masterData": "Master Data"
+      "masterData": "Master Data",
+      "auditTrail": "Audit Trail"
     }
   },
   "topbar": {
@@ -117,6 +118,10 @@
     "master": {
       "title": "Master Data",
       "description": "Reference data used by every module."
+    },
+    "audit": {
+      "title": "Audit Trail",
+      "description": "Who changed what and when, across the system."
     }
   },
   "dashboard": {
@@ -387,6 +392,50 @@
       "operasi": "Operations & assets",
       "komersial": "Commercial",
       "keuangan": "Finance"
-    }
+    },
+    "tabData": "Data",
+    "tabHistory": "History",
+    "tabFiles": "Attachments"
+  },
+  "audit": {
+    "search": "Search",
+    "searchPlaceholder": "User name or document ID",
+    "entityType": "Data type",
+    "action": "Action",
+    "from": "From",
+    "to": "To",
+    "caption": "Audit trail",
+    "time": "Time",
+    "user": "User",
+    "changed": "Changed fields",
+    "details": "Show change details",
+    "empty": "No entries for this filter.",
+    "noHistory": "No history yet.",
+    "system": "System",
+    "becomes": "becomes"
+  },
+  "dms": {
+    "upload": "Upload attachment",
+    "uploading": "Uploading…",
+    "rules": "PDF, JPG or PNG, max. 20 MB",
+    "empty": "No attachments yet.",
+    "tooLarge": "Maximum file size is 20 MB.",
+    "chooseFile": "Choose attachment file",
+    "download": "Download",
+    "downloadFile": "Download {{name}}",
+    "newVersionOf": "Upload new version of {{name}}",
+    "archiveFile": "Archive {{name}}",
+    "versions": "Versions",
+    "versionOf": "Version {{v}} of {{n}}",
+    "file": "File",
+    "version": "Version",
+    "size": "Size (bytes)"
+  },
+  "notifications": {
+    "bell": "Notifications, {{count}} unread",
+    "title": "Notifications",
+    "markAll": "Mark all as read",
+    "empty": "No notifications yet.",
+    "unread": "Unread:"
   }
 }

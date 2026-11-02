@@ -10,6 +10,7 @@ from sqlalchemy.orm import aliased
 
 from app.auth.models import Role, User
 from app.auth.principal import CurrentUser, Principal, require
+from app.core import access
 from app.core.db import get_session
 from app.core.errors import NotFoundError
 from app.core.pagination import PageParams, page_params
@@ -38,6 +39,20 @@ from app.workflow.schemas import (
 )
 
 router = APIRouter(prefix="/workflow", tags=["workflow"])
+
+
+async def _request_access(
+    session: AsyncSession, principal: Principal, entity_id: str, mode: access.Mode
+) -> bool:
+    try:
+        detail = await _detail(session, principal, uuid.UUID(entity_id))
+    except (NotFoundError, ValueError):
+        return False
+    return mode == "read" or detail.can_cancel or detail.can_act
+
+
+access.register("approval_request", _request_access)
+access.register("doa_rule", access.module_checker("workflow", "workflow", "admin"))
 Session = Annotated[AsyncSession, Depends(get_session)]
 Pages = Annotated[PageParams, Depends(page_params)]
 
