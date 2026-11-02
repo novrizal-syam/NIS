@@ -17,6 +17,7 @@ from app.auth.principal import Principal, load_principal
 from app.core.config import get_settings
 from app.core.db import get_session, make_engine, make_sessionmaker
 from app.main import app
+from app.master.config_seed import ACCOUNTS, COST_ELEMENTS, CURRENCIES
 
 TEST_DB_URL = os.environ.get("TEST_DATABASE_URL", get_settings().test_database_url)
 # Seeded configuration (system roles and their permissions) survives between tests.
@@ -29,6 +30,16 @@ TABLES = (
     "approval_requests",
     "doa_delegations",
     "doa_rule_changes",
+    "price_items",
+    "fx_rates",
+    "employees",
+    "cost_centers",
+    "clients",
+    "vendors",
+    "items",
+    "warehouses",
+    "assets",
+    "fiscal_periods",
     "users",
     "departments",
 )
@@ -102,6 +113,18 @@ async def sessionmaker(engine: AsyncEngine) -> AsyncIterator[async_sessionmaker[
     async with engine.begin() as conn:
         await conn.execute(text(f"TRUNCATE {', '.join(TABLES)} RESTART IDENTITY CASCADE"))
         await conn.execute(text("DELETE FROM roles WHERE NOT is_system"))
+        # Keep the configuration seed (COA, cost elements, currencies); drop test additions.
+        await conn.execute(
+            text("DELETE FROM cost_elements WHERE NOT code = ANY(:c)"),
+            {"c": [c for c, _, _ in COST_ELEMENTS]},
+        )
+        await conn.execute(
+            text("DELETE FROM accounts WHERE NOT code = ANY(:c)"), {"c": [c for c, *_ in ACCOUNTS]}
+        )
+        await conn.execute(
+            text("DELETE FROM currencies WHERE NOT code = ANY(:c)"),
+            {"c": [c for c, *_ in CURRENCIES]},
+        )
         # Tests may change DOA rules; restore the seed.
         await conn.execute(text("DELETE FROM doa_rules"))
         await conn.run_sync(lambda c: _seed_rules(c))

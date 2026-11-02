@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { matchPath, useLocation } from 'react-router-dom';
+import { useMeta } from '@/features/master/api';
 import { findNavItem } from './nav';
 
 export interface PageMeta {
@@ -11,6 +12,8 @@ export interface PageMeta {
 export function usePageMeta(): PageMeta {
   const { t } = useTranslation();
   const { pathname } = useLocation();
+  const masterEntity = matchPath('/master/:entity', pathname)?.params.entity ?? '';
+  const entityMeta = useMeta(masterEntity, masterEntity !== '');
 
   if (pathname === '/') {
     return { title: t('pages.dashboard.title'), description: t('pages.dashboard.description') };
@@ -33,6 +36,15 @@ export function usePageMeta(): PageMeta {
   }
   if (pathname === '/pengaturan/doa') {
     return { title: t('pages.doaRules.title'), description: t('pages.doaRules.description') };
+  }
+  if (pathname === '/master') {
+    return { title: t('pages.master.title'), description: t('pages.master.description') };
+  }
+  if (masterEntity) {
+    return {
+      title: entityMeta.data?.label ?? t('pages.master.title'),
+      description: t('pages.master.description'),
+    };
   }
   if (pathname === '/dev/komponen') {
     return { title: t('pages.components.title'), description: t('pages.components.description') };

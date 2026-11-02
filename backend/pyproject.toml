@@ -19,6 +19,7 @@ dependencies = [
     "segno>=1.6",
     "cryptography>=43",
     "openpyxl>=3.1",
+    "python-multipart>=0.0.12",
 ]
 
 [project.optional-dependencies]

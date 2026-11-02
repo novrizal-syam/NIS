@@ -11,6 +11,8 @@ import { KomponenPage } from '@/features/dev/KomponenPage';
 import { ComingSoonPage } from '@/features/home/ComingSoonPage';
 import { DashboardPage } from '@/features/home/DashboardPage';
 import { NotFoundPage } from '@/features/home/NotFoundPage';
+import { MasterIndexPage } from '@/features/master/MasterIndexPage';
+import { MasterListPage } from '@/features/master/MasterListPage';
 import { DoaRulesPage } from '@/features/workflow/DoaRulesPage';
 import { InboxPage } from '@/features/workflow/InboxPage';
 import { RequestDetailPage } from '@/features/workflow/RequestDetailPage';
@@ -48,6 +50,8 @@ export function AppRoutes() {
         <Route path="persetujuan" element={<InboxPage />} />
         <Route path="persetujuan/:id" element={<RequestDetailPage />} />
         <Route path="pengaturan/doa" element={<DoaRulesPage />} />
+        <Route path="master" element={<MasterIndexPage />} />
+        <Route path="master/:entity" element={<MasterListPage />} />
         <Route path="segera/:key" element={<ComingSoonPage />} />
         {import.meta.env.DEV && <Route path="dev/komponen" element={<KomponenPage />} />}
         <Route path="*" element={<NotFoundPage />} />

@@ -61,7 +61,8 @@
       "settings": "Settings",
       "users": "Users & Roles",
       "components": "Components (dev)",
-      "doaRules": "DOA rules"
+      "doaRules": "DOA rules",
+      "masterData": "Master Data"
     }
   },
   "topbar": {
@@ -112,6 +113,10 @@
     "doaRules": {
       "title": "DOA rules",
       "description": "Approval matrix and segregation of duties."
+    },
+    "master": {
+      "title": "Master Data",
+      "description": "Reference data used by every module."
     }
   },
   "dashboard": {
@@ -333,5 +338,55 @@
     "reasonHint": "At least 5 characters; shown to the Director.",
     "submitChange": "Submit change",
     "submitted": "Change submitted as {{number}}, awaiting Director approval."
+  },
+  "master": {
+    "back": "Back to Master Data",
+    "search": "Search",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "all": "All",
+    "activeCount": "Active",
+    "inactiveCount": "Inactive",
+    "add": "Add",
+    "import": "Import CSV",
+    "empty": "No data yet. Add rows one by one or import a CSV.",
+    "demo": "demo",
+    "yes": "Yes",
+    "no": "No",
+    "choose": "Choose",
+    "none": "None",
+    "required": "Required.",
+    "save": "Save",
+    "delete": "Delete",
+    "confirmDelete": "Click again to delete",
+    "newTitle": "Add {{entity}}",
+    "editTitle": "{{entity}}: {{name}}",
+    "sensitiveHint": "Personal data (PDP law); visible only with permission.",
+    "idrHint": "Whole rupiah, e.g. 1.250.000",
+    "docName": "Name",
+    "docNumber": "Number",
+    "docExpiry": "Valid until",
+    "addDoc": "Add document",
+    "removeDoc": "Remove document",
+    "importTitle": "Import {{entity}}",
+    "importHelp": "Download the template, fill it in Excel, save as CSV. Rows with an existing code are updated. If any row is wrong, nothing is saved.",
+    "template": "Download CSV template",
+    "importFile": "CSV file",
+    "importRun": "Import",
+    "importDone": "{{created}} new rows, {{updated}} updated.",
+    "importFailed": "{{count}} problems found. Nothing was saved; fix them and import again.",
+    "importErrors": "Import problems",
+    "row": "Row",
+    "column": "Column",
+    "problem": "Problem",
+    "groups": {
+      "organisasi": "Organisation",
+      "mitra": "Clients & vendors",
+      "sdm": "People",
+      "operasi": "Operations & assets",
+      "komersial": "Commercial",
+      "keuangan": "Finance"
+    }
   }
 }

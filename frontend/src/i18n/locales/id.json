@@ -61,7 +61,8 @@
       "settings": "Pengaturan",
       "users": "Pengguna & Peran",
       "components": "Komponen (dev)",
-      "doaRules": "Aturan DOA"
+      "doaRules": "Aturan DOA",
+      "masterData": "Data Master"
     }
   },
   "topbar": {
@@ -112,6 +113,10 @@
     "doaRules": {
       "title": "Aturan DOA",
       "description": "Matriks persetujuan dan pemisahan tugas."
+    },
+    "master": {
+      "title": "Data Master",
+      "description": "Data acuan yang dipakai semua modul."
     }
   },
   "dashboard": {
@@ -333,5 +338,55 @@
     "reasonHint": "Minimal 5 karakter; tampil ke Direktur.",
     "submitChange": "Ajukan perubahan",
     "submitted": "Perubahan diajukan sebagai {{number}} dan menunggu persetujuan Direktur."
+  },
+  "master": {
+    "back": "Kembali ke Data Master",
+    "search": "Cari",
+    "status": "Status",
+    "active": "Aktif",
+    "inactive": "Nonaktif",
+    "all": "Semua",
+    "activeCount": "Aktif",
+    "inactiveCount": "Nonaktif",
+    "add": "Tambah",
+    "import": "Impor CSV",
+    "empty": "Belum ada data. Tambah satu per satu atau impor CSV.",
+    "demo": "demo",
+    "yes": "Ya",
+    "no": "Tidak",
+    "choose": "Pilih",
+    "none": "Tidak ada",
+    "required": "Wajib diisi.",
+    "save": "Simpan",
+    "delete": "Hapus",
+    "confirmDelete": "Klik lagi untuk menghapus",
+    "newTitle": "Tambah {{entity}}",
+    "editTitle": "{{entity}}: {{name}}",
+    "sensitiveHint": "Data pribadi (UU PDP); hanya tampil bagi yang berizin.",
+    "idrHint": "Rupiah bulat, contoh 1.250.000",
+    "docName": "Nama",
+    "docNumber": "Nomor",
+    "docExpiry": "Berlaku sampai",
+    "addDoc": "Tambah dokumen",
+    "removeDoc": "Hapus dokumen",
+    "importTitle": "Impor {{entity}}",
+    "importHelp": "Unduh template, isi di Excel, simpan sebagai CSV. Baris dengan kode yang sudah ada akan diperbarui. Jika ada satu baris salah, tidak ada yang disimpan.",
+    "template": "Unduh template CSV",
+    "importFile": "File CSV",
+    "importRun": "Impor",
+    "importDone": "{{created}} baris baru, {{updated}} diperbarui.",
+    "importFailed": "{{count}} masalah ditemukan. Tidak ada data yang disimpan; perbaiki lalu impor ulang.",
+    "importErrors": "Daftar masalah impor",
+    "row": "Baris",
+    "column": "Kolom",
+    "problem": "Masalah",
+    "groups": {
+      "organisasi": "Organisasi",
+      "mitra": "Klien & vendor",
+      "sdm": "SDM",
+      "operasi": "Operasi & aset",
+      "komersial": "Komersial",
+      "keuangan": "Keuangan"
+    }
   }
 }

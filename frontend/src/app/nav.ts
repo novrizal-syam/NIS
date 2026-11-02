@@ -100,6 +100,7 @@ export const NAV: NavGroup[] = [
     key: 'settings',
     items: [
       soon('settings', 'settings', 'settings'),
+      { key: 'masterData', path: '/master', icon: 'database', ready: true, module: 'master' },
       soon('users', 'manage_accounts', 'users'),
       { key: 'doaRules', path: '/pengaturan/doa', icon: 'rule', ready: true, module: 'workflow' },
       { key: 'components', path: '/dev/komponen', icon: 'widgets', ready: true, devOnly: true },
