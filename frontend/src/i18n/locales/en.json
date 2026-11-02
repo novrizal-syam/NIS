@@ -4,7 +4,9 @@
     "tenant": "PT Global Energi KITA",
     "clientLabel": "Client: PT Global Energi KITA",
     "tagline": "STRATEGY - EXECUTED",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "renderError": "This page failed to render.",
+    "renderErrorHelp": "Reload the page. If it happens again, report it to the admin with the steps you took."
   },
   "nav": {
     "label": "Main menu",
@@ -58,7 +60,8 @@
       "lms": "Learning (LMS)",
       "settings": "Settings",
       "users": "Users & Roles",
-      "components": "Components (dev)"
+      "components": "Components (dev)",
+      "doaRules": "DOA rules"
     }
   },
   "topbar": {
@@ -97,6 +100,18 @@
       "title": "Page not found",
       "description": "The address you opened does not exist.",
       "back": "Back to Dashboard"
+    },
+    "approvals": {
+      "title": "My Approvals",
+      "description": "Documents waiting for your decision, oldest first."
+    },
+    "approvalDetail": {
+      "title": "Approval detail",
+      "description": "Step history and decisions."
+    },
+    "doaRules": {
+      "title": "DOA rules",
+      "description": "Approval matrix and segregation of duties."
     }
   },
   "dashboard": {
@@ -163,5 +178,160 @@
     "qrLabel": "QR code for the authenticator app",
     "manual": "Manual key",
     "submit": "Enable 2FA"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "close": "Close",
+    "edit": "Edit",
+    "change": "Change",
+    "loading": "Loading…"
+  },
+  "list": {
+    "showing": "Showing {{from}}–{{to}} of {{total}}",
+    "prev": "Previous page",
+    "next": "Next page",
+    "export": "Export Excel"
+  },
+  "roles": {
+    "super_admin": "Super Admin",
+    "admin": "Admin",
+    "director": "Director",
+    "shareholders": "Shareholders (RUPS)",
+    "head_of_sales": "Head of Sales & Ext. Comm.",
+    "account_executive": "Account Executive",
+    "tender_specialist": "Tender Specialist",
+    "billing_admin": "Billing Admin",
+    "legal_liaison": "Legal & Liaison Officer",
+    "qhse_coordinator": "QHSE Coordinator",
+    "head_of_operation": "Head of Operation",
+    "lead_engineer": "Lead Engineer (Planner)",
+    "engineer": "Engineer",
+    "ofs_superintendent": "OFS Superintendent",
+    "epcom_superintendent": "EPCOM Superintendent",
+    "field_engineer": "Field Engineer",
+    "operation_staff": "Operation Staff",
+    "asset_inventory_coordinator": "Asset & Inventory Coordinator",
+    "warehouse_head": "Warehouse Head",
+    "lead_controller": "Lead Controller",
+    "head_of_finance": "Head of Finance & Support",
+    "finance_officer": "Finance Officer",
+    "ap_accountant": "AP Accountant",
+    "cashier": "Cashier",
+    "tax_specialist": "Tax Specialist",
+    "procurement_officer": "Procurement Officer",
+    "hcbp_officer": "HCBP Officer",
+    "client_rep": "Client Representative",
+    "vendor": "Vendor"
+  },
+  "workflow": {
+    "tabsLabel": "Approvals",
+    "tabInbox": "Waiting for me",
+    "tabDelegations": "Delegations",
+    "summary": "Summary per document type",
+    "all": "All",
+    "allTypes": "All types",
+    "search": "Search",
+    "searchPlaceholder": "Document number or title",
+    "docType": "Document type",
+    "approve": "Approve",
+    "reject": "Reject",
+    "withdraw": "Withdraw",
+    "approveSelected": "Approve selected ({{count}})",
+    "bulkNeedsType": "Pick one document type to approve in bulk.",
+    "selectAll": "Select all on this page",
+    "selectOne": "Select {{number}}",
+    "tableCaption": "Documents waiting for your approval",
+    "empty": "Nothing is waiting for your approval.",
+    "col": {
+      "number": "Number",
+      "type": "Type",
+      "title": "Title",
+      "amount": "Amount",
+      "requester": "Requester",
+      "submitted": "Submitted",
+      "due": "Due",
+      "actions": "Actions",
+      "status": "Status"
+    },
+    "escalated": "Escalated",
+    "approvedOne": "{{number}} approved.",
+    "rejectedOne": "{{number}} rejected and returned to the requester.",
+    "bulkDone": "{{count}} documents approved.",
+    "bulkPartial": "{{ok}} approved, {{failed}} failed: {{reason}}",
+    "rejectTitle": "Reject {{number}}",
+    "rejectHelp": "The document returns to Draft. Say what the requester must fix.",
+    "withdrawTitle": "Withdraw {{number}}",
+    "withdrawHelp": "The submission is cancelled and the document returns to Draft.",
+    "reason": "Reason",
+    "reasonRequired": "Reason is required.",
+    "backToInbox": "Back to My Approvals",
+    "rule": "DOA rule",
+    "steps": "Approval steps",
+    "parallel": "parallel",
+    "onBehalfOf": "on behalf of {{name}}",
+    "dueAt": "Due {{date}}",
+    "commentOptional": "Comment (optional)",
+    "status": {
+      "pending": "Awaiting approval",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "cancelled": "Withdrawn"
+    },
+    "stepStatus": {
+      "waiting": "Not active yet",
+      "pending": "Waiting",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "skipped": "Skipped"
+    },
+    "delegation": {
+      "new": "New delegation",
+      "help": "During the period the delegate may approve on your behalf. Every action is logged.",
+      "delegate": "Delegate",
+      "searchUser": "Type a name or email (min. 2 letters)",
+      "pickDelegate": "Pick a delegate.",
+      "reasonRequired": "Reason is required.",
+      "role": "Role",
+      "allRoles": "All my roles",
+      "start": "Start",
+      "end": "End",
+      "save": "Save delegation",
+      "list": "Delegations",
+      "from": "From",
+      "to": "To",
+      "period": "Period",
+      "active": "Active",
+      "inactive": "Inactive",
+      "revoke": "Revoke",
+      "empty": "No delegations yet."
+    },
+    "changes": "Proposed changes",
+    "changeField": "Field",
+    "changeBefore": "Before",
+    "changeAfter": "After"
+  },
+  "doa": {
+    "intro": "Approval rules per document type. Rules are checked in order; the first match applies. Changes take effect after Director approval.",
+    "tableCaption": "DOA rules",
+    "docType": "Document type",
+    "condition": "Condition",
+    "steps": "Steps",
+    "escalationHours": "Escalation (hours)",
+    "active": "Active",
+    "inactive": "Inactive",
+    "changePending": "Change pending",
+    "pendingChanges": "Changes awaiting Director approval",
+    "editTitle": "Edit rule {{name}}",
+    "editHelp": "The change is sent to the Director and applies only after approval.",
+    "name": "Rule name",
+    "nestedReadOnly": "nested condition, change via system admin",
+    "seq": "Order",
+    "approver": "Approver",
+    "addStep": "Add step",
+    "removeStep": "Remove step",
+    "reason": "Reason for change",
+    "reasonHint": "At least 5 characters; shown to the Director.",
+    "submitChange": "Submit change",
+    "submitted": "Change submitted as {{number}}, awaiting Director approval."
   }
 }

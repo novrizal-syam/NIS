@@ -22,6 +22,18 @@ export function usePageMeta(): PageMeta {
       description: t('pages.soon.description'),
     };
   }
+  if (pathname === '/persetujuan') {
+    return { title: t('pages.approvals.title'), description: t('pages.approvals.description') };
+  }
+  if (matchPath('/persetujuan/:id', pathname)) {
+    return {
+      title: t('pages.approvalDetail.title'),
+      description: t('pages.approvalDetail.description'),
+    };
+  }
+  if (pathname === '/pengaturan/doa') {
+    return { title: t('pages.doaRules.title'), description: t('pages.doaRules.description') };
+  }
   if (pathname === '/dev/komponen') {
     return { title: t('pages.components.title'), description: t('pages.components.description') };
   }

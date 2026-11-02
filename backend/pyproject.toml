@@ -18,6 +18,7 @@ dependencies = [
     "pyotp>=2.9",
     "segno>=1.6",
     "cryptography>=43",
+    "openpyxl>=3.1",
 ]
 
 [project.optional-dependencies]
@@ -29,6 +30,7 @@ dev = [
     "ruff>=0.8",
     "mypy>=1.13",
     "boto3-stubs[s3]>=1.35",
+    "types-openpyxl>=3.1",
 ]
 
 [build-system]

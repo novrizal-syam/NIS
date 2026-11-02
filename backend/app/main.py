@@ -1,6 +1,9 @@
 """FastAPI application factory."""
 
+import asyncio
 import logging
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager, suppress
 from typing import Any
 
 from fastapi import APIRouter, Depends, FastAPI, Response
@@ -10,10 +13,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import models as _models  # noqa: F401  (register every model before the first request)
 from app.auth.router import router as auth_router
+from app.auth.users_router import router as users_router
 from app.core.config import get_settings
 from app.core.db import get_session
 from app.core.errors import install_error_handlers
 from app.core.logging import configure_logging, request_logging_middleware
+from app.workflow.jobs import scheduler_loop
+from app.workflow.router import router as workflow_router
 
 log = logging.getLogger("app")
 
@@ -22,7 +28,19 @@ def create_app() -> FastAPI:
     settings = get_settings()
     configure_logging(settings.log_level)
 
+    @asynccontextmanager
+    async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+        task = None
+        if settings.scheduler_enabled:
+            task = asyncio.create_task(scheduler_loop(settings.scheduler_interval_seconds))
+        yield
+        if task:
+            task.cancel()
+            with suppress(asyncio.CancelledError):
+                await task
+
     app = FastAPI(
+        lifespan=lifespan,
         title=settings.app_name,
         version="0.1.0",
         docs_url=None if settings.is_production else "/api/docs",
@@ -55,6 +73,8 @@ def create_app() -> FastAPI:
         return {"status": "ok", "db": "ok", "version": app.version}
 
     api.include_router(auth_router)
+    api.include_router(users_router)
+    api.include_router(workflow_router)
     app.include_router(api)
     return app
 

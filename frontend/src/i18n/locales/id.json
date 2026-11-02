@@ -4,7 +4,9 @@
     "tenant": "PT Global Energi KITA",
     "clientLabel": "Klien: PT Global Energi KITA",
     "tagline": "STRATEGY - EXECUTED",
-    "skipToContent": "Lewati ke konten"
+    "skipToContent": "Lewati ke konten",
+    "renderError": "Halaman ini gagal ditampilkan.",
+    "renderErrorHelp": "Muat ulang halaman. Jika berulang, laporkan ke admin beserta langkah yang Anda lakukan."
   },
   "nav": {
     "label": "Menu utama",
@@ -58,7 +60,8 @@
       "lms": "Pelatihan (LMS)",
       "settings": "Pengaturan",
       "users": "Pengguna & Peran",
-      "components": "Komponen (dev)"
+      "components": "Komponen (dev)",
+      "doaRules": "Aturan DOA"
     }
   },
   "topbar": {
@@ -97,6 +100,18 @@
       "title": "Halaman tidak ditemukan",
       "description": "Alamat yang Anda buka tidak ada.",
       "back": "Kembali ke Dasbor"
+    },
+    "approvals": {
+      "title": "Persetujuan Saya",
+      "description": "Dokumen yang menunggu keputusan Anda, terlama di atas."
+    },
+    "approvalDetail": {
+      "title": "Detail persetujuan",
+      "description": "Riwayat tahap dan keputusan."
+    },
+    "doaRules": {
+      "title": "Aturan DOA",
+      "description": "Matriks persetujuan dan pemisahan tugas."
     }
   },
   "dashboard": {
@@ -163,5 +178,160 @@
     "qrLabel": "Kode QR untuk aplikasi authenticator",
     "manual": "Kunci manual",
     "submit": "Aktifkan 2FA"
+  },
+  "common": {
+    "cancel": "Batal",
+    "close": "Tutup",
+    "edit": "Ubah",
+    "change": "Ganti",
+    "loading": "Memuat…"
+  },
+  "list": {
+    "showing": "Menampilkan {{from}}–{{to}} dari {{total}}",
+    "prev": "Halaman sebelumnya",
+    "next": "Halaman berikutnya",
+    "export": "Ekspor Excel"
+  },
+  "roles": {
+    "super_admin": "Super Admin",
+    "admin": "Admin",
+    "director": "Director",
+    "shareholders": "Shareholders (RUPS)",
+    "head_of_sales": "Head of Sales & Ext. Comm.",
+    "account_executive": "Account Executive",
+    "tender_specialist": "Tender Specialist",
+    "billing_admin": "Billing Admin",
+    "legal_liaison": "Legal & Liaison Officer",
+    "qhse_coordinator": "QHSE Coordinator",
+    "head_of_operation": "Head of Operation",
+    "lead_engineer": "Lead Engineer (Planner)",
+    "engineer": "Engineer",
+    "ofs_superintendent": "OFS Superintendent",
+    "epcom_superintendent": "EPCOM Superintendent",
+    "field_engineer": "Field Engineer",
+    "operation_staff": "Operation Staff",
+    "asset_inventory_coordinator": "Asset & Inventory Coordinator",
+    "warehouse_head": "Warehouse Head",
+    "lead_controller": "Lead Controller",
+    "head_of_finance": "Head of Finance & Support",
+    "finance_officer": "Finance Officer",
+    "ap_accountant": "AP Accountant",
+    "cashier": "Cashier",
+    "tax_specialist": "Tax Specialist",
+    "procurement_officer": "Procurement Officer",
+    "hcbp_officer": "HCBP Officer",
+    "client_rep": "Client Representative",
+    "vendor": "Vendor"
+  },
+  "workflow": {
+    "tabsLabel": "Persetujuan",
+    "tabInbox": "Menunggu saya",
+    "tabDelegations": "Delegasi",
+    "summary": "Ringkasan per jenis dokumen",
+    "all": "Semua",
+    "allTypes": "Semua jenis",
+    "search": "Cari",
+    "searchPlaceholder": "Nomor atau judul dokumen",
+    "docType": "Jenis dokumen",
+    "approve": "Setujui",
+    "reject": "Tolak",
+    "withdraw": "Tarik pengajuan",
+    "approveSelected": "Setujui terpilih ({{count}})",
+    "bulkNeedsType": "Pilih satu jenis dokumen untuk menyetujui sekaligus.",
+    "selectAll": "Pilih semua di halaman ini",
+    "selectOne": "Pilih {{number}}",
+    "tableCaption": "Dokumen yang menunggu persetujuan Anda",
+    "empty": "Tidak ada dokumen yang menunggu persetujuan Anda.",
+    "col": {
+      "number": "Nomor",
+      "type": "Jenis",
+      "title": "Judul",
+      "amount": "Nilai",
+      "requester": "Pengaju",
+      "submitted": "Diajukan",
+      "due": "Batas waktu",
+      "actions": "Tindakan",
+      "status": "Status"
+    },
+    "escalated": "Dieskalasi",
+    "approvedOne": "{{number}} disetujui.",
+    "rejectedOne": "{{number}} ditolak dan dikembalikan ke pengaju.",
+    "bulkDone": "{{count}} dokumen disetujui.",
+    "bulkPartial": "{{ok}} disetujui, {{failed}} gagal: {{reason}}",
+    "rejectTitle": "Tolak {{number}}",
+    "rejectHelp": "Dokumen kembali ke Draft. Tulis apa yang harus diperbaiki pengaju.",
+    "withdrawTitle": "Tarik {{number}}",
+    "withdrawHelp": "Pengajuan dibatalkan dan dokumen kembali ke Draft.",
+    "reason": "Alasan",
+    "reasonRequired": "Alasan wajib diisi.",
+    "backToInbox": "Kembali ke Persetujuan Saya",
+    "rule": "Aturan DOA",
+    "steps": "Tahap persetujuan",
+    "parallel": "paralel",
+    "onBehalfOf": "atas nama {{name}}",
+    "dueAt": "Batas waktu {{date}}",
+    "commentOptional": "Catatan (opsional)",
+    "status": {
+      "pending": "Menunggu persetujuan",
+      "approved": "Disetujui",
+      "rejected": "Ditolak",
+      "cancelled": "Ditarik"
+    },
+    "stepStatus": {
+      "waiting": "Belum aktif",
+      "pending": "Menunggu",
+      "approved": "Disetujui",
+      "rejected": "Ditolak",
+      "skipped": "Dilewati"
+    },
+    "delegation": {
+      "new": "Delegasi baru",
+      "help": "Selama periode delegasi, penerima dapat menyetujui atas nama Anda. Semua tindakan tercatat.",
+      "delegate": "Penerima delegasi",
+      "searchUser": "Ketik nama atau email (min. 2 huruf)",
+      "pickDelegate": "Pilih penerima delegasi.",
+      "reasonRequired": "Alasan delegasi wajib diisi.",
+      "role": "Peran",
+      "allRoles": "Semua peran saya",
+      "start": "Mulai",
+      "end": "Selesai",
+      "save": "Simpan delegasi",
+      "list": "Daftar delegasi",
+      "from": "Dari",
+      "to": "Kepada",
+      "period": "Periode",
+      "active": "Aktif",
+      "inactive": "Tidak aktif",
+      "revoke": "Cabut",
+      "empty": "Belum ada delegasi."
+    },
+    "changes": "Perubahan yang diajukan",
+    "changeField": "Bagian",
+    "changeBefore": "Sebelum",
+    "changeAfter": "Sesudah"
+  },
+  "doa": {
+    "intro": "Aturan persetujuan per jenis dokumen. Aturan diperiksa berurutan; aturan pertama yang cocok dipakai. Perubahan berlaku setelah disetujui Direktur.",
+    "tableCaption": "Aturan DOA",
+    "docType": "Jenis dokumen",
+    "condition": "Kondisi",
+    "steps": "Tahap",
+    "escalationHours": "Eskalasi (jam)",
+    "active": "Aktif",
+    "inactive": "Nonaktif",
+    "changePending": "Perubahan menunggu",
+    "pendingChanges": "Perubahan menunggu persetujuan Direktur",
+    "editTitle": "Ubah aturan {{name}}",
+    "editHelp": "Perubahan diajukan ke Direktur dan baru berlaku setelah disetujui.",
+    "name": "Nama aturan",
+    "nestedReadOnly": "kondisi bertingkat, ubah lewat admin sistem",
+    "seq": "Urutan",
+    "approver": "Penyetuju",
+    "addStep": "Tambah tahap",
+    "removeStep": "Hapus tahap",
+    "reason": "Alasan perubahan",
+    "reasonHint": "Minimal 5 karakter; tampil ke Direktur.",
+    "submitChange": "Ajukan perubahan",
+    "submitted": "Perubahan diajukan sebagai {{number}} dan menunggu persetujuan Direktur."
   }
 }

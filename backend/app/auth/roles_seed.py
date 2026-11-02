@@ -156,6 +156,7 @@ SYSTEM_ROLES: tuple[RoleDef, ...] = (
         g(OPS_MODULES, (A.VIEW, A.EXPORT, A.APPROVE), ALL),
         g(("project", "operations", "procurement"), WORK, ALL),
         g("treasury", (A.VIEW, A.APPROVE), ALL),  # cash advance approval
+        g("tender", (A.VIEW, A.APPROVE), ALL),  # technical approval of tender packages
         g("reporting", READ, ALL),
     ),
     _role(

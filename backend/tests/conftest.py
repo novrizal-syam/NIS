@@ -8,18 +8,30 @@ import pytest
 from alembic import command
 from alembic.config import Config
 from httpx import ASGITransport, AsyncClient
-from sqlalchemy import text
+from sqlalchemy import Connection, insert, text
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 
 from app.auth import service as auth_service
 from app.auth.models import User
+from app.auth.principal import Principal, load_principal
 from app.core.config import get_settings
 from app.core.db import get_session, make_engine, make_sessionmaker
 from app.main import app
 
 TEST_DB_URL = os.environ.get("TEST_DATABASE_URL", get_settings().test_database_url)
 # Seeded configuration (system roles and their permissions) survives between tests.
-TABLES = ("doc_counters", "audit_log", "refresh_tokens", "user_roles", "users", "departments")
+TABLES = (
+    "doc_counters",
+    "audit_log",
+    "refresh_tokens",
+    "user_roles",
+    "approval_steps",
+    "approval_requests",
+    "doa_delegations",
+    "doa_rule_changes",
+    "users",
+    "departments",
+)
 
 
 def _alembic_config() -> Config:
@@ -46,6 +58,38 @@ async def engine() -> AsyncIterator[AsyncEngine]:
     await eng.dispose()
 
 
+def _seed_rules(connection: Connection) -> None:
+    from app.workflow.models import DoaRule, DoaRuleStep
+    from app.workflow.rules_seed import RULES
+
+    for r in RULES:
+        rule_id = uuid.uuid4()
+        connection.execute(
+            insert(DoaRule).values(
+                id=rule_id,
+                doc_type=r.doc_type,
+                name=r.name,
+                priority=r.priority,
+                condition=r.condition or {},
+                escalation_hours=r.escalation_hours,
+                escalate_to_role=r.escalate_to_role,
+            )
+        )
+        connection.execute(
+            insert(DoaRuleStep),
+            [
+                {
+                    "rule_id": rule_id,
+                    "seq": st.seq,
+                    "approver_role": st.role,
+                    "label": st.label,
+                    "approver_scope": st.scope,
+                }
+                for st in r.steps
+            ],
+        )
+
+
 def _upgrade(cfg: Config, connection: object) -> None:
     cfg.attributes["connection"] = connection
     command.upgrade(cfg, "head")
@@ -58,6 +102,9 @@ async def sessionmaker(engine: AsyncEngine) -> AsyncIterator[async_sessionmaker[
     async with engine.begin() as conn:
         await conn.execute(text(f"TRUNCATE {', '.join(TABLES)} RESTART IDENTITY CASCADE"))
         await conn.execute(text("DELETE FROM roles WHERE NOT is_system"))
+        # Tests may change DOA rules; restore the seed.
+        await conn.execute(text("DELETE FROM doa_rules"))
+        await conn.run_sync(lambda c: _seed_rules(c))
 
 
 @pytest.fixture
@@ -89,13 +136,14 @@ PASSWORD = "Rahasia-Kuat-2026"
 def make_user(
     sessionmaker: async_sessionmaker[AsyncSession],
 ) -> Callable[..., Awaitable[User]]:
-    """Create an active user that can log in with PASSWORD (no pending password change)."""
+    """Create an active user that can log in with PASSWORD (no pending steps by default)."""
 
     async def _make(
         *roles: str,
         email: str | None = None,
         must_change_password: bool = False,
         department_id: uuid.UUID | None = None,
+        two_factor: bool = True,
     ) -> User:
         async with sessionmaker() as s:
             user, _ = await auth_service.create_user(
@@ -108,6 +156,9 @@ def make_user(
                 department_id=department_id,
             )
             user.must_change_password = must_change_password
+            # Marked enrolled without a secret: login asks no code. Tests of the 2FA flow
+            # itself pass two_factor=False.
+            user.totp_enabled = two_factor
             await s.commit()
             return user
 
@@ -127,3 +178,19 @@ def login(client: AsyncClient) -> Callable[..., Awaitable[dict[str, str]]]:
         return {"Authorization": f"Bearer {res.json()['access_token']}"}
 
     return _login
+
+
+@pytest.fixture
+def principal_of(
+    sessionmaker: async_sessionmaker[AsyncSession],
+) -> Callable[..., Awaitable[Principal]]:
+    """Principal bound to a long-lived session (for calling services directly)."""
+    sessions: list[AsyncSession] = []
+
+    async def _p(user: User, session: AsyncSession, active_role: str | None = None) -> Principal:
+        db_user = await session.get(User, user.id)
+        assert db_user is not None
+        return await load_principal(session, db_user, active_role)
+
+    _p.sessions = sessions  # type: ignore[attr-defined]
+    return _p

@@ -104,6 +104,21 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
   return body as T;
 }
 
+/** Download a file (e.g. Excel export) with the user's session. */
+export async function downloadFile(path: string, fallbackName: string): Promise<void> {
+  let res = await send(path, {});
+  if (res.status === 401 && (await refreshAccessToken())) res = await send(path, {});
+  if (!res.ok) throw toError(res.status, await parse(res));
+  const name =
+    /filename="([^"]+)"/.exec(res.headers.get('Content-Disposition') ?? '')?.[1] ?? fallbackName;
+  const url = URL.createObjectURL(await res.blob());
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = name;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 export const postJson = <T>(path: string, data?: unknown) =>
   api<T>(path, { method: 'POST', body: data === undefined ? undefined : JSON.stringify(data) });
 

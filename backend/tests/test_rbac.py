@@ -85,13 +85,7 @@ async def test_permission_matrix(
     allowed: bool,
 ) -> None:
     user = await make_user(role)
-    async with sessionmaker() as s:
-        # Skip 2FA enrolment for this test; enrolment is covered in test_auth.
-        u = await s.get(User, user.id)
-        assert u is not None
-        u.totp_enabled = True
-        await s.commit()
-    headers = await login(user)  # totp_enabled without a secret: no code asked (tests only)
+    headers = await login(user)
     res = await client.get(f"/api/_probe/{module}/{action}", headers=headers)
     if allowed:
         assert res.status_code == 200, res.text

@@ -198,7 +198,7 @@ async def test_forced_password_change_on_first_login(
 async def test_totp_required_by_role(
     client: AsyncClient, make_user: MakeUser, login: Login
 ) -> None:
-    user = await make_user("cashier")  # role requires 2FA
+    user = await make_user("cashier", two_factor=False)  # role requires 2FA
     headers = await login(user)
     blocked = await client.get("/api/auth/ping", headers=headers)
     assert blocked.json()["code"] == "TOTP_SETUP_REQUIRED"
@@ -231,7 +231,7 @@ async def test_totp_secret_is_encrypted_at_rest(
     login: Login,
     sessionmaker: async_sessionmaker[AsyncSession],
 ) -> None:
-    user = await make_user("cashier")
+    user = await make_user("cashier", two_factor=False)
     headers = await login(user)
     secret = (await client.post("/api/auth/totp/setup", headers=headers)).json()["secret"]
     async with sessionmaker() as s:

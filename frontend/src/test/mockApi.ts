@@ -48,6 +48,12 @@ export function mockApi(
     'GET /api/auth/me': () => json(me),
     'POST /api/auth/logout': () => new Response(null, { status: 204 }),
     'GET /api/health': () => json({ status: 'ok', db: 'ok', version: '0.1.0' }),
+    'GET /api/workflow/inbox/count': () => json({ count: 0 }),
+    'GET /api/workflow/doc-types': () =>
+      json([
+        { code: 'purchase_requisition', label: 'Purchase Requisition', module: 'procurement' },
+        { code: 'cash_advance', label: 'Uang muka kerja', module: 'treasury' },
+      ]),
   };
   const routes = { ...defaults, ...handlers };
   const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {

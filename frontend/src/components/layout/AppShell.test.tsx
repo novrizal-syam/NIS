@@ -91,3 +91,22 @@ describe('AppShell', () => {
     expect(calls.some((c) => c.key === 'POST /api/auth/logout')).toBe(true);
   });
 });
+
+describe('sign out', () => {
+  it('does not send the next user back to the previous page', async () => {
+    mockApi({
+      handlers: {
+        'POST /api/auth/login': () =>
+          new Response(JSON.stringify({ access_token: 't', expires_in: 900 }), { status: 200 }),
+      },
+    });
+    const user = userEvent.setup();
+    renderApp('/segera/leads');
+    await user.click(await screen.findByRole('button', { name: 'Menu pengguna' }));
+    await user.click(screen.getByRole('button', { name: /Keluar/ }));
+    await user.type(await screen.findByLabelText(/Email/), 'budi@gek.co.id');
+    await user.type(screen.getByLabelText(/Kata sandi/), 'BukitDuri-2026');
+    await user.click(screen.getByRole('button', { name: 'Masuk' }));
+    expect(await screen.findByRole('heading', { level: 1, name: 'Dasbor' })).toBeInTheDocument();
+  });
+});

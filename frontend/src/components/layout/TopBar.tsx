@@ -49,7 +49,7 @@ export function TopBar({
         </form>
 
         <Link
-          to="/segera/approvals"
+          to="/persetujuan"
           aria-label={t('topbar.approvalsCount', { count: approvalsCount })}
           title={t('topbar.approvals')}
           className="relative grid h-10 w-10 place-items-center rounded-control text-fg hover:bg-surface-muted"

@@ -41,10 +41,13 @@ class Principal:
     grants: dict[tuple[str, str], Scope]
     # Filled by the project module (assignments) in a later phase; used by Scope.PROJECT.
     project_ids: frozenset[uuid.UUID] = field(default_factory=frozenset)
+    # Captured once so they stay readable after a rollback expires the ORM object.
+    id: uuid.UUID = field(init=False)
+    department_id: uuid.UUID | None = field(init=False)
 
-    @property
-    def id(self) -> uuid.UUID:
-        return self.user.id
+    def __post_init__(self) -> None:
+        self.id = self.user.id
+        self.department_id = self.user.department_id
 
     @property
     def role_codes(self) -> set[str]:
@@ -201,8 +204,8 @@ def scope_filter(
         return false()
     if scope == Scope.ALL:
         return true()
-    if scope == Scope.DEPARTMENT and department_col is not None and principal.user.department_id:
-        return or_(own, department_col == principal.user.department_id)
+    if scope == Scope.DEPARTMENT and department_col is not None and principal.department_id:
+        return or_(own, department_col == principal.department_id)
     if scope == Scope.PROJECT and project_col is not None and principal.project_ids:
         return or_(own, project_col.in_(principal.project_ids))
     return own

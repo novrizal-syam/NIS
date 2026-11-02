@@ -164,7 +164,11 @@ export function UserMenu() {
               </button>
               <button
                 type="button"
-                onClick={() => void logout().then(() => navigate('/login', { replace: true }))}
+                onClick={() => {
+                  // Leave the protected page first so the next user does not land on it.
+                  navigate('/login', { replace: true });
+                  void logout();
+                }}
                 className="flex h-9 items-center gap-2 rounded-control px-2 text-small font-medium text-fg hover:bg-surface-muted"
               >
                 <Icon name="logout" />

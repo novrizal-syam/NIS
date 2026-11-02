@@ -29,7 +29,7 @@ export const NAV: NavGroup[] = [
     key: 'overview',
     items: [
       { key: 'dashboard', path: '/', icon: 'space_dashboard', ready: true },
-      soon('approvals', 'task_alt'),
+      { key: 'approvals', path: '/persetujuan', icon: 'task_alt', ready: true },
     ],
   },
   {
@@ -101,6 +101,7 @@ export const NAV: NavGroup[] = [
     items: [
       soon('settings', 'settings', 'settings'),
       soon('users', 'manage_accounts', 'users'),
+      { key: 'doaRules', path: '/pengaturan/doa', icon: 'rule', ready: true, module: 'workflow' },
       { key: 'components', path: '/dev/komponen', icon: 'widgets', ready: true, devOnly: true },
     ],
   },

@@ -32,10 +32,19 @@ const dateTime = new Intl.DateTimeFormat('id-ID', {
 const NBSP = new RegExp('[\\u00a0\\u202f]', 'g');
 const plain = (s: string) => s.replace(NBSP, ' ');
 
+function toWholeRupiah(value: number | bigint | string): number | bigint {
+  if (typeof value !== 'string') return value;
+  const s = value.trim();
+  // Plain digits stay exact as BigInt; anything else (e.g. "1.25E+7") is parsed as a number.
+  if (/^-?\d+$/.test(s)) return BigInt(s);
+  const n = Number(s);
+  if (!Number.isFinite(n)) throw new RangeError(`Bukan nilai uang: ${value}`);
+  return Math.round(n);
+}
+
 /** `1250000` -> `Rp 1.250.000` */
 export function formatIDR(value: number | bigint | string): string {
-  const v = typeof value === 'string' ? BigInt(value) : value;
-  return plain(idr.format(v));
+  return plain(idr.format(toWholeRupiah(value)));
 }
 
 /** `1234567` -> `1.234.567` */

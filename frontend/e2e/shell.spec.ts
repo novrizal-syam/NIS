@@ -36,6 +36,12 @@ for (const theme of THEMES) {
       expect(await contrastViolations(page)).toEqual([]);
     });
 
+    test('approvals inbox passes the contrast check', async ({ page }) => {
+      await page.goto('/persetujuan');
+      await expect(page.getByText('PR-26-031')).toBeVisible();
+      expect(await contrastViolations(page)).toEqual([]);
+    });
+
     test('login page passes the contrast check', async ({ page }) => {
       await page.unrouteAll();
       await mockSignedOut(page);
@@ -85,6 +91,7 @@ test('login works at 400 px width', async ({ page }) => {
 test('keyboard users see a focus ring', async ({ page }) => {
   await mockSignedIn(page);
   await page.goto('/');
+  await expect(page.getByRole('heading', { level: 1, name: 'Dasbor' })).toBeVisible();
   await page.keyboard.press('Tab'); // skip link
   await page.keyboard.press('Tab');
   const outline = await page.evaluate(() => {

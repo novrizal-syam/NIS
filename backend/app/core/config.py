@@ -38,6 +38,10 @@ class Settings(BaseSettings):
     refresh_cookie_name: str = "nustrad_refresh"
     totp_issuer: str = "Nustrad ERP"
 
+    # Run background jobs (DOA escalation) inside the API process.
+    scheduler_enabled: bool = False
+    scheduler_interval_seconds: int = 900
+
     smtp_host: str = "localhost"
     smtp_port: int = 1025
     smtp_user: str = ""
