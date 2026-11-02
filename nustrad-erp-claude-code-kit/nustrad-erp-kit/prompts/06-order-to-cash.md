@@ -1,0 +1,5 @@
+# 06 · Service ticket, invoice, faktur, receivables
+1. Ticket from approved DOR(s) (daily or per period per contract); client signs on tablet (signature pad) or by secure 7-day link for a Client Representative account; PSrE e-signature adapter interface (internal mode now). Line-level dispute with reason → removed from value, Dispute Register, journal 4100/1220. Record client acceptance number (BAST/SES). Signed PDF to DMS.
+2. Invoice only from signed tickets: subtotal, DPP 11/12, PPN 12%, expected PPh 23, net cash; stamp duty rule; journal per ACCOUNTING.md; faktur number + Coretax XML export (PJAP adapter interface later); invoice pack PDF (invoice, faktur, signed tickets, DOR summary, BAST) on GEK letterhead; email to client; reminders D-7/D+1/D+7, escalation D+14.
+3. Receipts: manual or bank import (CSV/MT940) with auto-match; journal with PPh 23 prepaid; bukti potong upload; AR aging, DSO, average days-to-cash (target < 30).
+Tests: invoice from unsigned ticket rejected; dispute reversal; receipt journal; XML export validity.

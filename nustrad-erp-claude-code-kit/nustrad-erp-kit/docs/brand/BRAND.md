@@ -1,0 +1,67 @@
+# Nustrad theme for the ERP
+
+Source: Nustrad design system (logo sheet, Nutech and TUK brochures, company profile) and www.nustrad.com. Brand line: **STRATEGY - EXECUTED**.
+
+## Logo
+Files in `docs/brand/logos/` (copy to `frontend/public/brand/`):
+- `nustrad-logo-reverse.svg` — gold wordmark, mist tagline. Use on `brand-ink` (sidebar, login panel, dark theme header).
+- `nustrad-logo-primary.svg` — gold wordmark, ink tagline. Use on white and `brand-mist` (PDF letterheads, light screens).
+- `nustrad-monogram-gold.svg` — the Monogram N. Favicon, PWA app icon, collapsed sidebar, avatar placeholder.
+Never redraw, recolour, retype or crop the wordmark; the Garuda head in the *n* stays. Minimum clear space = height of the *n*. The client's logo (GEK) appears only in the company profile area, on documents GEK sends (quotation, PO, invoice, letters) and as a small "Client: PT Global Energi KITA" label; the app shell is Nustrad.
+
+## Colour tokens (put in `frontend/src/theme/tokens.css` as CSS variables, map in `tailwind.config.ts`)
+| Token | Light | Dark | Use |
+|---|---|---|---|
+| brand-gold | #FFBD52 | #FFBD52 | Primary button fill, active nav marker, number badges, checkmarks, highlighted phrase on dark. Never text on light. |
+| brand-ink | #1A1A1A | #1A1A1A | Sidebar, login panel, covers. |
+| brand-mist | #F1F2F2 | #F1F2F2 | Panels on white, tagline on ink. |
+| surface | #FFFFFF | #1A1A1A | Page background. |
+| surface-muted | #F1F2F2 | #141414 | Grouped panels, table header, app background behind cards. |
+| surface-raised | #FFFFFF | #1E1E1E | Cards, dialogs (outlined with `border` on light). |
+| surface-inverse | #1A1A1A | #F1F2F2 | Inverted bars inside a page. |
+| text | #1A1A1A | #F1F2F2 | Headings, strong text. |
+| text-body | #333333 | #C9CBCB | Body copy, table cells. |
+| text-secondary | #4A4A4A | #B9BBBB | Descriptions, helper text. |
+| text-muted | #555555 | #9A9C9C | Captions, metadata, footers. |
+| text-accent | #8A5A00 | #FFBD52 | Eyebrows, links, gold-toned labels on light. |
+| text-on-inverse | #F1F2F2 | #1A1A1A | Text on inverse blocks. |
+| on-gold | #1A1A1A | #1A1A1A | Text/icons on gold fills (primary button label). |
+| on-gold-muted | #5A3B00 | #5A3B00 | Secondary text on gold. |
+| border | #E2E3E3 | #3A3A3A | Card outlines, table lines. |
+| border-strong | #1A1A1A | #F1F2F2 | Section rules, outlined tags. |
+| focus-ring | #1A1A1A | #FFBD52 | 2px solid outline, 2px offset. |
+
+App-only semantic colours (added for statuses; not part of the brand palette, never used as decoration):
+| Token | Light | Dark | Use |
+|---|---|---|---|
+| success | #1E7B4A | #5CC48A | Approved, Paid, Locked |
+| success-tint | #E3F3EA | #15301F | Pill background |
+| warning | #8A5A00 | #FFBD52 | Pending, Awaiting approval (reuses text-accent) |
+| warning-tint | #FFF3DC | #3A2A0E | Pill background |
+| danger | #B3261E | #F2857C | Rejected, Blocked by budget, Overdue |
+| danger-tint | #FBE4E2 | #3A1714 | Pill background |
+| info | #1F5F99 | #7DB4E8 | Sent, In progress |
+| info-tint | #E3EEF8 | #14283C | Pill background |
+
+## Type
+Google Fonts: `https://fonts.googleapis.com/css2?family=Prompt:wght@500;600;700&family=Montserrat:wght@400;500;600;700&display=swap`
+- Headings: Prompt — page title 24/32 600, section title 18/26 600, card title 15/22 600.
+- Text: Montserrat — body 14/22 400, table 13/20 400, small 12/18, caption 11/16 500.
+- Eyebrow: Montserrat 11/16 700 uppercase, letter-spacing 0.18em, `text-accent`, parts joined by " · " (e.g. `PROCURE TO PAY · PR-26-031`).
+- Numbers: `font-variant-numeric: tabular-nums`, right-aligned in tables.
+
+## Shape & spacing
+- Spacing scale 4 / 8 / 12 / 16 / 24 / 32 px. Page padding 24 px desktop, 16 px mobile.
+- Radius: cards & dialogs 8 px, inputs/chips/icon tiles 6 px, status pills 999 px, colour blocks 0.
+- Cards: 1px `border` on light, `surface-raised` fill on dark. No drop shadows (dialogs may use one soft shadow). No gradients.
+
+## App shell
+- Sidebar 248 px, `brand-ink` background, reverse logo at top (monogram when collapsed), groups by value stream with uppercase eyebrow labels in `text-muted` (dark values), active item: mist text + 3px `brand-gold` left marker. Approval badge: gold pill with `on-gold` text.
+- Top bar on `surface`: page title (Prompt) with a one-line description, global search, "Persetujuan Saya" bell with count, user menu (role switch if multi-role, theme toggle light/dark/system, language ID/EN).
+- Primary button: `brand-gold` fill, `on-gold` label. Secondary: outlined `border-strong`. Destructive: `danger` outline. Never more than one primary button per view.
+- Login page: split layout — left `brand-ink` panel with reverse logo and the tagline STRATEGY - EXECUTED, right white form. Client name "PT Global Energi KITA" shown as the tenant above the form.
+- Icons: Material Symbols Outlined, weight 400. No emoji.
+- PDFs (quotation, PO, invoice, letters): GEK letterhead from the company profile; footer line "Generated by Nustrad ERP".
+
+## Voice in the UI
+Short, specific, Bahasa Indonesia by default. Buttons say what happens ("Ajukan untuk persetujuan", "Kunci anggaran"). Errors say what went wrong and how to fix it. No exclamation marks, no emoji, no superlatives.

@@ -1,0 +1,3 @@
+# 08 · CAPEX
+Proposal (RJPP link, amount, funding, day rate, utilisation, opex %, life) → calculator (NPV at configurable rate default 12%, IRR, payback, buy vs rent vs lease using actual rental spend) → priority score → DOA `capex` (Director; > Rp 5 M plus RUPS) → locked CAPEX plan (reuse budget_control with a capex project type) → execution posts to AUC (1520); overspend needs a CAPEX change request → commissioning BAST in DMS → capitalisation (1510/1520), asset created with internal rate, depreciation starts → post-investment review at 6 and 12 months (actual utilisation, revenue, payback vs case).
+Tests: RUPS step above threshold, AUC postings, capitalisation creates the asset.
