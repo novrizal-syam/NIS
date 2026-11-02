@@ -1,63 +1,52 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, within } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
-import { AppRoutes } from '@/app/App';
-import { ThemeProvider } from '@/theme/ThemeProvider';
-
-function renderAt(path: string) {
-  const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  return render(
-    <ThemeProvider>
-      <QueryClientProvider client={qc}>
-        <MemoryRouter
-          initialEntries={[path]}
-          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-        >
-          <AppRoutes />
-        </MemoryRouter>
-      </QueryClientProvider>
-    </ThemeProvider>,
-  );
-}
+import { session } from '@/lib/api';
+import { makeMe, mockApi } from '@/test/mockApi';
+import { renderApp } from '@/test/render';
 
 beforeEach(() => {
   localStorage.clear();
+  session.setToken(null);
+  session.setActiveRole(null);
   delete document.documentElement.dataset.theme;
-  vi.stubGlobal(
-    'fetch',
-    vi.fn(async () => new Response(JSON.stringify({ status: 'ok', db: 'ok', version: '0.1.0' }))),
-  );
 });
 
 afterEach(() => vi.unstubAllGlobals());
 
 describe('AppShell', () => {
-  it('shows grouped menu with "Segera" on unbuilt items', () => {
-    renderAt('/');
-    const nav = screen.getAllByRole('navigation', { name: 'Menu utama' })[0]!;
+  it('shows only the menu items the user may view, with "Segera" on unbuilt ones', async () => {
+    mockApi();
+    renderApp('/');
+    const nav = (await screen.findAllByRole('navigation', { name: 'Menu utama' }))[0]!;
     expect(within(nav).getByText('Procure to Pay')).toBeInTheDocument();
-    expect(within(nav).getByText('SDM & Dokumen')).toBeInTheDocument();
     const lead = within(nav).getByRole('link', { name: /Lead\s*Segera/ });
     expect(lead).toHaveAttribute('href', '/segera/leads');
+    // No finance/payroll permission -> Keuangan group hidden entirely.
+    expect(within(nav).queryByText('Keuangan')).not.toBeInTheDocument();
+    expect(within(nav).queryByText('Penggajian')).not.toBeInTheDocument();
   });
 
   it('shows the page title in the top bar and API status', async () => {
-    renderAt('/');
-    expect(screen.getByRole('heading', { level: 1, name: 'Dasbor' })).toBeInTheDocument();
+    mockApi();
+    renderApp('/');
+    expect(await screen.findByRole('heading', { level: 1, name: 'Dasbor' })).toBeInTheDocument();
     expect(await screen.findByText('API dan database terhubung')).toBeInTheDocument();
   });
 
-  it('renders the coming-soon page for unbuilt modules', () => {
-    renderAt('/segera/purchaseOrders');
-    expect(screen.getByRole('heading', { level: 1, name: 'Purchase Order' })).toBeInTheDocument();
+  it('renders the coming-soon page for unbuilt modules', async () => {
+    mockApi();
+    renderApp('/segera/purchaseOrders');
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Purchase Order' }),
+    ).toBeInTheDocument();
     expect(screen.getByText(/belum tersedia/)).toBeInTheDocument();
   });
 
   it('switches theme from the user menu and remembers it', async () => {
+    mockApi();
     const user = userEvent.setup();
-    renderAt('/');
-    await user.click(screen.getByRole('button', { name: 'Menu pengguna' }));
+    renderApp('/');
+    await user.click(await screen.findByRole('button', { name: 'Menu pengguna' }));
     await user.click(screen.getByRole('button', { name: /Gelap/ }));
     expect(document.documentElement.dataset.theme).toBe('dark');
     expect(localStorage.getItem('nustrad.theme')).toBe('dark');
@@ -66,23 +55,39 @@ describe('AppShell', () => {
   });
 
   it('switches language to English', async () => {
+    mockApi();
     const user = userEvent.setup();
-    renderAt('/');
-    await user.click(screen.getByRole('button', { name: 'Menu pengguna' }));
+    renderApp('/');
+    await user.click(await screen.findByRole('button', { name: 'Menu pengguna' }));
     await user.click(screen.getByRole('button', { name: 'EN' }));
     expect(screen.getByRole('heading', { level: 1, name: 'Dashboard' })).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'ID' }));
   });
-});
 
-describe('LoginPage', () => {
-  it('shows Indonesian validation errors', async () => {
+  it('switches active role and sends it with every request', async () => {
+    const me = makeMe({
+      roles: [
+        { code: 'engineer', name: 'Engineer' },
+        { code: 'procurement_officer', name: 'Procurement Officer' },
+      ],
+    });
+    const { calls } = mockApi({ me });
     const user = userEvent.setup();
-    renderAt('/login');
-    expect(screen.getByText('PT Global Energi KITA', { exact: false })).toBeInTheDocument();
-    await user.type(screen.getByLabelText(/Email/), 'bukan-email');
-    await user.click(screen.getByRole('button', { name: 'Masuk' }));
-    expect(await screen.findByText(/Format email tidak valid/)).toBeInTheDocument();
-    expect(screen.getByText('Kata sandi wajib diisi.')).toBeInTheDocument();
+    renderApp('/');
+    await user.click(await screen.findByRole('button', { name: 'Menu pengguna' }));
+    await user.selectOptions(screen.getByLabelText('Peran aktif'), 'engineer');
+    const lastMe = calls.filter((c) => c.key === 'GET /api/auth/me').at(-1)!;
+    expect(new Headers(lastMe.init?.headers).get('X-Active-Role')).toBe('engineer');
+    expect(localStorage.getItem('nustrad.activeRole')).toBe('engineer');
+  });
+
+  it('signs out and returns to the login page', async () => {
+    const { calls } = mockApi();
+    const user = userEvent.setup();
+    renderApp('/');
+    await user.click(await screen.findByRole('button', { name: 'Menu pengguna' }));
+    await user.click(screen.getByRole('button', { name: /Keluar/ }));
+    expect(await screen.findByRole('heading', { name: 'Masuk' })).toBeInTheDocument();
+    expect(calls.some((c) => c.key === 'POST /api/auth/logout')).toBe(true);
   });
 });

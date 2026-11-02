@@ -7,6 +7,8 @@ export interface NavItem {
   icon: string; // Material Symbols Outlined name
   ready: boolean;
   devOnly?: boolean;
+  /** RBAC module whose `view` permission shows this item; none = every signed-in user. */
+  module?: string;
 }
 
 export interface NavGroup {
@@ -14,9 +16,10 @@ export interface NavGroup {
   items: NavItem[];
 }
 
-const soon = (key: string, icon: string): NavItem => ({
+const soon = (key: string, icon: string, module?: string): NavItem => ({
   key,
   icon,
+  module,
   path: `/segera/${key}`,
   ready: false,
 });
@@ -32,75 +35,85 @@ export const NAV: NavGroup[] = [
   {
     key: 'leadToContract',
     items: [
-      soon('leads', 'person_search'),
-      soon('opportunities', 'trending_up'),
-      soon('quotations', 'request_quote'),
-      soon('tenders', 'gavel'),
-      soon('contracts', 'handshake'),
+      soon('leads', 'person_search', 'crm'),
+      soon('opportunities', 'trending_up', 'crm'),
+      soon('quotations', 'request_quote', 'quotation'),
+      soon('tenders', 'gavel', 'tender'),
+      soon('contracts', 'handshake', 'contract'),
     ],
   },
   {
     key: 'plan',
     items: [
-      soon('projects', 'account_tree'),
-      soon('budgets', 'savings'),
-      soon('bcr', 'published_with_changes'),
+      soon('projects', 'account_tree', 'project'),
+      soon('budgets', 'savings', 'budget'),
+      soon('bcr', 'published_with_changes', 'budget'),
     ],
   },
   {
     key: 'procureToPay',
     items: [
-      soon('materialRequests', 'inventory'),
-      soon('purchaseRequisitions', 'assignment'),
-      soon('rfq', 'compare_arrows'),
-      soon('purchaseOrders', 'shopping_cart'),
-      soon('goodsReceipts', 'local_shipping'),
-      soon('inventoryStock', 'warehouse'),
-      soon('vendorInvoices', 'receipt_long'),
+      soon('materialRequests', 'inventory', 'inventory'),
+      soon('purchaseRequisitions', 'assignment', 'procurement'),
+      soon('rfq', 'compare_arrows', 'procurement'),
+      soon('purchaseOrders', 'shopping_cart', 'procurement'),
+      soon('goodsReceipts', 'local_shipping', 'inventory'),
+      soon('inventoryStock', 'warehouse', 'inventory'),
+      soon('vendorInvoices', 'receipt_long', 'finance'),
     ],
   },
   {
     key: 'execution',
     items: [
-      soon('dor', 'engineering'),
-      soon('maintenance', 'build'),
-      soon('qhse', 'health_and_safety'),
+      soon('dor', 'engineering', 'operations'),
+      soon('maintenance', 'build', 'maintenance'),
+      soon('qhse', 'health_and_safety', 'qhse'),
     ],
   },
   {
     key: 'orderToCash',
     items: [
-      soon('serviceTickets', 'fact_check'),
-      soon('invoices', 'description'),
-      soon('receipts', 'payments'),
+      soon('serviceTickets', 'fact_check', 'billing'),
+      soon('invoices', 'description', 'billing'),
+      soon('receipts', 'payments', 'treasury'),
     ],
   },
   {
     key: 'finance',
     items: [
-      soon('ledger', 'menu_book'),
-      soon('treasury', 'account_balance'),
-      soon('payroll', 'badge'),
-      soon('tax', 'percent'),
-      soon('capex', 'precision_manufacturing'),
+      soon('ledger', 'menu_book', 'finance'),
+      soon('treasury', 'account_balance', 'treasury'),
+      soon('payroll', 'badge', 'payroll'),
+      soon('tax', 'percent', 'tax'),
+      soon('capex', 'precision_manufacturing', 'capex'),
     ],
   },
   {
     key: 'peopleDocs',
-    items: [soon('letters', 'mail'), soon('dms', 'folder_open'), soon('lms', 'school')],
+    items: [
+      soon('letters', 'mail', 'letters'),
+      soon('dms', 'folder_open', 'dms'),
+      soon('lms', 'school', 'lms'),
+    ],
   },
   {
     key: 'settings',
     items: [
-      soon('settings', 'settings'),
-      soon('users', 'manage_accounts'),
+      soon('settings', 'settings', 'settings'),
+      soon('users', 'manage_accounts', 'users'),
       { key: 'components', path: '/dev/komponen', icon: 'widgets', ready: true, devOnly: true },
     ],
   },
 ];
 
-export function visibleNav(isDev: boolean): NavGroup[] {
-  return NAV.map((g) => ({ ...g, items: g.items.filter((i) => isDev || !i.devOnly) }));
+export function visibleNav(
+  isDev: boolean,
+  canView: (module: string) => boolean = () => true,
+): NavGroup[] {
+  return NAV.map((g) => ({
+    ...g,
+    items: g.items.filter((i) => (isDev || !i.devOnly) && (!i.module || canView(i.module))),
+  })).filter((g) => g.items.length > 0);
 }
 
 export function findNavItem(key: string): NavItem | undefined {

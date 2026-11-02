@@ -68,15 +68,15 @@
     "approvalsCount": "My Approvals: {{count}} pending",
     "userMenu": "User menu",
     "role": "Role",
-    "roleSwitchHint": "Role switching arrives in phase 01",
     "theme": "Theme",
     "themeLight": "Light",
     "themeDark": "Dark",
     "themeSystem": "System",
     "language": "Language",
     "signOut": "Sign out",
-    "demoUser": "Demo User",
-    "demoRole": "Super Admin"
+    "activeRole": "Active role",
+    "allRoles": "All roles",
+    "changePassword": "Change password"
   },
   "pages": {
     "dashboard": {
@@ -115,10 +115,12 @@
     "email": "Email",
     "password": "Password",
     "submit": "Sign in",
-    "placeholderNote": "Placeholder page. Authentication is built in phase 01.",
     "emailRequired": "Email is required.",
     "emailInvalid": "Invalid email format, e.g. name@gek.co.id.",
-    "passwordRequired": "Password is required."
+    "passwordRequired": "Password is required.",
+    "totp": "2FA code",
+    "totpHint": "6 digits from your authenticator app.",
+    "submitting": "Signing in…"
   },
   "status": {
     "draft": "Draft",
@@ -133,5 +135,33 @@
     "sent": "Sent",
     "inProgress": "In progress",
     "cancelled": "Cancelled"
+  },
+  "auth": {
+    "loading": "Loading session…",
+    "unexpected": "Something went wrong. Try again."
+  },
+  "password": {
+    "title": "Change password",
+    "subtitle": "Use a password only you know.",
+    "forcedSubtitle": "You signed in with a temporary password. Create a new password to continue.",
+    "current": "Current password",
+    "new": "New password",
+    "confirm": "Repeat new password",
+    "policy": "At least 10 characters, with letters and digits.",
+    "submit": "Save password",
+    "currentRequired": "Current password is required.",
+    "tooShort": "Password must be at least 10 characters.",
+    "needsLetterDigit": "Password must contain letters and digits.",
+    "mismatch": "New password and repeat do not match."
+  },
+  "totp": {
+    "title": "Enable 2FA",
+    "subtitle": "Your role requires two-step verification.",
+    "step1": "Install an authenticator app (Google Authenticator, Microsoft Authenticator or similar).",
+    "step2": "Scan the QR code below, or enter the key manually.",
+    "step3": "Enter the 6 digits shown in the app.",
+    "qrLabel": "QR code for the authenticator app",
+    "manual": "Manual key",
+    "submit": "Enable 2FA"
   }
 }

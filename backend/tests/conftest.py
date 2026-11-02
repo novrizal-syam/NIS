@@ -1,7 +1,8 @@
 """Test fixtures. Uses TEST_DATABASE_URL (a separate database) migrated with Alembic."""
 
 import os
-from collections.abc import AsyncIterator
+import uuid
+from collections.abc import AsyncIterator, Awaitable, Callable
 
 import pytest
 from alembic import command
@@ -10,12 +11,15 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 
+from app.auth import service as auth_service
+from app.auth.models import User
 from app.core.config import get_settings
 from app.core.db import get_session, make_engine, make_sessionmaker
 from app.main import app
 
 TEST_DB_URL = os.environ.get("TEST_DATABASE_URL", get_settings().test_database_url)
-TABLES = ("doc_counters", "audit_log")
+# Seeded configuration (system roles and their permissions) survives between tests.
+TABLES = ("doc_counters", "audit_log", "refresh_tokens", "user_roles", "users", "departments")
 
 
 def _alembic_config() -> Config:
@@ -53,6 +57,7 @@ async def sessionmaker(engine: AsyncEngine) -> AsyncIterator[async_sessionmaker[
     yield make_sessionmaker(engine)
     async with engine.begin() as conn:
         await conn.execute(text(f"TRUNCATE {', '.join(TABLES)} RESTART IDENTITY CASCADE"))
+        await conn.execute(text("DELETE FROM roles WHERE NOT is_system"))
 
 
 @pytest.fixture
@@ -75,3 +80,50 @@ async def client(
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
         yield c
     app.dependency_overrides.clear()
+
+
+PASSWORD = "Rahasia-Kuat-2026"
+
+
+@pytest.fixture
+def make_user(
+    sessionmaker: async_sessionmaker[AsyncSession],
+) -> Callable[..., Awaitable[User]]:
+    """Create an active user that can log in with PASSWORD (no pending password change)."""
+
+    async def _make(
+        *roles: str,
+        email: str | None = None,
+        must_change_password: bool = False,
+        department_id: uuid.UUID | None = None,
+    ) -> User:
+        async with sessionmaker() as s:
+            user, _ = await auth_service.create_user(
+                s,
+                email=email or f"{'-'.join(roles) or 'user'}-{uuid.uuid4().hex[:6]}@gek.co.id",
+                full_name="Pengguna Uji",
+                role_codes=list(roles),
+                actor_id=None,
+                password=PASSWORD,
+                department_id=department_id,
+            )
+            user.must_change_password = must_change_password
+            await s.commit()
+            return user
+
+    return _make
+
+
+@pytest.fixture
+def login(client: AsyncClient) -> Callable[..., Awaitable[dict[str, str]]]:
+    """Log in and return Authorization headers."""
+
+    async def _login(user: User, *, totp_code: str | None = None) -> dict[str, str]:
+        res = await client.post(
+            "/api/auth/login",
+            json={"email": user.email, "password": PASSWORD, "totp_code": totp_code},
+        )
+        assert res.status_code == 200, res.text
+        return {"Authorization": f"Bearer {res.json()['access_token']}"}
+
+    return _login

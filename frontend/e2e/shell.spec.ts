@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { mockSignedIn, mockSignedOut } from './mockApi';
 
 const THEMES = ['light', 'dark'] as const;
 
@@ -16,7 +17,10 @@ async function contrastViolations(page: Page) {
 
 for (const theme of THEMES) {
   test.describe(`${theme} theme`, () => {
-    test.beforeEach(async ({ page }) => useTheme(page, theme));
+    test.beforeEach(async ({ page }) => {
+      await useTheme(page, theme);
+      await mockSignedIn(page);
+    });
 
     test('Komponen page passes the contrast check', async ({ page }) => {
       await page.goto('/dev/komponen');
@@ -26,10 +30,15 @@ for (const theme of THEMES) {
       expect(await contrastViolations(page)).toEqual([]);
     });
 
-    test('shell and login pass the contrast check', async ({ page }) => {
+    test('shell passes the contrast check', async ({ page }) => {
       await page.goto('/');
       await expect(page.getByRole('heading', { level: 1, name: 'Dasbor' })).toBeVisible();
       expect(await contrastViolations(page)).toEqual([]);
+    });
+
+    test('login page passes the contrast check', async ({ page }) => {
+      await page.unrouteAll();
+      await mockSignedOut(page);
       await page.goto('/login');
       await expect(page.getByRole('heading', { name: 'Masuk' })).toBeVisible();
       expect(await contrastViolations(page)).toEqual([]);
@@ -38,6 +47,7 @@ for (const theme of THEMES) {
 }
 
 test('full WCAG A/AA scan of the Komponen page', async ({ page }) => {
+  await mockSignedIn(page);
   await page.goto('/dev/komponen');
   await expect(page.getByTestId('showcase-dark')).toBeVisible();
   const result = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze();
@@ -45,8 +55,9 @@ test('full WCAG A/AA scan of the Komponen page', async ({ page }) => {
 });
 
 test('works at 400 px width without horizontal scrolling', async ({ page }) => {
+  await mockSignedIn(page);
   await page.setViewportSize({ width: 400, height: 800 });
-  for (const path of ['/', '/dev/komponen', '/login']) {
+  for (const path of ['/', '/dev/komponen']) {
     await page.goto(path);
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
@@ -60,7 +71,19 @@ test('works at 400 px width without horizontal scrolling', async ({ page }) => {
   await expect(page.getByRole('dialog')).toBeHidden();
 });
 
+test('login works at 400 px width', async ({ page }) => {
+  await mockSignedOut(page);
+  await page.setViewportSize({ width: 400, height: 800 });
+  await page.goto('/login');
+  await expect(page.getByRole('heading', { name: 'Masuk' })).toBeVisible();
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  );
+  expect(overflow).toBeLessThanOrEqual(0);
+});
+
 test('keyboard users see a focus ring', async ({ page }) => {
+  await mockSignedIn(page);
   await page.goto('/');
   await page.keyboard.press('Tab'); // skip link
   await page.keyboard.press('Tab');

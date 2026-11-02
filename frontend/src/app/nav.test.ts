@@ -33,3 +33,15 @@ describe('navigation', () => {
     expect(keys).not.toContain('components');
   });
 });
+
+describe('permission filtering', () => {
+  it('drops items without view permission and empty groups', () => {
+    const groups = visibleNav(false, (m) => m === 'procurement');
+    expect(groups.map((g) => g.key)).toEqual(['overview', 'procureToPay']);
+    expect(groups[1]!.items.map((i) => i.key)).toEqual([
+      'purchaseRequisitions',
+      'rfq',
+      'purchaseOrders',
+    ]);
+  });
+});

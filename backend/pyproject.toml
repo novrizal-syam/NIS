@@ -13,6 +13,11 @@ dependencies = [
     "pydantic-settings>=2.6",
     "boto3>=1.35",
     "email-validator>=2.2",
+    "argon2-cffi>=23.1",
+    "pyjwt>=2.9",
+    "pyotp>=2.9",
+    "segno>=1.6",
+    "cryptography>=43",
 ]
 
 [project.optional-dependencies]

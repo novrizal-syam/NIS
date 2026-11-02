@@ -8,6 +8,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app import models as _models  # noqa: F401  (register every model before the first request)
+from app.auth.router import router as auth_router
 from app.core.config import get_settings
 from app.core.db import get_session
 from app.core.errors import install_error_handlers
@@ -52,6 +54,7 @@ def create_app() -> FastAPI:
             return {"status": "degraded", "db": "error", "version": app.version}
         return {"status": "ok", "db": "ok", "version": app.version}
 
+    api.include_router(auth_router)
     app.include_router(api)
     return app
 

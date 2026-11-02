@@ -1,69 +1,80 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { ApiError } from '@/lib/api';
+import { AuthLayout, FormError } from './AuthLayout';
+import { useAuth } from './AuthProvider';
 
 const schema = z.object({
   email: z.string().trim().min(1, 'login.emailRequired').email('login.emailInvalid'),
   password: z.string().min(1, 'login.passwordRequired'),
+  totp: z.string().trim().optional(),
 });
 type LoginForm = z.infer<typeof schema>;
 
-/** Placeholder: real authentication arrives in phase 01. */
 export function LoginPage() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const { status, login } = useAuth();
+  const location = useLocation();
+  const [needTotp, setNeedTotp] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<LoginForm>({ resolver: zodResolver(schema) });
+
+  if (status === 'authenticated') {
+    const from = (location.state as { from?: string } | null)?.from ?? '/';
+    return <Navigate to={from} replace />;
+  }
+
+  const onSubmit = handleSubmit(async (values) => {
+    setError(null);
+    try {
+      await login(values.email, values.password, needTotp ? values.totp : undefined);
+    } catch (err) {
+      if (err instanceof ApiError && err.code === 'TOTP_REQUIRED') {
+        setNeedTotp(true);
+        return;
+      }
+      setError(err instanceof ApiError ? err.message : t('auth.unexpected'));
+    }
+  });
 
   const err = (key?: string) => (key ? t(key) : undefined);
 
   return (
-    <div className="grid min-h-screen bg-surface lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
-      <section className="flex flex-col justify-between bg-brand-ink p-8 text-sidebar-fg md:p-12">
-        <img
-          src="/brand/nustrad-logo-reverse.svg"
-          alt="Nustrad"
-          className="h-12 w-auto self-start md:h-14"
-        />
-        <p className="mt-10 font-heading text-section-title tracking-[0.18em] text-brand-gold lg:mt-0">
-          {t('app.tagline')}
-        </p>
-      </section>
-
-      <main className="flex items-center justify-center p-6 md:p-12">
-        <div className="w-full max-w-sm">
-          <p className="eyebrow">
-            {t('login.tenant')} · {t('app.tenant')}
-          </p>
-          <h1 className="mt-2 text-page-title">{t('login.title')}</h1>
-          <p className="mt-1 text-body text-fg-secondary">{t('login.subtitle')}</p>
-
-          <form
-            noValidate
-            className="mt-6 flex flex-col gap-4"
-            onSubmit={handleSubmit(() => navigate('/'))}
-          >
-            <Field label={t('login.email')} error={err(errors.email?.message)} required>
-              <Input type="email" autoComplete="username" {...register('email')} />
-            </Field>
-            <Field label={t('login.password')} error={err(errors.password?.message)} required>
-              <Input type="password" autoComplete="current-password" {...register('password')} />
-            </Field>
-            <Button type="submit" variant="primary" className="mt-2 w-full">
-              {t('login.submit')}
-            </Button>
-          </form>
-          <p className="mt-6 text-small text-fg-muted">{t('login.placeholderNote')}</p>
-        </div>
-      </main>
-    </div>
+    <AuthLayout title={t('login.title')} subtitle={t('login.subtitle')}>
+      <form noValidate className="flex flex-col gap-4" onSubmit={onSubmit}>
+        <FormError message={error} />
+        <Field label={t('login.email')} error={err(errors.email?.message)} required>
+          <Input type="email" autoComplete="username" {...register('email')} />
+        </Field>
+        <Field label={t('login.password')} error={err(errors.password?.message)} required>
+          <Input type="password" autoComplete="current-password" {...register('password')} />
+        </Field>
+        {needTotp && (
+          <Field label={t('login.totp')} hint={t('login.totpHint')} required>
+            <Input
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              maxLength={6}
+              autoFocus
+              {...register('totp')}
+            />
+          </Field>
+        )}
+        <Button type="submit" variant="primary" className="mt-2 w-full" disabled={isSubmitting}>
+          {isSubmitting ? t('login.submitting') : t('login.submit')}
+        </Button>
+      </form>
+    </AuthLayout>
   );
 }

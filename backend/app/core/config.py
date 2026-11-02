@@ -6,7 +6,7 @@ from typing import Annotated
 from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
-DEV_SECRET = "change-me-in-production"  # noqa: S105 - rejected in production below
+DEV_SECRET = "dev-only-secret-change-me-in-production-0000"  # noqa: S105 - rejected in production below
 
 
 class Settings(BaseSettings):
@@ -30,6 +30,14 @@ class Settings(BaseSettings):
     s3_bucket: str = "nustrad-erp"
     s3_region: str = "us-east-1"
 
+    # Auth
+    access_token_minutes: int = 15
+    refresh_token_days: int = 7
+    login_max_failures: int = 5
+    login_lock_minutes: int = 30
+    refresh_cookie_name: str = "nustrad_refresh"
+    totp_issuer: str = "Nustrad ERP"
+
     smtp_host: str = "localhost"
     smtp_port: int = 1025
     smtp_user: str = ""
@@ -46,8 +54,8 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def _require_real_secret_in_production(self) -> "Settings":
-        if self.is_production and self.secret_key == DEV_SECRET:
-            raise ValueError("SECRET_KEY must be set in production.")
+        if self.is_production and (self.secret_key == DEV_SECRET or len(self.secret_key) < 32):
+            raise ValueError("SECRET_KEY must be set to a random value of 32+ chars in production.")
         return self
 
     @property

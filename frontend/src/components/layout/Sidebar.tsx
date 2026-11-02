@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
 import { visibleNav } from '@/app/nav';
+import { useAuth } from '@/features/auth/AuthProvider';
 import { Icon } from '@/components/ui/icon';
 import { cn } from '@/lib/utils';
 
@@ -18,7 +19,8 @@ export function Sidebar({
   approvalsCount,
 }: SidebarProps) {
   const { t } = useTranslation();
-  const groups = visibleNav(import.meta.env.DEV);
+  const { can } = useAuth();
+  const groups = visibleNav(import.meta.env.DEV, (m) => can(m, 'view'));
 
   return (
     <div className="sidebar flex h-full flex-col border-r border-border bg-sidebar text-sidebar-fg">

@@ -68,15 +68,15 @@
     "approvalsCount": "Persetujuan Saya: {{count}} menunggu",
     "userMenu": "Menu pengguna",
     "role": "Peran",
-    "roleSwitchHint": "Ganti peran tersedia setelah fase 01",
     "theme": "Tema",
     "themeLight": "Terang",
     "themeDark": "Gelap",
     "themeSystem": "Sistem",
     "language": "Bahasa",
     "signOut": "Keluar",
-    "demoUser": "Pengguna Demo",
-    "demoRole": "Super Admin"
+    "activeRole": "Peran aktif",
+    "allRoles": "Semua peran",
+    "changePassword": "Ganti kata sandi"
   },
   "pages": {
     "dashboard": {
@@ -115,10 +115,12 @@
     "email": "Email",
     "password": "Kata sandi",
     "submit": "Masuk",
-    "placeholderNote": "Halaman contoh. Autentikasi dibangun di fase 01.",
     "emailRequired": "Email wajib diisi.",
     "emailInvalid": "Format email tidak valid, contoh: nama@gek.co.id.",
-    "passwordRequired": "Kata sandi wajib diisi."
+    "passwordRequired": "Kata sandi wajib diisi.",
+    "totp": "Kode 2FA",
+    "totpHint": "6 angka dari aplikasi authenticator.",
+    "submitting": "Memproses…"
   },
   "status": {
     "draft": "Draft",
@@ -133,5 +135,33 @@
     "sent": "Terkirim",
     "inProgress": "Berjalan",
     "cancelled": "Dibatalkan"
+  },
+  "auth": {
+    "loading": "Memuat sesi…",
+    "unexpected": "Terjadi kesalahan. Coba lagi."
+  },
+  "password": {
+    "title": "Ganti kata sandi",
+    "subtitle": "Gunakan kata sandi yang hanya Anda ketahui.",
+    "forcedSubtitle": "Anda masuk dengan kata sandi sementara. Buat kata sandi baru untuk melanjutkan.",
+    "current": "Kata sandi saat ini",
+    "new": "Kata sandi baru",
+    "confirm": "Ulangi kata sandi baru",
+    "policy": "Minimal 10 karakter, berisi huruf dan angka.",
+    "submit": "Simpan kata sandi",
+    "currentRequired": "Kata sandi saat ini wajib diisi.",
+    "tooShort": "Kata sandi minimal 10 karakter.",
+    "needsLetterDigit": "Kata sandi harus berisi huruf dan angka.",
+    "mismatch": "Kata sandi baru dan ulangan tidak sama."
+  },
+  "totp": {
+    "title": "Aktifkan 2FA",
+    "subtitle": "Peran Anda mewajibkan verifikasi dua langkah.",
+    "step1": "Pasang aplikasi authenticator (Google Authenticator, Microsoft Authenticator, atau sejenisnya).",
+    "step2": "Pindai kode QR di bawah, atau masukkan kunci secara manual.",
+    "step3": "Masukkan 6 angka yang tampil di aplikasi.",
+    "qrLabel": "Kode QR untuk aplikasi authenticator",
+    "manual": "Kunci manual",
+    "submit": "Aktifkan 2FA"
   }
 }
