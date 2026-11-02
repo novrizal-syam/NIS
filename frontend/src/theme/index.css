@@ -1,0 +1,56 @@
+@import './tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-surface-muted font-sans text-body text-fg-body antialiased;
+    margin: 0;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-heading text-fg;
+  }
+
+  /* Visible focus ring: 2px solid, 2px offset (BRAND.md). */
+  :focus-visible {
+    outline: 2px solid rgb(var(--focus-ring));
+    outline-offset: 2px;
+  }
+
+  .sidebar :focus-visible {
+    outline-color: rgb(var(--sidebar-focus));
+  }
+
+  .tabular-nums,
+  td.num,
+  th.num {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  .eyebrow {
+    @apply text-eyebrow uppercase text-fg-accent;
+  }
+
+  .material-symbols-outlined {
+    font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24;
+    font-size: 20px;
+    line-height: 1;
+    user-select: none;
+  }
+}

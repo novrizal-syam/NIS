@@ -1,0 +1,115 @@
+/*
+ * Nustrad theme tokens (docs/brand/BRAND.md).
+ * Values are "R G B" triplets; use as rgb(var(--token)) or via Tailwind classes.
+ * Theme selection: <html data-theme="light|dark">; without the attribute the
+ * OS preference (prefers-color-scheme) decides ("system").
+ */
+
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+
+  /* Brand (same in both themes) */
+  --brand-gold: 255 189 82; /* #FFBD52 */
+  --brand-ink: 26 26 26; /* #1A1A1A */
+  --brand-mist: 241 242 242; /* #F1F2F2 */
+
+  --surface: 255 255 255; /* #FFFFFF */
+  --surface-muted: 241 242 242; /* #F1F2F2 */
+  --surface-raised: 255 255 255; /* #FFFFFF */
+  --surface-inverse: 26 26 26; /* #1A1A1A */
+
+  --text: 26 26 26; /* #1A1A1A */
+  --text-body: 51 51 51; /* #333333 */
+  --text-secondary: 74 74 74; /* #4A4A4A */
+  --text-muted: 85 85 85; /* #555555 */
+  --text-accent: 138 90 0; /* #8A5A00 */
+  --text-on-inverse: 241 242 242; /* #F1F2F2 */
+  --on-gold: 26 26 26; /* #1A1A1A */
+  --on-gold-muted: 90 59 0; /* #5A3B00 */
+
+  --border: 226 227 227; /* #E2E3E3 */
+  --border-strong: 26 26 26; /* #1A1A1A */
+  --focus-ring: 26 26 26; /* #1A1A1A */
+
+  --success: 30 123 74; /* #1E7B4A */
+  --success-tint: 227 243 234; /* #E3F3EA */
+  --warning: 138 90 0; /* #8A5A00 */
+  --warning-tint: 255 243 220; /* #FFF3DC */
+  --danger: 179 38 30; /* #B3261E */
+  --danger-tint: 251 228 226; /* #FBE4E2 */
+  --info: 31 95 153; /* #1F5F99 */
+  --info-tint: 227 238 248; /* #E3EEF8 */
+
+  /* Sidebar is brand-ink in both themes; text uses the dark-theme values. */
+  --sidebar-fg: 241 242 242; /* #F1F2F2 */
+  --sidebar-muted: 154 156 156; /* #9A9C9C */
+  --sidebar-hover: 42 42 42; /* #2A2A2A */
+  /* Focus ring inside the ink sidebar must stay visible on ink. */
+  --sidebar-focus: 255 189 82; /* #FFBD52 */
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --surface: 26 26 26; /* #1A1A1A */
+  --surface-muted: 20 20 20; /* #141414 */
+  --surface-raised: 30 30 30; /* #1E1E1E */
+  --surface-inverse: 241 242 242; /* #F1F2F2 */
+
+  --text: 241 242 242; /* #F1F2F2 */
+  --text-body: 201 203 203; /* #C9CBCB */
+  --text-secondary: 185 187 187; /* #B9BBBB */
+  --text-muted: 154 156 156; /* #9A9C9C */
+  --text-accent: 255 189 82; /* #FFBD52 */
+  --text-on-inverse: 26 26 26; /* #1A1A1A */
+
+  --border: 58 58 58; /* #3A3A3A */
+  --border-strong: 241 242 242; /* #F1F2F2 */
+  --focus-ring: 255 189 82; /* #FFBD52 */
+
+  --success: 92 196 138; /* #5CC48A */
+  --success-tint: 21 48 31; /* #15301F */
+  --warning: 255 189 82; /* #FFBD52 */
+  --warning-tint: 58 42 14; /* #3A2A0E */
+  --danger: 242 133 124; /* #F2857C */
+  --danger-tint: 58 23 20; /* #3A1714 */
+  --info: 125 180 232; /* #7DB4E8 */
+  --info-tint: 20 40 60; /* #14283C */
+
+  --sidebar-hover: 38 38 38; /* #262626 */
+}
+
+/* "System": no data-theme attribute -> follow the OS. Keep in sync with [data-theme='dark']. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+
+    --surface: 26 26 26;
+    --surface-muted: 20 20 20;
+    --surface-raised: 30 30 30;
+    --surface-inverse: 241 242 242;
+
+    --text: 241 242 242;
+    --text-body: 201 203 203;
+    --text-secondary: 185 187 187;
+    --text-muted: 154 156 156;
+    --text-accent: 255 189 82;
+    --text-on-inverse: 26 26 26;
+
+    --border: 58 58 58;
+    --border-strong: 241 242 242;
+    --focus-ring: 255 189 82;
+
+    --success: 92 196 138;
+    --success-tint: 21 48 31;
+    --warning: 255 189 82;
+    --warning-tint: 58 42 14;
+    --danger: 242 133 124;
+    --danger-tint: 58 23 20;
+    --info: 125 180 232;
+    --info-tint: 20 40 60;
+
+    --sidebar-hover: 38 38 38;
+  }
+}

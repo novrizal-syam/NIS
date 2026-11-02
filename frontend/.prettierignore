@@ -1,0 +1,7 @@
+dist
+coverage
+playwright-report
+test-results
+node_modules
+public/brand
+package-lock.json

@@ -1,0 +1,137 @@
+{
+  "app": {
+    "name": "Nustrad ERP",
+    "tenant": "PT Global Energi KITA",
+    "clientLabel": "Client: PT Global Energi KITA",
+    "tagline": "STRATEGY - EXECUTED",
+    "skipToContent": "Skip to content"
+  },
+  "nav": {
+    "label": "Main menu",
+    "soon": "Soon",
+    "collapse": "Collapse menu",
+    "expand": "Expand menu",
+    "open": "Open menu",
+    "close": "Close menu",
+    "groups": {
+      "overview": "Overview",
+      "leadToContract": "Lead to Contract",
+      "plan": "Plan",
+      "procureToPay": "Procure to Pay",
+      "execution": "Execution",
+      "orderToCash": "Order to Cash",
+      "finance": "Finance",
+      "peopleDocs": "People & Documents",
+      "settings": "Settings"
+    },
+    "items": {
+      "dashboard": "Dashboard",
+      "approvals": "My Approvals",
+      "leads": "Leads",
+      "opportunities": "Opportunities",
+      "quotations": "Quotations",
+      "tenders": "Tenders",
+      "contracts": "Contracts",
+      "projects": "Projects",
+      "budgets": "Budgets",
+      "bcr": "Budget Change (BCR)",
+      "materialRequests": "Material Requests",
+      "purchaseRequisitions": "Purchase Requisitions",
+      "rfq": "RFQ",
+      "purchaseOrders": "Purchase Orders",
+      "goodsReceipts": "Goods Receipts",
+      "inventoryStock": "Inventory",
+      "vendorInvoices": "Vendor Invoices",
+      "dor": "Daily Operation Report",
+      "maintenance": "Maintenance",
+      "qhse": "QHSE",
+      "serviceTickets": "Service Tickets",
+      "invoices": "Invoices",
+      "receipts": "Cash Receipts",
+      "ledger": "Ledger & Reports",
+      "treasury": "Treasury",
+      "payroll": "Payroll",
+      "tax": "Tax",
+      "capex": "CAPEX",
+      "letters": "Letters",
+      "dms": "Documents (DMS)",
+      "lms": "Learning (LMS)",
+      "settings": "Settings",
+      "users": "Users & Roles",
+      "components": "Components (dev)"
+    }
+  },
+  "topbar": {
+    "search": "Search documents, projects, vendors…",
+    "searchLabel": "Global search",
+    "approvals": "My Approvals",
+    "approvalsCount": "My Approvals: {{count}} pending",
+    "userMenu": "User menu",
+    "role": "Role",
+    "roleSwitchHint": "Role switching arrives in phase 01",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
+    "language": "Language",
+    "signOut": "Sign out",
+    "demoUser": "Demo User",
+    "demoRole": "Super Admin"
+  },
+  "pages": {
+    "dashboard": {
+      "title": "Dashboard",
+      "description": "Performance summary and work waiting for you."
+    },
+    "soon": {
+      "title": "Coming soon",
+      "description": "This module is built in a later phase.",
+      "body": "The {{name}} module is not available yet. This menu activates once its phase is done.",
+      "back": "Back to Dashboard"
+    },
+    "components": {
+      "title": "Components",
+      "description": "UI component catalogue in light and dark themes (development only)."
+    },
+    "notFound": {
+      "title": "Page not found",
+      "description": "The address you opened does not exist.",
+      "back": "Back to Dashboard"
+    }
+  },
+  "dashboard": {
+    "welcome": "The application foundation is running. Business modules are added phase by phase.",
+    "systemStatus": "System status",
+    "apiOk": "API and database connected",
+    "apiDegraded": "API running, database not connected",
+    "apiChecking": "Checking connection…",
+    "apiError": "API cannot be reached",
+    "version": "API version {{version}}"
+  },
+  "login": {
+    "title": "Sign in",
+    "subtitle": "Use your work account.",
+    "tenant": "Tenant",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "placeholderNote": "Placeholder page. Authentication is built in phase 01.",
+    "emailRequired": "Email is required.",
+    "emailInvalid": "Invalid email format, e.g. name@gek.co.id.",
+    "passwordRequired": "Password is required."
+  },
+  "status": {
+    "draft": "Draft",
+    "submitted": "Submitted",
+    "awaitingApproval": "Awaiting approval",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "blockedByBudget": "Blocked by budget",
+    "locked": "Locked",
+    "paid": "Paid",
+    "overdue": "Overdue",
+    "sent": "Sent",
+    "inProgress": "In progress",
+    "cancelled": "Cancelled"
+  }
+}

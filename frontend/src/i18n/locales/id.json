@@ -1,0 +1,137 @@
+{
+  "app": {
+    "name": "Nustrad ERP",
+    "tenant": "PT Global Energi KITA",
+    "clientLabel": "Klien: PT Global Energi KITA",
+    "tagline": "STRATEGY - EXECUTED",
+    "skipToContent": "Lewati ke konten"
+  },
+  "nav": {
+    "label": "Menu utama",
+    "soon": "Segera",
+    "collapse": "Ciutkan menu",
+    "expand": "Lebarkan menu",
+    "open": "Buka menu",
+    "close": "Tutup menu",
+    "groups": {
+      "overview": "Ringkasan",
+      "leadToContract": "Lead ke Kontrak",
+      "plan": "Rencana",
+      "procureToPay": "Procure to Pay",
+      "execution": "Eksekusi",
+      "orderToCash": "Order to Cash",
+      "finance": "Keuangan",
+      "peopleDocs": "SDM & Dokumen",
+      "settings": "Settings"
+    },
+    "items": {
+      "dashboard": "Dasbor",
+      "approvals": "Persetujuan Saya",
+      "leads": "Lead",
+      "opportunities": "Peluang",
+      "quotations": "Penawaran",
+      "tenders": "Tender",
+      "contracts": "Kontrak",
+      "projects": "Proyek",
+      "budgets": "Anggaran",
+      "bcr": "Perubahan Anggaran (BCR)",
+      "materialRequests": "Permintaan Material",
+      "purchaseRequisitions": "Purchase Requisition",
+      "rfq": "RFQ",
+      "purchaseOrders": "Purchase Order",
+      "goodsReceipts": "Penerimaan Barang",
+      "inventoryStock": "Persediaan",
+      "vendorInvoices": "Tagihan Vendor",
+      "dor": "Daily Operation Report",
+      "maintenance": "Pemeliharaan",
+      "qhse": "QHSE",
+      "serviceTickets": "Service Ticket",
+      "invoices": "Invoice",
+      "receipts": "Penerimaan Kas",
+      "ledger": "Buku Besar & Laporan",
+      "treasury": "Treasury",
+      "payroll": "Penggajian",
+      "tax": "Pajak",
+      "capex": "CAPEX",
+      "letters": "Surat Masuk & Keluar",
+      "dms": "Dokumen (DMS)",
+      "lms": "Pelatihan (LMS)",
+      "settings": "Pengaturan",
+      "users": "Pengguna & Peran",
+      "components": "Komponen (dev)"
+    }
+  },
+  "topbar": {
+    "search": "Cari dokumen, proyek, vendor…",
+    "searchLabel": "Pencarian global",
+    "approvals": "Persetujuan Saya",
+    "approvalsCount": "Persetujuan Saya: {{count}} menunggu",
+    "userMenu": "Menu pengguna",
+    "role": "Peran",
+    "roleSwitchHint": "Ganti peran tersedia setelah fase 01",
+    "theme": "Tema",
+    "themeLight": "Terang",
+    "themeDark": "Gelap",
+    "themeSystem": "Sistem",
+    "language": "Bahasa",
+    "signOut": "Keluar",
+    "demoUser": "Pengguna Demo",
+    "demoRole": "Super Admin"
+  },
+  "pages": {
+    "dashboard": {
+      "title": "Dasbor",
+      "description": "Ringkasan kinerja dan pekerjaan yang menunggu Anda."
+    },
+    "soon": {
+      "title": "Segera hadir",
+      "description": "Modul ini dibangun di fase berikutnya.",
+      "body": "Modul {{name}} belum tersedia. Menu ini aktif setelah fasenya selesai.",
+      "back": "Kembali ke Dasbor"
+    },
+    "components": {
+      "title": "Komponen",
+      "description": "Katalog komponen UI dalam tema terang dan gelap (khusus pengembangan)."
+    },
+    "notFound": {
+      "title": "Halaman tidak ditemukan",
+      "description": "Alamat yang Anda buka tidak ada.",
+      "back": "Kembali ke Dasbor"
+    }
+  },
+  "dashboard": {
+    "welcome": "Fondasi aplikasi sudah berjalan. Modul bisnis ditambahkan per fase.",
+    "systemStatus": "Status sistem",
+    "apiOk": "API dan database terhubung",
+    "apiDegraded": "API berjalan, database tidak terhubung",
+    "apiChecking": "Memeriksa koneksi…",
+    "apiError": "API tidak dapat dihubungi",
+    "version": "Versi API {{version}}"
+  },
+  "login": {
+    "title": "Masuk",
+    "subtitle": "Gunakan akun kantor Anda.",
+    "tenant": "Tenant",
+    "email": "Email",
+    "password": "Kata sandi",
+    "submit": "Masuk",
+    "placeholderNote": "Halaman contoh. Autentikasi dibangun di fase 01.",
+    "emailRequired": "Email wajib diisi.",
+    "emailInvalid": "Format email tidak valid, contoh: nama@gek.co.id.",
+    "passwordRequired": "Kata sandi wajib diisi."
+  },
+  "status": {
+    "draft": "Draft",
+    "submitted": "Diajukan",
+    "awaitingApproval": "Menunggu persetujuan",
+    "approved": "Disetujui",
+    "rejected": "Ditolak",
+    "blockedByBudget": "Diblokir anggaran",
+    "locked": "Terkunci",
+    "paid": "Lunas",
+    "overdue": "Jatuh tempo",
+    "sent": "Terkirim",
+    "inProgress": "Berjalan",
+    "cancelled": "Dibatalkan"
+  }
+}
