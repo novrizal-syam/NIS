@@ -5,7 +5,9 @@ import { useAuth } from './AuthProvider';
 
 const PENDING_ROUTES = {
   change_password: '/akun/ganti-password',
+  accept_privacy: '/akun/privasi',
   setup_totp: '/akun/2fa',
+  complete_profile: '/akun/profil',
 } as const;
 
 function FullScreenStatus() {

@@ -117,7 +117,7 @@ async def test_temporary_password_shown_once_and_must_change(
     me = await client.get(
         "/api/auth/me", headers={"Authorization": f"Bearer {signed.json()['access_token']}"}
     )
-    assert me.json()["pending"] == ["change_password"]
+    assert me.json()["pending"] == ["change_password", "accept_privacy", "complete_profile"]
     detail = (await client.get(f"/api/users/{res.json()['id']}", headers=h)).json()
     assert "temporary_password" not in detail and detail["status"] == "active"
 

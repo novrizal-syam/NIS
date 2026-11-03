@@ -15,7 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 
 from app.auth import service as auth_service
 from app.auth.models import User
-from app.auth.principal import Principal, load_principal
+from app.auth.principal import PRIVACY_VERSION, Principal, load_principal
 from app.core.config import get_settings
 from app.core.db import get_session, make_engine, make_sessionmaker
 from app.main import app
@@ -177,6 +177,7 @@ def make_user(
         must_change_password: bool = False,
         department_id: uuid.UUID | None = None,
         two_factor: bool = True,
+        onboarded: bool = True,
     ) -> User:
         async with sessionmaker() as s:
             user, _ = await auth_service.create_user(
@@ -192,6 +193,11 @@ def make_user(
             # Marked enrolled without a secret: login asks no code. Tests of the 2FA flow
             # itself pass two_factor=False.
             user.totp_enabled = two_factor
+            if onboarded:  # privacy notice accepted and profile filled
+                user.privacy_version = PRIVACY_VERSION
+                user.privacy_accepted_at = user.created_at
+                user.profile_completed_at = user.created_at
+                user.phone = "0812000000"
             await s.commit()
             return user
 

@@ -422,4 +422,11 @@ async def me(session: AsyncSession, principal: Principal) -> dict[str, object]:
         "totp_enabled": u.totp_enabled,
         "totp_required": PENDING_TOTP in principal.pending
         or any(r.requires_2fa for r in all_roles),
+        "phone": u.phone,
+        "photo_attachment_id": str(u.photo_attachment_id) if u.photo_attachment_id else None,
+        "signature_attachment_id": (
+            str(u.signature_attachment_id) if u.signature_attachment_id else None
+        ),
+        "tour_done": u.tour_done_at is not None,
+        "employee_code": u.employee_code,
     }

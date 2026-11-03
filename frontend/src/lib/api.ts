@@ -140,7 +140,7 @@ export const getHealth = () => api<Health>('/health');
 
 // --- auth -----------------------------------------------------------------------------------
 
-export type PendingStep = 'change_password' | 'setup_totp';
+export type PendingStep = 'change_password' | 'accept_privacy' | 'setup_totp' | 'complete_profile';
 
 export interface Me {
   id: string;
@@ -153,6 +153,11 @@ export interface Me {
   pending: PendingStep[];
   totp_enabled: boolean;
   totp_required: boolean;
+  phone: string | null;
+  photo_attachment_id: string | null;
+  signature_attachment_id: string | null;
+  tour_done: boolean;
+  employee_code: string | null;
 }
 
 export interface TotpSetup {

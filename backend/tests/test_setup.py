@@ -226,7 +226,7 @@ async def test_recovery_code_is_break_glass(
             "/api/auth/me", headers={"Authorization": f"Bearer {ok.json()['access_token']}"}
         )
     ).json()
-    assert me["pending"] == ["setup_totp"] and me["totp_enabled"] is False
+    assert "setup_totp" in me["pending"] and me["totp_enabled"] is False
 
     # Re-enrol; the old (used) code cannot be reused and old codes are replaced.
     h2 = {"Authorization": f"Bearer {ok.json()['access_token']}"}

@@ -17,6 +17,8 @@ import { MasterListPage } from '@/features/master/MasterListPage';
 import { DoaRulesPage } from '@/features/workflow/DoaRulesPage';
 import { InboxPage } from '@/features/workflow/InboxPage';
 import { RequestDetailPage } from '@/features/workflow/RequestDetailPage';
+import { PrivacyPage } from '@/features/onboarding/PrivacyPage';
+import { ProfilePage } from '@/features/onboarding/ProfilePage';
 import { SettingsPage } from '@/features/settings/SettingsPage';
 import { AcceptInvitePage } from '@/features/users/AcceptInvitePage';
 import { UsersPage } from '@/features/users/UsersPage';
@@ -37,6 +39,22 @@ export function AppRoutes() {
           element={
             <RequireAuth allowPending>
               <ChangePasswordPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/akun/privasi"
+          element={
+            <RequireAuth allowPending>
+              <PrivacyPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/akun/profil"
+          element={
+            <RequireAuth allowPending>
+              <ProfilePage />
             </RequireAuth>
           }
         />

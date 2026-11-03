@@ -9,7 +9,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.models import User
-from app.auth.principal import CurrentUser
+from app.auth.principal import CurrentUser, Principal, ensure_onboarded, get_principal_allow_pending
 from app.core import access
 from app.core.db import get_session
 from app.core.errors import AppError, NotFoundError
@@ -20,6 +20,13 @@ from app.services.storage import Storage, get_storage
 router = APIRouter(prefix="/attachments", tags=["dms"])
 Session = Annotated[AsyncSession, Depends(get_session)]
 Store = Annotated[Storage, Depends(get_storage)]
+PendingUser = Annotated[Principal, Depends(get_principal_allow_pending)]
+
+
+def _onboarding_exception(principal: Principal, entity_type: str, entity_id: str) -> None:
+    """Users still onboarding may only handle their own profile photo/signature."""
+    if not (entity_type == "user_profile" and entity_id == str(principal.id)):
+        ensure_onboarded(principal)
 
 
 class AttachmentOut(BaseModel):
@@ -99,7 +106,7 @@ async def versions(
 
 @router.post("", status_code=201)
 async def upload(
-    principal: CurrentUser,
+    principal: PendingUser,
     session: Session,
     storage: Store,
     entity_type: Annotated[str, Form(max_length=40)],
@@ -108,6 +115,7 @@ async def upload(
     replaces: Annotated[uuid.UUID | None, Form()] = None,
     note: Annotated[str | None, Form(max_length=300)] = None,
 ) -> AttachmentOut:
+    _onboarding_exception(principal, entity_type, entity_id)
     await access.require(session, principal, entity_type, entity_id, "write")
     data = await file.read(service.MAX_BYTES + 1)
     att = await service.upload(
@@ -128,12 +136,15 @@ async def upload(
 @router.get("/{attachment_id}/content")
 async def content(
     attachment_id: uuid.UUID,
-    principal: CurrentUser,
+    principal: PendingUser,
     session: Session,
     storage: Store,
     download: bool = False,
 ) -> Response:
     """Streams through the API (not a public link) so permissions apply to every view."""
+    att = await session.get(Attachment, attachment_id)
+    if att is not None:
+        _onboarding_exception(principal, att.entity_type, att.entity_id)
     att = await _get(session, principal, attachment_id, "read")
     obj = await storage.get(att.storage_key)
     disposition = "attachment" if download else "inline"

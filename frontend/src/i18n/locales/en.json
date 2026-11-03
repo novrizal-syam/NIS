@@ -588,5 +588,37 @@
     "acceptSubmit": "Save and sign in",
     "totpOn": "2FA enabled",
     "totpOff": "2FA not enabled"
+  },
+  "onboarding": {
+    "privacyTitle": "Privacy notice",
+    "privacySubtitle": "Under Law 27/2022 on Personal Data Protection.",
+    "version": "Version",
+    "privacyRead": "I have read the privacy notice",
+    "agree": "I agree",
+    "profileTitle": "Complete your profile",
+    "profileSubtitle": "Used in approvals and documents you sign.",
+    "phoneHint": "A work contact number, e.g. 0812-3456-7890.",
+    "photo": "Photo",
+    "photoHint": "Optional. JPG or PNG.",
+    "signature": "Signature image",
+    "signatureHint": "Optional now; needed for documents you sign. PNG on white.",
+    "choose": "Choose image",
+    "imageOnly": "JPG or PNG only.",
+    "saveProfile": "Save profile"
+  },
+  "tour": {
+    "welcomeTitle": "Welcome, {{name}}",
+    "welcomeBody": "You are signed in as {{roles}}. Menus and buttons follow your roles.",
+    "menuTitle": "Your menu",
+    "menuBody": "On the left: {{groups}}. Items marked \"Soon\" activate once their module is built.",
+    "approvalsTitle": "Approvals and notifications",
+    "approvalsBody": "Documents waiting for your decision are in My Approvals (count in the menu). The bell at the top right holds notifications, including certificates about to expire.",
+    "helpTitle": "Help",
+    "helpBody": "Switch active role, theme, language and password from your name menu at the top right. Access problems? Contact IT Admin.",
+    "progress": "Step {{n}} of {{total}}",
+    "skip": "Skip",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done"
   }
 }

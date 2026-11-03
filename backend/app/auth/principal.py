@@ -24,6 +24,10 @@ from app.core.errors import AppError, ForbiddenError
 
 PENDING_PASSWORD = "change_password"  # noqa: S105 - a step name, not a secret
 PENDING_TOTP = "setup_totp"
+PENDING_PRIVACY = "accept_privacy"
+PENDING_PROFILE = "complete_profile"
+# Current privacy notice version; bump to ask everyone to accept again.
+PRIVACY_VERSION = "2026-1"
 
 
 @dataclass(frozen=True)
@@ -56,10 +60,15 @@ class Principal:
     @property
     def pending(self) -> list[str]:
         out = []
+        # Order of the first-login steps: password, privacy notice, 2FA, profile.
         if self.user.must_change_password:
             out.append(PENDING_PASSWORD)
+        if self.user.privacy_version != PRIVACY_VERSION:
+            out.append(PENDING_PRIVACY)
         if not self.user.totp_enabled and any(r.requires_2fa for r in self.roles):
             out.append(PENDING_TOTP)
+        if self.user.profile_completed_at is None:
+            out.append(PENDING_PROFILE)
         return out
 
     def scope_for(self, module: str, action: str) -> Scope | None:
@@ -151,16 +160,27 @@ async def get_principal_allow_pending(
 async def get_principal(
     principal: Annotated[Principal, Depends(get_principal_allow_pending)],
 ) -> Principal:
+    ensure_onboarded(principal)
+    return principal
+
+
+def ensure_onboarded(principal: Principal) -> None:
+    """Raise when first-login steps (password, privacy, 2FA, profile) are still open."""
     pending = principal.pending
     if PENDING_PASSWORD in pending:
         raise ForbiddenError(
             "PASSWORD_CHANGE_REQUIRED", "Ganti kata sandi sementara Anda terlebih dahulu."
         )
+    if PENDING_PRIVACY in pending:
+        raise ForbiddenError(
+            "PRIVACY_ACCEPTANCE_REQUIRED", "Baca dan setujui pemberitahuan privasi terlebih dahulu."
+        )
     if PENDING_TOTP in pending:
         raise ForbiddenError(
             "TOTP_SETUP_REQUIRED", "Aktifkan verifikasi dua langkah (2FA) terlebih dahulu."
         )
-    return principal
+    if PENDING_PROFILE in pending:
+        raise ForbiddenError("PROFILE_REQUIRED", "Lengkapi profil Anda terlebih dahulu.")
 
 
 CurrentUser = Annotated[Principal, Depends(get_principal)]

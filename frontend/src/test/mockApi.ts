@@ -27,6 +27,11 @@ export function makeMe(overrides: Partial<Me> = {}): Me {
     pending: [],
     totp_enabled: false,
     totp_required: false,
+    phone: '0812000000',
+    photo_attachment_id: null,
+    signature_attachment_id: null,
+    tour_done: true,
+    employee_code: null,
     ...overrides,
   };
 }

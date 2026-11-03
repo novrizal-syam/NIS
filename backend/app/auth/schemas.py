@@ -46,6 +46,11 @@ class MeOut(BaseModel):
     pending: list[str]
     totp_enabled: bool
     totp_required: bool
+    phone: str | None
+    photo_attachment_id: str | None
+    signature_attachment_id: str | None
+    tour_done: bool
+    employee_code: str | None
 
 
 class RecoveryCodesOut(BaseModel):

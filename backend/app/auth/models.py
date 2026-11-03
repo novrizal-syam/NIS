@@ -47,6 +47,14 @@ class User(EntityMixin, Base):
     department_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey(Department.id, ondelete="RESTRICT")
     )
+    # First-login onboarding (phase 01a)
+    privacy_accepted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    privacy_version: Mapped[str | None] = mapped_column(String(20))
+    phone: Mapped[str | None] = mapped_column(String(40))
+    profile_completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    tour_done_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    photo_attachment_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
+    signature_attachment_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
     # Link to the HR record (employees.code); FK added in the migration.
     employee_code: Mapped[str | None] = mapped_column(
         String(20), ForeignKey("employees.code", ondelete="SET NULL"), unique=True

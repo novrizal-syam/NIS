@@ -588,5 +588,37 @@
     "acceptSubmit": "Simpan dan masuk",
     "totpOn": "2FA aktif",
     "totpOff": "2FA belum aktif"
+  },
+  "onboarding": {
+    "privacyTitle": "Pemberitahuan privasi",
+    "privacySubtitle": "Sesuai UU 27/2022 tentang Pelindungan Data Pribadi.",
+    "version": "Versi",
+    "privacyRead": "Saya telah membaca pemberitahuan privasi",
+    "agree": "Saya setuju",
+    "profileTitle": "Lengkapi profil",
+    "profileSubtitle": "Dipakai di persetujuan dan dokumen yang Anda tandatangani.",
+    "phoneHint": "Nomor yang bisa dihubungi untuk urusan kerja, contoh 0812-3456-7890.",
+    "photo": "Foto",
+    "photoHint": "Opsional. JPG atau PNG.",
+    "signature": "Gambar tanda tangan",
+    "signatureHint": "Opsional sekarang; diperlukan untuk dokumen yang Anda tandatangani. PNG berlatar putih.",
+    "choose": "Pilih gambar",
+    "imageOnly": "Hanya JPG atau PNG.",
+    "saveProfile": "Simpan profil"
+  },
+  "tour": {
+    "welcomeTitle": "Selamat datang, {{name}}",
+    "welcomeBody": "Anda masuk sebagai {{roles}}. Menu dan tombol yang tampil disesuaikan dengan peran Anda.",
+    "menuTitle": "Menu Anda",
+    "menuBody": "Di sisi kiri: {{groups}}. Menu bertanda \"Segera\" akan aktif setelah modulnya selesai dibangun.",
+    "approvalsTitle": "Persetujuan dan notifikasi",
+    "approvalsBody": "Dokumen yang menunggu keputusan Anda ada di Persetujuan Saya (angka di menu). Lonceng di kanan atas berisi notifikasi, termasuk sertifikat yang akan berakhir.",
+    "helpTitle": "Bantuan",
+    "helpBody": "Ganti peran aktif, tema, bahasa, dan kata sandi lewat menu nama Anda di kanan atas. Masalah akses? Hubungi Admin IT.",
+    "progress": "Langkah {{n}} dari {{total}}",
+    "skip": "Lewati",
+    "back": "Kembali",
+    "next": "Berikutnya",
+    "done": "Selesai"
   }
 }

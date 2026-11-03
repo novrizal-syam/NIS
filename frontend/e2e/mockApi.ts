@@ -41,6 +41,11 @@ export const ME = {
   pending: [],
   totp_enabled: true,
   totp_required: true,
+  phone: '0812000000',
+  photo_attachment_id: null,
+  signature_attachment_id: null,
+  tour_done: true,
+  employee_code: null,
 };
 
 /** Signed-in session without a running backend. */

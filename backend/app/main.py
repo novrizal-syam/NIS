@@ -14,6 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import models as _models  # noqa: F401  (register every model before the first request)
 from app.audit.router import router as audit_router
+from app.auth.onboarding import router as onboarding_router
 from app.auth.roles_router import router as roles_router
 from app.auth.router import router as auth_router
 from app.auth.users_router import router as users_router
@@ -104,6 +105,7 @@ def create_app() -> FastAPI:
         return {"status": "ok", "db": "ok", "version": app.version}
 
     api.include_router(auth_router)
+    api.include_router(onboarding_router)
     api.include_router(users_router)
     api.include_router(roles_router)
     api.include_router(workflow_router)
