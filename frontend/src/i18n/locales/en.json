@@ -145,6 +145,18 @@
     "accessReview": {
       "title": "Access Review",
       "description": "Quarterly report of users, roles and sensitive data."
+    },
+    "leads": {
+      "title": "Leads",
+      "description": "Prospects from CIVD, e-proc, invitations and visits; qualify, then turn into opportunities."
+    },
+    "opportunities": {
+      "title": "Opportunities",
+      "description": "Pipeline Qualified → Quotation → Submitted → Won/Lost."
+    },
+    "opportunityDetail": {
+      "title": "Opportunity",
+      "description": "Value, stage, bid/no-bid decision and history."
     }
   },
   "dashboard": {
@@ -758,5 +770,146 @@
       "password_reset": "Password reset",
       "test": "Test"
     }
+  },
+  "crm": {
+    "leadStatus": {
+      "new": "New",
+      "contacted": "Contacted",
+      "qualified": "Qualified",
+      "disqualified": "Disqualified"
+    },
+    "stage": {
+      "qualified": "Qualified",
+      "quotation": "Quotation",
+      "submitted": "Submitted",
+      "won": "Won",
+      "lost": "Lost"
+    },
+    "sources": {
+      "civd": "CIVD",
+      "eproc": "e-Procurement",
+      "invitation": "Invitation",
+      "visit": "Visit",
+      "referral": "Referral",
+      "website": "Website",
+      "exhibition": "Exhibition"
+    },
+    "criteria": {
+      "budget": "Client has budget/AFE",
+      "technical_fit": "Fits our technical capability",
+      "start_6m": "Starts within 6 months",
+      "decision_maker": "Decision maker known",
+      "csms": "CSMS possible"
+    },
+    "scores": {
+      "strategic_fit": "Strategic fit (RJPP)",
+      "technical": "Technical capability",
+      "availability": "Asset & crew availability",
+      "csms": "CSMS & compliance",
+      "margin": "Margin",
+      "risk": "Commercial & legal risk"
+    },
+    "recommend": {
+      "bid": "Recommends bid",
+      "no_bid": "Recommends no-bid"
+    },
+    "proposals": {
+      "bid": "Bid",
+      "no_bid": "No-bid"
+    },
+    "decisionStatus": {
+      "pending": "Waiting for Director",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "cancelled": "Withdrawn"
+    },
+    "moveTo": {
+      "submitted": "Mark quotation submitted",
+      "won": "Mark won"
+    },
+    "views": {
+      "board": "Kanban",
+      "table": "Table"
+    },
+    "dash": {
+      "title": "Sales {{year}}",
+      "scopeOwn": "Your records",
+      "scopeAll": "All records",
+      "open": "Open pipeline",
+      "openCount_one": "{{count}} open opportunity",
+      "openCount_other": "{{count}} open opportunities",
+      "weighted": "Weighted pipeline",
+      "weightedHelp": "Value × probability",
+      "winRate": "Win rate this year",
+      "target": "Target {{value}}",
+      "decided": "{{won}} won · {{lost}} lost",
+      "newContracts": "New contract value this year",
+      "ofTarget": "of {{target}} target"
+    },
+    "number": "Number",
+    "company": "Company",
+    "client": "Client (master data)",
+    "clientHint": "Leave empty for a new prospect.",
+    "prospect": "New prospect",
+    "contactName": "Contact name",
+    "contactEmail": "Contact email",
+    "contactPhone": "Contact phone",
+    "source": "Source",
+    "need": "Need",
+    "estimatedValue": "Estimated value",
+    "owner": "Owner",
+    "ownerMe": "Myself",
+    "created": "Created",
+    "searchLeads": "Search number, company, contact, need",
+    "searchOpps": "Search number, title, company",
+    "mineOnly": "Mine",
+    "newLead": "New lead",
+    "createLead": "Save lead",
+    "noLeads": "No leads match the filters.",
+    "noOpps": "No opportunities match the filters.",
+    "saved": "Changes saved.",
+    "tabDetail": "Details",
+    "tabFiles": "Attachments",
+    "qualification": "Qualification checklist",
+    "criteriaMet": "{{count}} of 5 met (minimum {{min}})",
+    "qualifyHint": "Meet at least {{min}} criteria to qualify.",
+    "markContacted": "Mark contacted",
+    "qualify": "Qualify",
+    "disqualify": "Disqualify",
+    "disqualifyReason": "Disqualification reason",
+    "confirmDisqualify": "Disqualify lead",
+    "convert": "Turn into opportunity",
+    "confirmConvert": "Create opportunity",
+    "convertedTo": "Opportunity created:",
+    "oppTitle": "Opportunity title",
+    "value": "Value",
+    "probability": "Probability (%)",
+    "weighted": "Weighted",
+    "expectedClose": "Expected close",
+    "stageLabel": "Stage",
+    "tender": "Tender",
+    "isTender": "This opportunity is a tender",
+    "view": "View",
+    "emptyColumn": "Empty",
+    "fromLeadHint": "Opportunities are created from qualified leads (\"Turn into opportunity\").",
+    "bidPending": "Bid/no-bid pending",
+    "bidPendingNote": "The bid/no-bid decision is waiting for the Director; the stage cannot change until decided.",
+    "backToOpps": "Back to opportunities",
+    "editOpp": "Edit opportunity",
+    "qualifiedHint": "Quotation is reached only through a bid decision approved by the Director.",
+    "stageHint": "Move the stage as the quotation progresses.",
+    "markLost": "Mark lost/cancelled",
+    "lostReason": "Reason lost/cancelled",
+    "confirmLost": "Save as Lost",
+    "bidTitle": "Bid/no-bid decision",
+    "bidHelp": "Score six aspects 1–5. A score ≥ {{threshold}}% recommends bid; the Director decides.",
+    "score": "Score",
+    "proposal": "Proposal",
+    "bidNote": "Note",
+    "justifyHint": "The proposal differs from the score recommendation: give a reason (min. 10 characters).",
+    "submitBid": "Submit to Director",
+    "bidHistory": "Bid/no-bid history",
+    "directorComment": "Director's note",
+    "openApproval": "Open approval document"
   }
 }

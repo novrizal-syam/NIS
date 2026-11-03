@@ -90,6 +90,78 @@ export async function mockSignedIn(page: Page) {
           page_size: 25,
           counts: { purchase_requisition: 2 },
         });
+      case 'GET /api/crm/dashboard':
+        return json({
+          year: 2026,
+          open_count: 3,
+          open_pipeline: '12000000000',
+          weighted_pipeline: '5000000000',
+          won_count: 2,
+          lost_count: 3,
+          win_rate: '40.0',
+          win_rate_target: '45',
+          new_contract_value: '20000000000',
+          contract_target: '80000000000',
+          scope: 'all',
+        });
+      case 'GET /api/crm/leads':
+        return json({
+          items: [
+            {
+              id: 'l1',
+              number: 'LD-26-001',
+              client_code: null,
+              company_name: 'PT Migas Hulu Contoh',
+              contact_name: 'Bapak Andi',
+              contact_email: null,
+              contact_phone: null,
+              source: 'civd',
+              need: 'Well testing 3 sumur, Q1 2027',
+              estimated_value: '4500000000',
+              status: 'contacted',
+              disqualify_reason: null,
+              qualification: {},
+              qualification_count: 0,
+              owner_id: 'u1',
+              owner_name: 'Rina Wijaya',
+              opportunity_id: null,
+              opportunity_number: null,
+              created_at: '2026-11-01T02:00:00Z',
+              is_demo: false,
+            },
+          ],
+          total: 1,
+          counts: { new: 0, contacted: 1, qualified: 0, disqualified: 0 },
+        });
+      case 'GET /api/crm/opportunities': {
+        const stages = ['qualified', 'quotation', 'submitted', 'won', 'lost'] as const;
+        return json({
+          items: stages.map((stage, i) => ({
+            id: `o${i}`,
+            number: `OPP-26-00${i + 1}`,
+            lead_id: null,
+            lead_number: null,
+            client_code: null,
+            company_name: 'PT Energi Rokan Hulu',
+            title: 'Well clean-up 4 sumur Rokan',
+            owner_id: 'u1',
+            owner_name: 'Rina Wijaya',
+            value: '6800000000',
+            weighted_value: '2720000000',
+            probability: 40,
+            expected_close: null,
+            is_tender: i === 1,
+            stage,
+            bid_status: i === 0 ? 'pending' : 'bid',
+            lost_reason: null,
+            won_at: null,
+            lost_at: null,
+            is_demo: false,
+          })),
+          total: 5,
+          summary: Object.fromEntries(stages.map((s) => [s, { count: 1, value: '6800000000' }])),
+        });
+      }
       default:
         return json({ code: 'NOT_FOUND', message: 'Tidak ada mock.' }, 404);
     }

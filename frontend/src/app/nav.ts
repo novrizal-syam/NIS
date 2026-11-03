@@ -35,8 +35,14 @@ export const NAV: NavGroup[] = [
   {
     key: 'leadToContract',
     items: [
-      soon('leads', 'person_search', 'crm'),
-      soon('opportunities', 'trending_up', 'crm'),
+      { key: 'leads', path: '/lead', icon: 'person_search', ready: true, module: 'crm' },
+      {
+        key: 'opportunities',
+        path: '/peluang',
+        icon: 'trending_up',
+        ready: true,
+        module: 'crm',
+      },
       soon('quotations', 'request_quote', 'quotation'),
       soon('tenders', 'gavel', 'tender'),
       soon('contracts', 'handshake', 'contract'),

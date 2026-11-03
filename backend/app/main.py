@@ -23,6 +23,7 @@ from app.core.config import get_settings
 from app.core.db import get_session, session_scope, use_session_provider
 from app.core.errors import install_error_handlers
 from app.core.logging import configure_logging, request_logging_middleware
+from app.crm.router import router as crm_router
 from app.demo.router import router as demo_router
 from app.dms.router import router as dms_router
 from app.master.router import router as master_router
@@ -117,6 +118,7 @@ def create_app() -> FastAPI:
     api.include_router(setup_router)
     api.include_router(sod_router)
     api.include_router(reports_router)
+    api.include_router(crm_router)
     app.include_router(api)
     return app
 

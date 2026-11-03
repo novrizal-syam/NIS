@@ -25,6 +25,21 @@ export function usePageMeta(): PageMeta {
       description: t('pages.soon.description'),
     };
   }
+  if (pathname === '/lead') {
+    return { title: t('pages.leads.title'), description: t('pages.leads.description') };
+  }
+  if (pathname === '/peluang') {
+    return {
+      title: t('pages.opportunities.title'),
+      description: t('pages.opportunities.description'),
+    };
+  }
+  if (matchPath('/peluang/:id', pathname)) {
+    return {
+      title: t('pages.opportunityDetail.title'),
+      description: t('pages.opportunityDetail.description'),
+    };
+  }
   if (pathname === '/persetujuan') {
     return { title: t('pages.approvals.title'), description: t('pages.approvals.description') };
   }

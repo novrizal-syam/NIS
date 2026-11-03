@@ -11,6 +11,7 @@ from app.auth.models import (
 )
 from app.auth.password_reset import PasswordReset, PasswordResetRequest
 from app.core.models import Base
+from app.crm.models import BidDecision, Lead, Opportunity
 from app.dms.models import Attachment
 from app.master.models import (
     Account,
@@ -51,6 +52,7 @@ __all__ = [
     "Attachment",
     "AuditLog",
     "Base",
+    "BidDecision",
     "Client",
     "CostCenter",
     "CostElement",
@@ -66,7 +68,9 @@ __all__ = [
     "FiscalPeriod",
     "FxRate",
     "Item",
+    "Lead",
     "Notification",
+    "Opportunity",
     "PasswordReset",
     "PasswordResetRequest",
     "PriceItem",

@@ -42,6 +42,15 @@ for (const theme of THEMES) {
       expect(await contrastViolations(page)).toEqual([]);
     });
 
+    test('sales screens pass the contrast check', async ({ page }) => {
+      await page.goto('/lead');
+      await expect(page.getByText('LD-26-001')).toBeVisible();
+      expect(await contrastViolations(page)).toEqual([]);
+      await page.goto('/peluang');
+      await expect(page.getByText('OPP-26-005')).toBeVisible();
+      expect(await contrastViolations(page)).toEqual([]);
+    });
+
     test('login page passes the contrast check', async ({ page }) => {
       await page.unrouteAll();
       await mockSignedOut(page);
@@ -63,7 +72,7 @@ test('full WCAG A/AA scan of the Komponen page', async ({ page }) => {
 test('works at 400 px width without horizontal scrolling', async ({ page }) => {
   await mockSignedIn(page);
   await page.setViewportSize({ width: 400, height: 800 });
-  for (const path of ['/', '/dev/komponen']) {
+  for (const path of ['/', '/dev/komponen', '/lead', '/peluang']) {
     await page.goto(path);
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,

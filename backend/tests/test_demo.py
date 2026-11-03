@@ -34,6 +34,7 @@ async def test_load_demo_matches_the_prompt(sessionmaker: async_sessionmaker[Asy
         assert summary.counts["vendors"] == 15
         assert summary.counts["items"] == 10 and summary.counts["assets"] == 6
         assert summary.counts["price_items"] == 8
+        assert summary.counts["crm_leads"] == 8 and summary.counts["crm_opportunities"] == 5
 
         per_cat = dict(
             (await s.execute(select(Vendor.category, func.count()).group_by(Vendor.category)))
@@ -114,6 +115,7 @@ async def test_remove_demo_is_super_admin_only_and_complete(
     res = await client.post("/api/admin/demo/remove", headers=sa)
     assert res.status_code == 200, res.text
     assert res.json()["removed"]["users"] == len(SYSTEM_ROLES)
+    assert res.json()["removed"]["crm_leads"] == 8
     assert (await client.get("/api/admin/demo", headers=sa)).json()["present"] is False
 
     async with sessionmaker() as s:

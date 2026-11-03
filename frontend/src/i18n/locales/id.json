@@ -145,6 +145,18 @@
     "accessReview": {
       "title": "Tinjauan Akses",
       "description": "Laporan triwulanan pengguna, peran, dan data sensitif."
+    },
+    "leads": {
+      "title": "Lead",
+      "description": "Calon pekerjaan dari CIVD, e-proc, undangan dan kunjungan; kualifikasi lalu jadikan opportunity."
+    },
+    "opportunities": {
+      "title": "Peluang",
+      "description": "Pipeline Qualified → Quotation → Submitted → Won/Lost."
+    },
+    "opportunityDetail": {
+      "title": "Detail peluang",
+      "description": "Nilai, tahap, keputusan bid/no-bid dan riwayat."
     }
   },
   "dashboard": {
@@ -758,5 +770,146 @@
       "password_reset": "Reset sandi",
       "test": "Uji"
     }
+  },
+  "crm": {
+    "leadStatus": {
+      "new": "Baru",
+      "contacted": "Dihubungi",
+      "qualified": "Terkualifikasi",
+      "disqualified": "Didiskualifikasi"
+    },
+    "stage": {
+      "qualified": "Qualified",
+      "quotation": "Quotation",
+      "submitted": "Submitted",
+      "won": "Won",
+      "lost": "Lost"
+    },
+    "sources": {
+      "civd": "CIVD",
+      "eproc": "e-Procurement",
+      "invitation": "Undangan",
+      "visit": "Kunjungan",
+      "referral": "Referensi",
+      "website": "Website",
+      "exhibition": "Pameran"
+    },
+    "criteria": {
+      "budget": "Klien punya anggaran/AFE",
+      "technical_fit": "Sesuai kemampuan teknis kita",
+      "start_6m": "Mulai dalam 6 bulan",
+      "decision_maker": "Pengambil keputusan diketahui",
+      "csms": "CSMS memungkinkan"
+    },
+    "scores": {
+      "strategic_fit": "Kesesuaian strategis (RJPP)",
+      "technical": "Kemampuan teknis",
+      "availability": "Ketersediaan aset & kru",
+      "csms": "CSMS & kepatuhan",
+      "margin": "Margin",
+      "risk": "Risiko komersial & hukum"
+    },
+    "recommend": {
+      "bid": "Rekomendasi: bid",
+      "no_bid": "Rekomendasi: no-bid"
+    },
+    "proposals": {
+      "bid": "Bid",
+      "no_bid": "No-bid"
+    },
+    "decisionStatus": {
+      "pending": "Menunggu Direktur",
+      "approved": "Disetujui",
+      "rejected": "Ditolak",
+      "cancelled": "Ditarik"
+    },
+    "moveTo": {
+      "submitted": "Tandai penawaran terkirim",
+      "won": "Tandai menang"
+    },
+    "views": {
+      "board": "Kanban",
+      "table": "Tabel"
+    },
+    "dash": {
+      "title": "Penjualan {{year}}",
+      "scopeOwn": "Data Anda",
+      "scopeAll": "Semua data",
+      "open": "Pipeline terbuka",
+      "openCount_one": "{{count}} peluang terbuka",
+      "openCount_other": "{{count}} peluang terbuka",
+      "weighted": "Pipeline tertimbang",
+      "weightedHelp": "Nilai × probabilitas",
+      "winRate": "Win rate tahun ini",
+      "target": "Target {{value}}",
+      "decided": "{{won}} menang · {{lost}} kalah",
+      "newContracts": "Nilai kontrak baru tahun ini",
+      "ofTarget": "dari target {{target}}"
+    },
+    "number": "Nomor",
+    "company": "Perusahaan",
+    "client": "Klien (data master)",
+    "clientHint": "Kosongkan untuk calon klien baru.",
+    "prospect": "Calon klien baru",
+    "contactName": "Nama kontak",
+    "contactEmail": "Email kontak",
+    "contactPhone": "Telepon kontak",
+    "source": "Sumber",
+    "need": "Kebutuhan",
+    "estimatedValue": "Estimasi nilai",
+    "owner": "Pemilik",
+    "ownerMe": "Saya sendiri",
+    "created": "Dibuat",
+    "searchLeads": "Cari nomor, perusahaan, kontak, kebutuhan",
+    "searchOpps": "Cari nomor, judul, perusahaan",
+    "mineOnly": "Milik saya",
+    "newLead": "Lead baru",
+    "createLead": "Simpan lead",
+    "noLeads": "Belum ada lead yang cocok dengan filter.",
+    "noOpps": "Belum ada peluang yang cocok dengan filter.",
+    "saved": "Perubahan disimpan.",
+    "tabDetail": "Detail",
+    "tabFiles": "Lampiran",
+    "qualification": "Checklist kualifikasi",
+    "criteriaMet": "{{count}} dari 5 terpenuhi (minimal {{min}})",
+    "qualifyHint": "Penuhi minimal {{min}} kriteria untuk kualifikasi.",
+    "markContacted": "Tandai sudah dihubungi",
+    "qualify": "Kualifikasi",
+    "disqualify": "Diskualifikasi",
+    "disqualifyReason": "Alasan diskualifikasi",
+    "confirmDisqualify": "Diskualifikasi lead",
+    "convert": "Jadikan Opportunity",
+    "confirmConvert": "Buat opportunity",
+    "convertedTo": "Opportunity dibuat:",
+    "oppTitle": "Judul peluang",
+    "value": "Nilai",
+    "probability": "Probabilitas (%)",
+    "weighted": "Tertimbang",
+    "expectedClose": "Perkiraan closing",
+    "stageLabel": "Tahap",
+    "tender": "Tender",
+    "isTender": "Peluang ini berupa tender",
+    "view": "Tampilan",
+    "emptyColumn": "Kosong",
+    "fromLeadHint": "Peluang dibuat dari lead yang terkualifikasi (tombol \"Jadikan Opportunity\").",
+    "bidPending": "Bid/no-bid menunggu",
+    "bidPendingNote": "Keputusan bid/no-bid menunggu Direktur; tahap tidak dapat diubah sampai diputus.",
+    "backToOpps": "Kembali ke daftar peluang",
+    "editOpp": "Ubah peluang",
+    "qualifiedHint": "Ke Quotation hanya lewat keputusan bid yang disetujui Direktur.",
+    "stageHint": "Ubah tahap sesuai kemajuan penawaran.",
+    "markLost": "Tandai kalah/batal",
+    "lostReason": "Alasan kalah/batal",
+    "confirmLost": "Simpan sebagai Lost",
+    "bidTitle": "Keputusan bid/no-bid",
+    "bidHelp": "Beri skor 1–5 untuk enam aspek. Skor ≥ {{threshold}}% merekomendasikan bid; Direktur yang memutuskan.",
+    "score": "Skor",
+    "proposal": "Usulan",
+    "bidNote": "Catatan",
+    "justifyHint": "Usulan berbeda dari rekomendasi skor: tulis alasan (min. 10 karakter).",
+    "submitBid": "Ajukan ke Direktur",
+    "bidHistory": "Riwayat bid/no-bid",
+    "directorComment": "Catatan Direktur",
+    "openApproval": "Buka dokumen persetujuan"
   }
 }

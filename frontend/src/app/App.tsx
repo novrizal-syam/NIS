@@ -12,6 +12,9 @@ import { RequireAuth } from '@/features/auth/RequireAuth';
 import { TotpSetupPage } from '@/features/auth/TotpSetupPage';
 import { KomponenPage } from '@/features/dev/KomponenPage';
 import { ComingSoonPage } from '@/features/home/ComingSoonPage';
+import { LeadsPage } from '@/features/crm/LeadsPage';
+import { OpportunitiesPage } from '@/features/crm/OpportunitiesPage';
+import { OpportunityDetailPage } from '@/features/crm/OpportunityDetailPage';
 import { DashboardPage } from '@/features/home/DashboardPage';
 import { NotFoundPage } from '@/features/home/NotFoundPage';
 import { MasterIndexPage } from '@/features/master/MasterIndexPage';
@@ -85,6 +88,9 @@ export function AppRoutes() {
           <Route index element={<DashboardPage />} />
           <Route path="persetujuan" element={<InboxPage />} />
           <Route path="persetujuan/:id" element={<RequestDetailPage />} />
+          <Route path="lead" element={<LeadsPage />} />
+          <Route path="peluang" element={<OpportunitiesPage />} />
+          <Route path="peluang/:id" element={<OpportunityDetailPage />} />
           <Route path="pengaturan" element={<SettingsPage />} />
           <Route path="pengguna" element={<UsersPage />} />
           <Route path="pengaturan/peran" element={<RolesPage />} />

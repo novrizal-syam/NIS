@@ -22,6 +22,8 @@ from app.auth import service as auth_service
 from app.auth.models import RefreshToken, User, UserRole
 from app.core.db import SessionLocal
 from app.core.errors import ConflictError
+from app.crm.models import BidDecision, Lead, Opportunity
+from app.crm.service import QUALIFICATION
 from app.demo import data as d
 from app.master.models import (
     Asset,
@@ -37,7 +39,7 @@ from app.master.models import (
     Warehouse,
 )
 from app.notifications.models import Notification
-from app.services import audit
+from app.services import audit, numbering
 from app.services.numbering import today_jakarta
 from app.workflow.models import ApprovalRequest, ApprovalStep, Delegation
 
@@ -72,7 +74,7 @@ async def demo_exists(session: AsyncSession) -> bool:
 
 async def demo_counts(session: AsyncSession) -> dict[str, int]:
     out: dict[str, int] = {}
-    for model in (*DEMO_TABLES, User, Department):
+    for model in (Lead, Opportunity, BidDecision, *DEMO_TABLES, User, Department):
         n = await session.execute(select(func.count()).where(model.is_demo.is_(True)))
         out[model.__tablename__] = int(n.scalar_one())
     return out
@@ -270,6 +272,7 @@ async def load(
     s.add("price_items", len(d.PRICE_ITEMS))
     s.add("fx_rates", len(d.FX))
     await session.flush()
+    await _load_crm(session, s, today, demo)
 
     await audit.record(
         session,
@@ -282,12 +285,90 @@ async def load(
     return s
 
 
+async def _load_crm(session: AsyncSession, s: Summary, today: date, demo: dict[str, Any]) -> None:
+    owners = dict(
+        (await session.execute(select(User.email, User.id).where(User.is_demo.is_(True))))
+        .tuples()
+        .all()
+    )
+    clients = dict((await session.execute(select(Client.code, Client.name))).tuples().all())
+    leads = opps = 0
+    for i, (
+        code,
+        company,
+        contact,
+        source,
+        need,
+        value,
+        status,
+        met,
+        role,
+        stage,
+        prob,
+    ) in enumerate(d.LEADS):
+        owner = owners[f"{role.replace('_', '.')}@{d.EMAIL_DOMAIN}"]
+        lead = Lead(
+            number=await numbering.next(session, "LD"),
+            client_code=code,
+            company_name=company or clients[code or ""],
+            contact_name=contact,
+            source=source,
+            need=need,
+            estimated_value=Decimal(value) if value is not None else None,
+            status=status,
+            disqualify_reason="Nilai di bawah minimum layanan"
+            if status == "disqualified"
+            else None,
+            qualification={k: n < met for n, k in enumerate(QUALIFICATION)},
+            owner_id=owner,
+            **demo,
+        )
+        session.add(lead)
+        leads += 1
+        if stage is None:
+            continue
+        await session.flush()
+        session.add(
+            Opportunity(
+                number=await numbering.next(session, "OPP"),
+                lead_id=lead.id,
+                client_code=code,
+                company_name=lead.company_name,
+                title=need,
+                owner_id=owner,
+                value=Decimal(value or 0),
+                probability=prob,
+                expected_close=today + timedelta(days=30 * (i + 1)),
+                is_tender=source in ("eproc", "invitation"),
+                stage=stage,
+                bid_status="none"
+                if stage == "qualified"
+                else "no_bid"
+                if stage == "lost"
+                else "bid",
+                lost_reason="Harga kompetitor lebih rendah" if stage == "lost" else None,
+                won_at=today - timedelta(days=20) if stage == "won" else None,
+                lost_at=today - timedelta(days=10) if stage == "lost" else None,
+                **demo,
+            )
+        )
+        opps += 1
+    await session.flush()
+    s.add("crm_leads", leads)
+    s.add("crm_opportunities", opps)
+
+
 async def remove(session: AsyncSession, *, actor_id: uuid.UUID | None) -> Summary:
     """Delete every is_demo row. Refuses (nothing deleted) if real data depends on demo data."""
     s = Summary()
     demo_users = select(User.id).where(User.is_demo.is_(True))
     try:
         async with session.begin_nested():
+            # Sales records first: bid decisions reference approval requests.
+            crm_tables: tuple[Any, ...] = (BidDecision, Opportunity, Lead)
+            for crm_model in crm_tables:
+                res = await session.execute(delete(crm_model).where(crm_model.is_demo.is_(True)))
+                s.add(crm_model.__tablename__, res.rowcount or 0)  # type: ignore[attr-defined]
             # Approval history of demo users (their requests and any steps they acted on).
             reqs = select(ApprovalRequest.id).where(ApprovalRequest.requester_id.in_(demo_users))
             await session.execute(delete(ApprovalStep).where(ApprovalStep.request_id.in_(reqs)))
