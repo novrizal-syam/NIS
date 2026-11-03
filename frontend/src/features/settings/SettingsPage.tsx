@@ -18,6 +18,61 @@ interface DemoStatus {
 
 const CONFIRM_WORD = 'HAPUS';
 
+interface TestResult {
+  status: 'sent' | 'failed' | 'not_configured';
+  error: string | null;
+  to: string;
+}
+
+/** Super Admin: check the email configuration by sending a message to themselves. */
+function EmailCard() {
+  const { t } = useTranslation();
+  const status = useQuery({
+    queryKey: ['admin', 'email'],
+    queryFn: () => api<{ provider: string | null }>('/admin/email/status'),
+  });
+  const test = useMutation({ mutationFn: () => postJson<TestResult>('/admin/email/test') });
+  const r = test.data;
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('settings.emailTitle')}</CardTitle>
+        <CardDescription>{t('settings.emailHelp')}</CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-3">
+        <p className="text-body text-fg-body">
+          {t('settings.emailProvider')}:{' '}
+          <span className="font-semibold text-fg">
+            {status.data ? (status.data.provider ?? t('settings.emailNone')) : '…'}
+          </span>
+        </p>
+        <FormError message={test.error instanceof ApiError ? test.error.message : null} />
+        {r && (
+          <p
+            role="status"
+            className={
+              r.status === 'sent'
+                ? 'rounded-control bg-success-tint px-3 py-2 text-small font-medium text-success'
+                : 'rounded-control bg-warning-tint px-3 py-2 text-small font-medium text-warning'
+            }
+          >
+            {t('settings.emailResult', { to: r.to, status: t(`email.status.${r.status}`) })}
+            {r.error ? ` – ${r.error}` : ''}
+          </p>
+        )}
+        <Button
+          variant="secondary"
+          className="self-start"
+          disabled={test.isPending}
+          onClick={() => test.mutate()}
+        >
+          <Icon name="send" /> {t('settings.emailTest')}
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
 /** Settings. More sections arrive with phase 01a; demo removal is Super Admin only. */
 export function SettingsPage() {
   const { t } = useTranslation();
@@ -41,6 +96,7 @@ export function SettingsPage() {
 
   return (
     <div className="flex max-w-3xl flex-col gap-4">
+      <EmailCard />
       <Card>
         <CardHeader>
           <CardTitle>{t('settings.demoTitle')}</CardTitle>

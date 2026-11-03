@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.auth.models import User
 from app.auth.principal import Principal
+from app.core.config import get_settings
 from app.master.models import Vendor
 from app.notifications import service
 from app.notifications.models import Notification
@@ -117,7 +118,9 @@ async def test_email_outbox_sends_after_commit_and_retries(
             raise OSError("SMTP down")
         sent.append(msg)
 
-    monkeypatch.setattr(email, "_send_sync", fake_send)
+    monkeypatch.setattr(email, "_smtp_send", fake_send)
+    monkeypatch.setattr(get_settings(), "email_provider", "smtp")
+    monkeypatch.setattr(get_settings(), "smtp_host", "mail.test")
     async with sessionmaker() as s:
         await service.notify(
             s, [user.id], kind="test", title="Uji email", body="Isi", link="/persetujuan"
@@ -129,7 +132,7 @@ async def test_email_outbox_sends_after_commit_and_retries(
         assert (
             note.email_status == "pending"
             and note.email_attempts == 1
-            and note.email_error == "SMTP down"
+            and note.email_error == "OSError: SMTP down"
         )
 
         fail["on"] = False
@@ -138,8 +141,9 @@ async def test_email_outbox_sends_after_commit_and_retries(
         await s.refresh(note)
         assert note.email_status == "sent"
     msg = sent[0]
-    assert msg["To"] == "Pengguna Uji <budi@gek.co.id>" and msg["Subject"] == "Uji email"
-    assert "http://localhost:5173/persetujuan" in msg.get_content()
+    assert msg["To"] == "budi@gek.co.id" and msg["Subject"] == "Uji email"
+    text_part = msg.get_body(preferencelist=("plain",))
+    assert text_part is not None and "http://localhost:5173/persetujuan" in text_part.get_content()
 
 
 async def test_notifications_api(
@@ -166,3 +170,15 @@ async def test_notifications_api(
     assert (await client.post(f"/api/notifications/{other}/read", headers=h)).status_code == 404
     assert (await client.post("/api/notifications/read-all", headers=h)).status_code == 204
     assert (await client.get("/api/notifications/count", headers=h)).json() == {"unread": 0}
+
+
+async def test_outbox_without_email_configured(
+    make_user: MakeUser, sessionmaker: async_sessionmaker[AsyncSession]
+) -> None:
+    user = await make_user("engineer")
+    async with sessionmaker() as s:
+        await service.notify(s, [user.id], kind="test", title="Tanpa email")
+        await s.commit()
+        assert await service.deliver_email_outbox(s) == 0
+        await s.commit()
+        assert (await _notes(s, user))[0].email_status == "not_configured"

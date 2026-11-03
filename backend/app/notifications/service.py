@@ -14,6 +14,7 @@ from app.auth.models import User
 from app.master.models import Asset, Employee, Vendor
 from app.notifications.models import Notification
 from app.services import email
+from app.services import email_templates as templates
 from app.services.numbering import today_jakarta
 from app.workflow import engine
 from app.workflow.models import ApprovalRequest
@@ -215,11 +216,14 @@ async def deliver_email_outbox(session: AsyncSession, limit: int = 50) -> int:
         if not user.is_active:
             n.email_status = "none"
             continue
-        try:
-            await email.send(email.Mail(user.email, user.full_name, n.title, n.body, n.link))
-        except Exception as exc:  # network/SMTP problems: retry later
+        message = templates.notification(user.full_name, n.title, n.body, n.link)
+        result = await email.send_email(user.email, message.subject, message.html, message.text)
+        if result.status == "not_configured":
+            n.email_status = "not_configured"
+            continue
+        if result.status == "failed":  # network/provider problems: retry later
             n.email_attempts += 1
-            n.email_error = str(exc)[:500]
+            n.email_error = result.error
             if n.email_attempts >= MAX_EMAIL_ATTEMPTS:
                 n.email_status = "failed"
             log.warning("email_failed", extra={"notification": str(n.id), "error": n.email_error})

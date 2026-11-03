@@ -172,7 +172,8 @@
     "useRecovery": "Lost your phone? Use a recovery code",
     "useTotp": "Use 2FA code",
     "recovery": "Recovery code",
-    "recoveryHint": "Format XXXX-XXXX. After signing in you must enable 2FA again."
+    "recoveryHint": "Format XXXX-XXXX. After signing in you must enable 2FA again.",
+    "forgot": "Forgot password?"
   },
   "status": {
     "draft": "Draft",
@@ -519,7 +520,13 @@
     "demoRemoved": "{{count}} demo rows removed.",
     "demoConfirmTitle": "Remove all demo data?",
     "demoConfirmHelp": "This cannot be undone and is recorded in the audit trail. Type {{word}} to continue.",
-    "demoConfirmLabel": "Type {{word}}"
+    "demoConfirmLabel": "Type {{word}}",
+    "emailTitle": "Email",
+    "emailHelp": "Send a test email to your address to check the configuration (EMAIL_PROVIDER, SMTP or Resend).",
+    "emailProvider": "Provider",
+    "emailNone": "not configured",
+    "emailTest": "Send test email",
+    "emailResult": "Result to {{to}}: {{status}}"
   },
   "setup": {
     "subtitle": "First-run setup of Nustrad ERP. Done only once.",
@@ -646,7 +653,9 @@
     "acceptHelp": "Create a password for your Nustrad ERP account.",
     "acceptSubmit": "Save and sign in",
     "totpOn": "2FA enabled",
-    "totpOff": "2FA not enabled"
+    "totpOff": "2FA not enabled",
+    "linkNotEmailed": "Email is not configured. Copy this activation link and give it to the user directly (valid 72 hours, single use).",
+    "lastEmail": "Last email"
   },
   "onboarding": {
     "privacyTitle": "Privacy notice",
@@ -722,6 +731,32 @@
       "with_sensitive": "Sensitive data access",
       "missing_2fa": "2FA required, not enabled",
       "with_sod_exception": "SoD exceptions"
+    }
+  },
+  "forgot": {
+    "title": "Forgot password",
+    "subtitle": "Enter your work email. We will send a link to create a new password.",
+    "submit": "Send link",
+    "back": "Back to sign in"
+  },
+  "reset": {
+    "title": "Reset password",
+    "subtitle": "Create a new password for your account.",
+    "submit": "Save new password",
+    "done": "Password updated. All old sessions were ended; please sign in again.",
+    "toLogin": "Go to sign in",
+    "noToken": "The link is incomplete. Open the link from the email or request a new one."
+  },
+  "email": {
+    "status": {
+      "sent": "sent",
+      "failed": "failed",
+      "not_configured": "not configured"
+    },
+    "kind": {
+      "invite": "Invitation",
+      "password_reset": "Password reset",
+      "test": "Test"
     }
   }
 }

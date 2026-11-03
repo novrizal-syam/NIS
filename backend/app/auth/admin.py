@@ -23,7 +23,6 @@ from app.auth.security import (
 )
 from app.core.errors import AppError, ConflictError, ForbiddenError, NotFoundError
 from app.master.models import Department, Employee
-from app.notifications import service as notifications
 from app.services import audit
 from app.services.audit import AuditAction
 from app.setup import service as setup_service
@@ -131,6 +130,8 @@ async def _guard_super_admin_target(session: AsyncSession, actor: Principal, use
 
 
 async def create_invite(session: AsyncSession, actor_id: uuid.UUID | None, user: User) -> str:
+    """New single-use invite (72 h); older open invites stop working. Returns the raw token,
+    which is only ever emailed (or shown to the admin when email is not configured)."""
     await session.execute(
         update(UserInvite)
         .where(
@@ -150,18 +151,6 @@ async def create_invite(session: AsyncSession, actor_id: uuid.UUID | None, user:
         )
     )
     await session.flush()
-    link = f"/undangan/{raw}"
-    await notifications.notify(
-        session,
-        [user.id],
-        kind="invite",
-        title="Undangan Nustrad ERP",
-        body=(
-            f"Halo {user.full_name}, Anda diundang ke Nustrad ERP PT Global Energi KITA. "
-            f"Tautan berlaku {INVITE_HOURS} jam dan hanya sekali pakai."
-        ),
-        link=link,
-    )
     await audit.record(
         session,
         action="invite",
@@ -268,7 +257,7 @@ async def create(
     department_code: str | None,
     employee_code: str | None,
     mode: Literal["invite", "password"],
-) -> tuple[User, str | None]:
+) -> tuple[User, str | None, str | None]:
     await _check_roles(session, actor, role_codes_)
     await _check_employee(session, employee_code, None)
     dept_id = None
@@ -293,9 +282,8 @@ async def create(
         department_id=dept_id,
     )
     user.employee_code = employee_code
-    if mode == "invite":
-        await create_invite(session, actor.id, user)
-    return user, temp
+    token = await create_invite(session, actor.id, user) if mode == "invite" else None
+    return user, temp, token
 
 
 async def set_roles(
@@ -521,6 +509,7 @@ async def revoke_session(
 class ImportReport:
     created: int = 0
     errors: list[dict[str, Any]] = field(default_factory=list)
+    invites: list[tuple[User, str]] = field(default_factory=list)
 
 
 def _rows(filename: str, content: bytes) -> list[dict[str, str]]:
@@ -583,7 +572,7 @@ async def import_users(
             continue
         try:
             async with session.begin_nested():
-                await create(
+                user, _, token = await create(
                     session,
                     actor,
                     email=email,
@@ -594,6 +583,8 @@ async def import_users(
                     mode="invite",
                 )
             report.created += 1
+            if token:
+                report.invites.append((user, token))
         except AppError as exc:
             report.errors.append({"row": i, "field": None, "message": exc.message})
     return report

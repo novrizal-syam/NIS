@@ -45,12 +45,17 @@ class Settings(BaseSettings):
     scheduler_enabled: bool = False
     scheduler_interval_seconds: int = 900
 
-    smtp_host: str = "localhost"
-    smtp_port: int = 1025
+    # Email: provider "smtp" or "resend"; empty = not configured (links are shown to the
+    # admin instead and email_log records not_configured).
+    email_provider: str = ""
+    smtp_host: str = ""
+    smtp_port: int = 587
     smtp_user: str = ""
     smtp_password: str = ""
-    smtp_starttls: bool = False
-    mail_from: str = "Nustrad ERP <no-reply@nustrad.local>"
+    smtp_tls: bool = False  # STARTTLS; port 465 always uses implicit TLS
+    resend_api_key: str = ""
+    email_from: str = "no-reply@nustrad.local"
+    email_from_name: str = "Nustrad ERP"
     app_base_url: str = "http://localhost:5173"  # links in emails
     email_interval_seconds: int = 30
 

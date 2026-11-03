@@ -157,3 +157,63 @@ it('asks for a reason on an SoD conflict and reports the pending approval', asyn
     sod_reason: 'Kasir cuti tiga bulan, belum ada pengganti',
   });
 });
+
+it('shows the activation link to copy when email is not configured', async () => {
+  mockApi({
+    me: admin,
+    handlers: {
+      'GET /api/roles': () => json(ROLES),
+      'GET /api/users': () =>
+        json({
+          items: [
+            {
+              id: 'u5',
+              email: 'budi@gek.co.id',
+              full_name: 'Budi',
+              roles: ['engineer'],
+              role_names: ['Engineer'],
+              department_code: null,
+              employee_code: null,
+              status: 'invited',
+              totp_enabled: false,
+              last_login_at: null,
+              is_demo: false,
+              last_email: {
+                kind: 'invite',
+                status: 'not_configured',
+                error: null,
+                at: '2026-11-03T02:00:00Z',
+              },
+            },
+          ],
+          total: 1,
+          counts: { invited: 1, active: 1, locked: 0, inactive: 0 },
+          active_super_admins: 2,
+        }),
+      'GET /api/master/departments/options': () => json([]),
+      'GET /api/master/employees/options': () => json([]),
+      'POST /api/users': () =>
+        json(
+          {
+            id: 'u9',
+            temporary_password: null,
+            activation_link: 'http://localhost:5173/activate?token=abc123',
+          },
+          201,
+        ),
+    },
+  });
+  const user = userEvent.setup();
+  renderApp('/pengguna');
+  expect(await screen.findByText('Undangan: belum dikonfigurasi')).toBeInTheDocument();
+  await user.click(screen.getByRole('button', { name: /Undang pengguna/ }));
+  const dialog = await screen.findByRole('dialog');
+  await user.type(within(dialog).getByLabelText(/Nama lengkap/), 'Tono');
+  await user.type(within(dialog).getByLabelText(/Email/), 'tono@gek.co.id');
+  await user.click(within(dialog).getByLabelText(/^Engineer/));
+  await user.click(within(dialog).getByRole('button', { name: /Kirim undangan/ }));
+  expect(
+    await within(dialog).findByText('http://localhost:5173/activate?token=abc123'),
+  ).toBeInTheDocument();
+  expect(within(dialog).getByText(/Email belum dikonfigurasi/)).toBeInTheDocument();
+});

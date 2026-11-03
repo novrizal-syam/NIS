@@ -1,10 +1,10 @@
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, Request, Response
+from fastapi import APIRouter, BackgroundTasks, Depends, Request, Response
 from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth import admin, service
+from app.auth import admin, password_reset, service
 from app.auth.principal import CurrentUser, Principal, get_principal_allow_pending
 from app.auth.schemas import (
     ChangePasswordIn,
@@ -17,6 +17,8 @@ from app.auth.schemas import (
 )
 from app.core.config import get_settings
 from app.core.db import get_session
+from app.services import email_log
+from app.services import email_templates as templates
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 Session = Annotated[AsyncSession, Depends(get_session)]
@@ -134,3 +136,33 @@ async def accept_invite(
         session, email=user.email, password=body.password, totp_code=None, **_client(request)
     )
     return _token_out(response, tokens)
+
+
+class ForgotIn(BaseModel):
+    email: str = Field(min_length=3, max_length=254)
+
+
+@router.post("/forgot-password")
+async def forgot_password(
+    body: ForgotIn, request: Request, background: BackgroundTasks, session: Session
+) -> dict[str, str]:
+    """Same answer whether or not the email exists (no account discovery)."""
+    found = await password_reset.request_reset(session, body.email, _client(request)["ip"])
+    await session.commit()
+    if found:
+        user, token = found
+        message = templates.password_reset(user.full_name, token, password_reset.RESET_MINUTES)
+        background.add_task(email_log.deliver, "password_reset", user.email, message, user.id)
+    return {"message": password_reset.GENERIC_MESSAGE}
+
+
+class ResetIn(BaseModel):
+    token: str = Field(min_length=10, max_length=200)
+    password: str = Field(min_length=1, max_length=200)
+
+
+@router.post("/reset-password", status_code=204)
+async def reset_password(body: ResetIn, session: Session) -> Response:
+    await password_reset.reset(session, body.token, body.password)
+    await session.commit()
+    return Response(status_code=204)

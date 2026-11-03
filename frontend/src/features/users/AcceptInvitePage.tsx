@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
@@ -8,10 +8,12 @@ import { AuthLayout, FormError } from '@/features/auth/AuthLayout';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { ApiError, postJson } from '@/lib/api';
 
-/** /undangan/:token — the invited user chooses a password and is signed in. */
+/** /activate?token=… (and legacy /undangan/:token): the invited user sets a password and is signed in. */
 export function AcceptInvitePage() {
   const { t } = useTranslation();
-  const { token = '' } = useParams();
+  const params = useParams();
+  const [search] = useSearchParams();
+  const token = search.get('token') ?? params.token ?? '';
   const { acceptToken } = useAuth();
   const navigate = useNavigate();
   const [pw, setPw] = useState('');

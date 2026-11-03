@@ -1,5 +1,6 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api, postJson } from '@/lib/api';
+import type { LastEmail } from './EmailStatus';
 
 export type UserStatus = 'invited' | 'active' | 'locked' | 'inactive';
 
@@ -15,6 +16,7 @@ export interface UserRow {
   totp_enabled: boolean;
   last_login_at: string | null;
   is_demo: boolean;
+  last_email: LastEmail | null;
 }
 
 export interface SessionRow {
@@ -94,7 +96,11 @@ export function useCreateUser() {
       department_code: string | null;
       employee_code: string | null;
       mode: 'invite' | 'password';
-    }) => postJson<{ id: string; temporary_password: string | null }>('/users', v),
+    }) =>
+      postJson<{ id: string; temporary_password: string | null; activation_link: string | null }>(
+        '/users',
+        v,
+      ),
     onSuccess: invalidate,
   });
 }
@@ -127,7 +133,9 @@ export function useUserAction(id: string) {
   return useMutation({
     mutationFn: (action: UserAction | { revoke: string }) =>
       typeof action === 'string'
-        ? postJson<{ temporary_password?: string } | null>(`/users/${id}/${action}`)
+        ? postJson<{ temporary_password?: string; activation_link?: string | null } | null>(
+            `/users/${id}/${action}`,
+          )
         : postJson<null>(`/users/${id}/sessions/${action.revoke}/revoke`),
     onSuccess: invalidate,
   });
@@ -143,6 +151,7 @@ export function useImportUsers() {
         ok: boolean;
         created: number;
         errors: { row: number | null; field: string | null; message: string }[];
+        activation_links?: { email: string; activation_link: string }[];
       }>('/users/import', { method: 'POST', body });
     },
     onSuccess: (r) => {

@@ -26,6 +26,8 @@ TEST_DB_URL = os.environ.get("TEST_DATABASE_URL", get_settings().test_database_u
 # Seeded configuration (system roles and their permissions) survives between tests.
 TABLES = (
     "notifications",
+    "password_reset_requests",
+    "email_log",
     "attachments",
     "doc_counters",
     "audit_log",

@@ -54,3 +54,23 @@ describe('Pengaturan · data demo', () => {
     expect(calls.some((c) => c.key === 'GET /api/admin/demo')).toBe(false);
   });
 });
+
+describe('Pengaturan · email', () => {
+  it('lets the Super Admin send a test email and shows the result', async () => {
+    const { calls } = mockApi({
+      me: superAdmin,
+      handlers: {
+        'GET /api/admin/demo': () => json({ present: false, counts: {} }),
+        'GET /api/admin/email/status': () => json({ provider: 'smtp' }),
+        'POST /api/admin/email/test': () =>
+          json({ status: 'sent', error: null, to: 'rina@gek.co.id' }),
+      },
+    });
+    const user = userEvent.setup();
+    renderApp('/pengaturan');
+    expect(await screen.findByText('smtp')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /Kirim email uji/ }));
+    expect(await screen.findByText('Hasil ke rina@gek.co.id: terkirim')).toBeInTheDocument();
+    expect(calls.some((c) => c.key === 'POST /api/admin/email/test')).toBe(true);
+  });
+});

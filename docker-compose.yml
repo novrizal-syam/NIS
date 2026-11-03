@@ -48,6 +48,8 @@ services:
       TEST_DATABASE_URL: ${TEST_DATABASE_URL:-postgresql+asyncpg://nustrad:nustrad@db:5432/nustrad_test}
       S3_ENDPOINT_URL: ${S3_ENDPOINT_URL:-http://minio:9000}
       SMTP_HOST: ${SMTP_HOST:-mailpit}
+      SMTP_PORT: ${SMTP_PORT:-1025}
+      EMAIL_PROVIDER: ${EMAIL_PROVIDER:-smtp}
     ports:
       - "8000:8000"
     volumes:

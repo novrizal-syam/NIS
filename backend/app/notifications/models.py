@@ -32,8 +32,9 @@ class Notification(Base):
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
     read_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    # none | pending | sent | failed  (outbox: sent by a job after the transaction commits)
-    email_status: Mapped[str] = mapped_column(String(10), nullable=False, server_default="none")
+    # none | pending | sent | failed | not_configured
+    # (outbox: sent by a job after the transaction commits)
+    email_status: Mapped[str] = mapped_column(String(20), nullable=False, server_default="none")
     email_attempts: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
     email_sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     email_error: Mapped[str | None] = mapped_column(String(500))

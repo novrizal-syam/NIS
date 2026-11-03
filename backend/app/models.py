@@ -9,6 +9,7 @@ from app.auth.models import (
     UserInvite,
     UserRole,
 )
+from app.auth.password_reset import PasswordReset, PasswordResetRequest
 from app.core.models import Base
 from app.dms.models import Attachment
 from app.master.models import (
@@ -29,6 +30,7 @@ from app.master.models import (
 )
 from app.notifications.models import Notification
 from app.services.audit import AuditLog
+from app.services.email_log import EmailLog
 from app.services.numbering import DocCounter
 from app.setup.models import SystemSetting
 from app.sod.models import SodException, SodRule
@@ -59,11 +61,14 @@ __all__ = [
     "DoaRuleChange",
     "DoaRuleStep",
     "DocCounter",
+    "EmailLog",
     "Employee",
     "FiscalPeriod",
     "FxRate",
     "Item",
     "Notification",
+    "PasswordReset",
+    "PasswordResetRequest",
     "PriceItem",
     "RecoveryCode",
     "RefreshToken",

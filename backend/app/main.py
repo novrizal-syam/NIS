@@ -14,12 +14,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import models as _models  # noqa: F401  (register every model before the first request)
 from app.audit.router import router as audit_router
+from app.auth.email_admin import router as email_admin_router
 from app.auth.onboarding import router as onboarding_router
 from app.auth.roles_router import router as roles_router
 from app.auth.router import router as auth_router
 from app.auth.users_router import router as users_router
 from app.core.config import get_settings
-from app.core.db import get_session
+from app.core.db import get_session, session_scope, use_session_provider
 from app.core.errors import install_error_handlers
 from app.core.logging import configure_logging, request_logging_middleware
 from app.demo.router import router as demo_router
@@ -59,6 +60,8 @@ def create_app() -> FastAPI:
         openapi_url=None if settings.is_production else "/api/openapi.json",
     )
     install_error_handlers(app)
+    # Background tasks and middleware resolve sessions like endpoints (overridable in tests).
+    use_session_provider(lambda: app.dependency_overrides.get(get_session, get_session))
 
     @app.middleware("http")
     async def setup_guard(request: Request, call_next: Any) -> Any:
@@ -67,14 +70,8 @@ def create_app() -> FastAPI:
         path = request.url.path
         open_paths = ("/api/health", "/api/setup", "/api/auth/")
         if path.startswith("/api/") and not path.startswith(open_paths):
-            # Same session factory as the endpoints (honours dependency overrides in tests).
-            provider = app.dependency_overrides.get(get_session, get_session)
-            sessions = provider()
-            session = await anext(sessions)
-            try:
+            async with session_scope() as session:
                 completed = await setup_service.is_completed(session)
-            finally:
-                await sessions.aclose()
             if not completed:
                 return JSONResponse(
                     {"code": "SETUP_REQUIRED", "message": "Penyiapan awal belum selesai."}, 423
@@ -108,6 +105,7 @@ def create_app() -> FastAPI:
 
     api.include_router(auth_router)
     api.include_router(onboarding_router)
+    api.include_router(email_admin_router)
     api.include_router(users_router)
     api.include_router(roles_router)
     api.include_router(workflow_router)

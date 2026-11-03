@@ -172,7 +172,8 @@
     "useRecovery": "Ponsel hilang? Pakai kode pemulihan",
     "useTotp": "Pakai kode 2FA",
     "recovery": "Kode pemulihan",
-    "recoveryHint": "Format XXXX-XXXX. Setelah masuk, Anda wajib mengaktifkan 2FA lagi."
+    "recoveryHint": "Format XXXX-XXXX. Setelah masuk, Anda wajib mengaktifkan 2FA lagi.",
+    "forgot": "Lupa kata sandi?"
   },
   "status": {
     "draft": "Draft",
@@ -519,7 +520,13 @@
     "demoRemoved": "{{count}} baris data demo dihapus.",
     "demoConfirmTitle": "Hapus semua data demo?",
     "demoConfirmHelp": "Tindakan ini tidak dapat dibatalkan dan tercatat di jejak audit. Ketik {{word}} untuk melanjutkan.",
-    "demoConfirmLabel": "Ketik {{word}}"
+    "demoConfirmLabel": "Ketik {{word}}",
+    "emailTitle": "Email",
+    "emailHelp": "Kirim email uji ke alamat Anda untuk memeriksa konfigurasi (EMAIL_PROVIDER, SMTP atau Resend).",
+    "emailProvider": "Penyedia",
+    "emailNone": "belum dikonfigurasi",
+    "emailTest": "Kirim email uji",
+    "emailResult": "Hasil ke {{to}}: {{status}}"
   },
   "setup": {
     "subtitle": "Penyiapan awal Nustrad ERP. Langkah ini hanya dilakukan sekali.",
@@ -646,7 +653,9 @@
     "acceptHelp": "Buat kata sandi untuk akun Nustrad ERP Anda.",
     "acceptSubmit": "Simpan dan masuk",
     "totpOn": "2FA aktif",
-    "totpOff": "2FA belum aktif"
+    "totpOff": "2FA belum aktif",
+    "linkNotEmailed": "Email belum dikonfigurasi. Salin tautan aktivasi ini dan berikan langsung kepada pengguna (berlaku 72 jam, sekali pakai).",
+    "lastEmail": "Email terakhir"
   },
   "onboarding": {
     "privacyTitle": "Pemberitahuan privasi",
@@ -722,6 +731,32 @@
       "with_sensitive": "Akses data sensitif",
       "missing_2fa": "Wajib 2FA, belum aktif",
       "with_sod_exception": "Pengecualian SoD"
+    }
+  },
+  "forgot": {
+    "title": "Lupa kata sandi",
+    "subtitle": "Masukkan email kantor Anda. Kami kirim tautan untuk membuat kata sandi baru.",
+    "submit": "Kirim tautan",
+    "back": "Kembali ke halaman masuk"
+  },
+  "reset": {
+    "title": "Atur ulang kata sandi",
+    "subtitle": "Buat kata sandi baru untuk akun Anda.",
+    "submit": "Simpan kata sandi baru",
+    "done": "Kata sandi diperbarui. Semua sesi lama sudah diakhiri; silakan masuk lagi.",
+    "toLogin": "Ke halaman masuk",
+    "noToken": "Tautan tidak lengkap. Buka tautan dari email atau minta tautan baru."
+  },
+  "email": {
+    "status": {
+      "sent": "terkirim",
+      "failed": "gagal",
+      "not_configured": "belum dikonfigurasi"
+    },
+    "kind": {
+      "invite": "Undangan",
+      "password_reset": "Reset sandi",
+      "test": "Uji"
     }
   }
 }

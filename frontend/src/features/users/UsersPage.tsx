@@ -14,6 +14,8 @@ import { ApiError, downloadFile } from '@/lib/api';
 import { formatDateTime } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import { useImportUsers, useRoles, useUsers, type UserStatus } from './api';
+import { ActivationLink } from './ActivationLink';
+import { EmailStatus } from './EmailStatus';
 import { StatusBadge } from './StatusBadge';
 import { InviteDialog, UserDialog } from './UserDialogs';
 
@@ -74,6 +76,12 @@ function ImportUsersDialog({ onClose }: { onClose: () => void }) {
             {t('users.importDone', { count: run.data.created })}
           </p>
         )}
+        {run.data?.activation_links?.map((l) => (
+          <div key={l.email} className="flex flex-col gap-1">
+            <span className="text-small font-semibold text-fg">{l.email}</span>
+            <ActivationLink link={l.activation_link} />
+          </div>
+        ))}
         {run.data && !run.data.ok && (
           <>
             <FormError message={t('master.importFailed', { count: run.data.errors.length })} />
@@ -200,12 +208,13 @@ export function UsersPage() {
               <TH>{t('master.status')}</TH>
               <TH>2FA</TH>
               <TH>{t('users.lastLogin')}</TH>
+              <TH>{t('users.lastEmail')}</TH>
             </TR>
           </THead>
           <TBody>
             {data?.items.length === 0 && (
               <TR>
-                <TD colSpan={6} className="py-8 text-center text-fg-secondary">
+                <TD colSpan={7} className="py-8 text-center text-fg-secondary">
                   {t('users.empty')}
                 </TD>
               </TR>
@@ -233,6 +242,9 @@ export function UsersPage() {
                 <TD>{u.totp_enabled ? t('master.yes') : t('master.no')}</TD>
                 <TD className="whitespace-nowrap">
                   {u.last_login_at ? formatDateTime(u.last_login_at) : '–'}
+                </TD>
+                <TD>
+                  <EmailStatus value={u.last_email} />
                 </TD>
               </TR>
             ))}

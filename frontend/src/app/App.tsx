@@ -5,6 +5,8 @@ import { AppShell } from '@/components/layout/AppShell';
 import { AuthProvider } from '@/features/auth/AuthProvider';
 import { AuditPage } from '@/features/audit/AuditPage';
 import { ChangePasswordPage } from '@/features/auth/ChangePasswordPage';
+import { ForgotPasswordPage } from '@/features/auth/ForgotPasswordPage';
+import { ResetPasswordPage } from '@/features/auth/ResetPasswordPage';
 import { LoginPage } from '@/features/auth/LoginPage';
 import { RequireAuth } from '@/features/auth/RequireAuth';
 import { TotpSetupPage } from '@/features/auth/TotpSetupPage';
@@ -37,7 +39,10 @@ export function AppRoutes() {
       <Routes>
         <Route path="/setup" element={<SetupPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/activate" element={<AcceptInvitePage />} />
         <Route path="/undangan/:token" element={<AcceptInvitePage />} />
+        <Route path="/lupa-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route
           path="/akun/ganti-password"
           element={

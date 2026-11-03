@@ -13,6 +13,8 @@ import { useOptions } from '@/features/master/api';
 import { ApiError } from '@/lib/api';
 import { formatDateTime } from '@/lib/format';
 import { RolePicker } from './RolePicker';
+import { ActivationLink } from './ActivationLink';
+import { EmailStatus } from './EmailStatus';
 import { TempPassword } from './TempPassword';
 import {
   useAddTemporaryRole,
@@ -124,6 +126,8 @@ export function InviteDialog({ onClose }: { onClose: () => void }) {
       {done ? (
         done.temporary_password ? (
           <TempPassword value={done.temporary_password} />
+        ) : done.activation_link ? (
+          <ActivationLink link={done.activation_link} />
         ) : (
           <p
             role="status"
@@ -193,6 +197,7 @@ export function UserDialog({ id, onClose }: { id: string; onClose: () => void })
   } | null>(null);
   const [temp, setTemp] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [link, setLink] = useState<string | null>(null);
   const [sodConflict, setSodConflict] = useState(false);
   const [sodReason, setSodReason] = useState('');
   const u = user.data;
@@ -215,6 +220,7 @@ export function UserDialog({ id, onClose }: { id: string; onClose: () => void })
       onSuccess: (res) => {
         if (res && 'temporary_password' in res && res.temporary_password)
           setTemp(res.temporary_password);
+        setLink(res && 'activation_link' in res ? (res.activation_link ?? null) : null);
         setNotice(t(`users.done.${a}`));
       },
     });
@@ -236,6 +242,9 @@ export function UserDialog({ id, onClose }: { id: string; onClose: () => void })
             </StatusPill>
             <span className="text-small text-fg-secondary">
               {t('users.lastLogin')}: {u.last_login_at ? formatDateTime(u.last_login_at) : '–'}
+            </span>
+            <span className="inline-flex items-center gap-1 text-small text-fg-secondary">
+              {t('users.lastEmail')}: <EmailStatus value={u.last_email} withTime />
             </span>
           </div>
           <Tabs
@@ -259,6 +268,7 @@ export function UserDialog({ id, onClose }: { id: string; onClose: () => void })
             </p>
           )}
           {temp && <TempPassword value={temp} />}
+          {link && <ActivationLink link={link} />}
 
           {tab === 'profile' && (
             <div className="flex flex-col gap-4">

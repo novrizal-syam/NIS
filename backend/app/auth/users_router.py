@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 from typing import Annotated, Any, Literal
 
-from fastapi import APIRouter, Depends, File, Query, Response, UploadFile
+from fastapi import APIRouter, BackgroundTasks, Depends, File, Query, Response, UploadFile
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, EmailStr, Field
 from sqlalchemy import func, or_, select
@@ -12,10 +12,14 @@ from app.auth import admin
 from app.auth.models import Role, User, UserRole
 from app.auth.principal import CurrentUser, Principal, require
 from app.core import access
+from app.core.config import get_settings
 from app.core.db import get_session
 from app.core.errors import AppError
 from app.core.pagination import PageParams, page_params
 from app.master.models import Department
+from app.services import email, email_log
+from app.services import email_templates as templates
+from app.services.email_log import EmailLog
 from app.services.export import Column, xlsx_response
 from app.services.numbering import today_jakarta
 from app.setup import service as setup_service
@@ -63,6 +67,7 @@ class UserRow(BaseModel):
     totp_enabled: bool
     last_login_at: datetime | None
     is_demo: bool
+    last_email: dict[str, Any] | None = None
 
 
 async def _rows(session: AsyncSession, users: list[User]) -> list[UserRow]:
@@ -77,6 +82,18 @@ async def _rows(session: AsyncSession, users: list[User]) -> list[UserRow]:
         roles.setdefault(uid, []).append((code, name))
     depts = dict((await session.execute(select(Department.id, Department.code))).tuples().all())
     invited = await admin.open_invite_users(session, ids)
+    last_rows = await session.execute(
+        select(
+            EmailLog.user_id, EmailLog.kind, EmailLog.status, EmailLog.error, EmailLog.created_at
+        )
+        .where(EmailLog.user_id.in_(ids))
+        .distinct(EmailLog.user_id)
+        .order_by(EmailLog.user_id, EmailLog.created_at.desc())
+    )
+    last_email = {
+        uid: {"kind": k, "status": st, "error": err, "at": at}
+        for uid, k, st, err, at in last_rows.all()
+    }
     return [
         UserRow(
             id=u.id,
@@ -90,6 +107,7 @@ async def _rows(session: AsyncSession, users: list[User]) -> list[UserRow]:
             totp_enabled=u.totp_enabled,
             last_login_at=u.last_login_at,
             is_demo=u.is_demo,
+            last_email=last_email.get(u.id),
         )
         for u in users
     ]
@@ -179,9 +197,21 @@ class CreateIn(BaseModel):
     mode: Literal["invite", "password"] = "invite"
 
 
+def _send_invite(background: BackgroundTasks, user: User, token: str) -> str | None:
+    """Queue the invitation email. When email is not configured, return the activation link
+    for the admin to copy (and log not_configured)."""
+    message = templates.invite(user.full_name, token, admin.INVITE_HOURS)
+    background.add_task(email_log.deliver, "invite", user.email, message, user.id)
+    if email.provider() is None:
+        return f"{get_settings().app_base_url.rstrip('/')}/activate?token={token}"
+    return None
+
+
 @router.post("", status_code=201)
-async def create_user(body: CreateIn, actor: Creator, session: Session) -> dict[str, Any]:
-    user, temp = await admin.create(
+async def create_user(
+    body: CreateIn, actor: Creator, session: Session, background: BackgroundTasks
+) -> dict[str, Any]:
+    user, temp, token = await admin.create(
         session,
         actor,
         email=body.email,
@@ -192,13 +222,17 @@ async def create_user(body: CreateIn, actor: Creator, session: Session) -> dict[
         mode=body.mode,
     )
     await session.commit()
-    # The temporary password is returned once and never stored in plain text.
-    return {"id": str(user.id), "temporary_password": temp}
+    link = _send_invite(background, user, token) if token else None
+    # The temporary password / activation link are returned once and never stored in plain text.
+    return {"id": str(user.id), "temporary_password": temp, "activation_link": link}
 
 
 @router.post("/import")
 async def import_users(
-    actor: Creator, session: Session, file: Annotated[UploadFile, File()]
+    actor: Creator,
+    session: Session,
+    background: BackgroundTasks,
+    file: Annotated[UploadFile, File()],
 ) -> dict[str, Any]:
     content = await file.read(5 * 1024 * 1024 + 1)
     if len(content) > 5 * 1024 * 1024:
@@ -208,7 +242,12 @@ async def import_users(
         await session.rollback()
         return {"ok": False, "created": 0, "errors": report.errors[:200]}
     await session.commit()
-    return {"ok": True, "created": report.created, "errors": []}
+    links = [
+        {"email": u.email, "activation_link": link}
+        for u, token in report.invites
+        if (link := _send_invite(background, u, token))
+    ]
+    return {"ok": True, "created": report.created, "errors": [], "activation_links": links}
 
 
 @router.get("/{user_id}")
@@ -318,8 +357,10 @@ async def force_logout(user_id: uuid.UUID, actor: Admin, session: Session) -> Re
     return Response(status_code=204)
 
 
-@router.post("/{user_id}/invite", status_code=204)
-async def resend_invite(user_id: uuid.UUID, actor: Creator, session: Session) -> Response:
+@router.post("/{user_id}/invite")
+async def resend_invite(
+    user_id: uuid.UUID, actor: Creator, session: Session, background: BackgroundTasks
+) -> dict[str, str | None]:
     user = await admin.get_user(session, user_id)
     if user.last_login_at is not None:
         raise AppError(
@@ -327,9 +368,9 @@ async def resend_invite(user_id: uuid.UUID, actor: Creator, session: Session) ->
             "Pengguna sudah pernah masuk; gunakan reset kata sandi.",
             status_code=409,
         )
-    await admin.create_invite(session, actor.id, user)
+    token = await admin.create_invite(session, actor.id, user)
     await session.commit()
-    return Response(status_code=204)
+    return {"activation_link": _send_invite(background, user, token)}
 
 
 class TemporaryRoleIn(BaseModel):

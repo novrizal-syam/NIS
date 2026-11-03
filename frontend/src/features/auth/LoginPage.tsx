@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
@@ -95,6 +95,12 @@ export function LoginPage() {
         <Button type="submit" variant="primary" className="mt-2 w-full" disabled={isSubmitting}>
           {isSubmitting ? t('login.submitting') : t('login.submit')}
         </Button>
+        <Link
+          to="/lupa-password"
+          className="self-start text-small font-semibold text-fg-accent underline"
+        >
+          {t('login.forgot')}
+        </Link>
       </form>
     </AuthLayout>
   );

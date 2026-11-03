@@ -9,28 +9,15 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.auth.models import User, UserInvite
 from app.master.models import Employee
-from app.notifications.models import Notification
 
 MakeUser = Callable[..., Awaitable[User]]
 Login = Callable[..., Awaitable[dict[str, str]]]
 
 
-async def _invite_token(sessionmaker: async_sessionmaker[AsyncSession], email: str) -> str:
-    async with sessionmaker() as s:
-        user = (await s.execute(select(User).where(User.email == email))).scalar_one()
-        note = (
-            (
-                await s.execute(
-                    select(Notification).where(
-                        Notification.user_id == user.id, Notification.kind == "invite"
-                    )
-                )
-            )
-            .scalars()
-            .all()[-1]
-        )
-        assert note.link is not None and note.email_status == "pending"
-        return note.link.rsplit("/", 1)[-1]
+def _token(link: str | None) -> str:
+    # Email is not configured in tests, so the API hands the activation link to the admin.
+    assert link and "/activate?token=" in link
+    return link.split("token=", 1)[1]
 
 
 async def test_invite_flow(
@@ -46,10 +33,10 @@ async def test_invite_flow(
         headers=h,
     )
     assert res.status_code == 201 and res.json()["temporary_password"] is None
+    token = _token(res.json()["activation_link"])
     listed = (await client.get("/api/users?status=invited", headers=h)).json()
     assert [u["email"] for u in listed["items"]] == ["baru@gek.co.id"]
 
-    token = await _invite_token(sessionmaker, "baru@gek.co.id")
     weak = await client.post("/api/auth/invite/accept", json={"token": token, "password": "pendek"})
     assert weak.status_code == 422
     ok = await client.post(
@@ -72,16 +59,15 @@ async def test_invite_expires_and_resend_revokes_old(
     sessionmaker: async_sessionmaker[AsyncSession],
 ) -> None:
     h = await login(await make_user("admin"))
-    uid = (
-        await client.post(
-            "/api/users",
-            json={"email": "x@gek.co.id", "full_name": "Uji Undangan", "roles": ["engineer"]},
-            headers=h,
-        )
-    ).json()["id"]
-    first = await _invite_token(sessionmaker, "x@gek.co.id")
-    assert (await client.post(f"/api/users/{uid}/invite", headers=h)).status_code == 204
-    second = await _invite_token(sessionmaker, "x@gek.co.id")
+    created = await client.post(
+        "/api/users",
+        json={"email": "x@gek.co.id", "full_name": "Uji Undangan", "roles": ["engineer"]},
+        headers=h,
+    )
+    uid, first = created.json()["id"], _token(created.json()["activation_link"])
+    resend = await client.post(f"/api/users/{uid}/invite", headers=h)
+    assert resend.status_code == 200
+    second = _token(resend.json()["activation_link"])
     assert first != second
     old = await client.post(
         "/api/auth/invite/accept", json={"token": first, "password": "GunungSalak-2026"}
@@ -258,7 +244,8 @@ async def test_import_csv_and_excel(client: AsyncClient, make_user: MakeUser, lo
             "/api/users/import", files={"file": ("u.xlsx", buf.getvalue())}, headers=h
         )
     ).json()
-    assert res == {"ok": True, "created": 2, "errors": []}
+    assert res["ok"] is True and res["created"] == 2 and res["errors"] == []
+    assert [x["email"] for x in res["activation_links"]] == ["a@gek.co.id", "b@gek.co.id"]
     ani = (await client.get("/api/users?q=ani", headers=h)).json()["items"][0]
     assert ani["roles"] == ["engineer", "procurement_officer"] and ani["status"] == "invited"
 
