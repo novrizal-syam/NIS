@@ -110,3 +110,21 @@ describe('sign out', () => {
     expect(await screen.findByRole('heading', { level: 1, name: 'Dasbor' })).toBeInTheDocument();
   });
 });
+
+describe('active menu item', () => {
+  it('highlights only the deepest matching item', async () => {
+    mockApi({
+      me: makeMe({ permissions: { settings: { view: 'all' }, users: { view: 'all' } } }),
+      handlers: { 'GET /api/roles': () => new Response('[]', { status: 200 }) },
+    });
+    renderApp('/pengaturan/peran');
+    const nav = (await screen.findAllByRole('navigation', { name: 'Menu utama' }))[0]!;
+    expect(within(nav).getByRole('link', { name: /Peran & Izin/ })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+    expect(within(nav).getByRole('link', { name: /^Pengaturan$/ })).not.toHaveAttribute(
+      'aria-current',
+    );
+  });
+});

@@ -46,13 +46,67 @@ def status_of(user: User, has_open_invite: bool) -> Status:
     return "active"
 
 
-async def role_codes(session: AsyncSession, user_id: uuid.UUID) -> list[str]:
-    rows = await session.execute(
+async def role_codes(
+    session: AsyncSession, user_id: uuid.UUID, *, permanent_only: bool = False
+) -> list[str]:
+    stmt = (
         select(Role.code)
         .join(UserRole, UserRole.role_id == Role.id)
         .where(UserRole.user_id == user_id)
     )
-    return sorted(rows.scalars())
+    if permanent_only:
+        stmt = stmt.where(UserRole.valid_until.is_(None))
+    return sorted((await session.execute(stmt)).scalars())
+
+
+async def add_temporary_role(
+    session: AsyncSession,
+    actor: Principal,
+    user: User,
+    *,
+    code: str,
+    valid_from: datetime | None,
+    valid_until: datetime,
+    reason: str,
+    hook: Any = None,
+) -> None:
+    """Acting role for a period (e.g. cover during leave); removed by the expiry job."""
+    await _guard_super_admin_target(session, actor, user)
+    await _check_roles(session, actor, [code])
+    if valid_until <= (valid_from or _now()):
+        raise AppError(
+            "INVALID_PERIOD", "Tanggal berakhir harus setelah tanggal mulai.", status_code=422
+        )
+    current = await role_codes(session, user.id)
+    if code in current:
+        raise ConflictError("ROLE_ALREADY_ASSIGNED", "Peran ini sudah dimiliki pengguna.")
+    if hook is not None:  # SoD conflict check (phase 01a.5)
+        await hook(session, actor, user, current, sorted({*current, code}))
+    role = (await session.execute(select(Role).where(Role.code == code))).scalar_one()
+    session.add(
+        UserRole(
+            user_id=user.id,
+            role_id=role.id,
+            assigned_by=actor.id,
+            valid_from=valid_from,
+            valid_until=valid_until,
+            reason=reason.strip(),
+        )
+    )
+    await session.flush()
+    await audit.record(
+        session,
+        action="role_temporary",
+        entity_type="user",
+        entity_id=user.id,
+        actor_id=actor.id,
+        after={
+            "role": code,
+            "valid_from": valid_from,
+            "valid_until": valid_until,
+            "reason": reason,
+        },
+    )
 
 
 async def get_user(session: AsyncSession, user_id: uuid.UUID) -> User:
@@ -249,15 +303,29 @@ async def set_roles(
 ) -> None:
     await _guard_super_admin_target(session, actor, user)
     await _check_roles(session, actor, codes)
-    before = await role_codes(session, user.id)
+    before = await role_codes(session, user.id, permanent_only=True)
     if "super_admin" in before and "super_admin" not in codes:
         await setup_service.ensure_super_admin_remains(session, losing_user_id=user.id)
     if hook is not None:  # SoD conflict check (phase 01a.5)
         await hook(session, actor, user, before, codes)
     roles = (await session.execute(select(Role).where(Role.code.in_(codes)))).scalars().all()
-    await session.execute(delete(UserRole).where(UserRole.user_id == user.id))
+    # Permanent assignments are replaced; temporary ones keep their own end date unless the
+    # same role is now granted permanently.
+    await session.execute(
+        delete(UserRole).where(UserRole.user_id == user.id, UserRole.valid_until.is_(None))
+    )
+    temporary = {
+        ur.role_id: ur
+        for ur in (
+            await session.execute(select(UserRole).where(UserRole.user_id == user.id))
+        ).scalars()
+    }
     for r in roles:
-        session.add(UserRole(user_id=user.id, role_id=r.id, assigned_by=actor.id))
+        if r.id in temporary:
+            temporary[r.id].valid_until = None
+            temporary[r.id].valid_from = None
+        else:
+            session.add(UserRole(user_id=user.id, role_id=r.id, assigned_by=actor.id))
     await session.flush()
     if sorted(codes) != before:
         await audit.record(

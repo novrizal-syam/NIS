@@ -34,6 +34,12 @@ async def run_expiry_alerts() -> int:
     return await _in_session(notifications.run_expiry_alerts)
 
 
+async def run_role_expiry() -> int:
+    from app.auth.roles_router import expire_temporary_roles
+
+    return await _in_session(expire_temporary_roles)
+
+
 async def run_email_outbox() -> int:
     return await _in_session(notifications.deliver_email_outbox)
 
@@ -42,6 +48,7 @@ JOBS: dict[str, Callable[[], Awaitable[int]]] = {
     "escalate": run_escalation,
     "expiry": run_expiry_alerts,
     "email": run_email_outbox,
+    "roles": run_role_expiry,
 }
 
 
@@ -52,7 +59,7 @@ async def scheduler_loop(interval_seconds: int = 900) -> None:
     while True:
         jobs = ["email"]
         if time.monotonic() - last_slow >= interval_seconds:
-            jobs += ["escalate", "expiry"]
+            jobs += ["escalate", "expiry", "roles"]
             last_slow = time.monotonic()
         for name in jobs:
             try:
@@ -72,5 +79,5 @@ async def _run(names: list[str]) -> None:
 if __name__ == "__main__":
     arg = sys.argv[1] if len(sys.argv) > 1 else ""
     if arg not in (*JOBS, "all"):
-        sys.exit("usage: python -m app.workflow.jobs escalate|expiry|email|all")
+        sys.exit("usage: python -m app.workflow.jobs escalate|expiry|email|roles|all")
     asyncio.run(_run(list(JOBS) if arg == "all" else [arg]))

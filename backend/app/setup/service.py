@@ -65,7 +65,7 @@ async def active_super_admins(session: AsyncSession) -> list[uuid.UUID]:
         select(User.id)
         .join(UserRole, UserRole.user_id == User.id)
         .join(Role, Role.id == UserRole.role_id)
-        .where(Role.code == "super_admin", User.is_active.is_(True))
+        .where(Role.code == "super_admin", User.is_active.is_(True), UserRole.active_now())
     )
     return list(rows.scalars())
 

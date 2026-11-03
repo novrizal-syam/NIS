@@ -63,7 +63,8 @@
       "components": "Components (dev)",
       "doaRules": "DOA rules",
       "masterData": "Master Data",
-      "auditTrail": "Audit Trail"
+      "auditTrail": "Audit Trail",
+      "roles": "Roles & Permissions"
     }
   },
   "topbar": {
@@ -130,6 +131,10 @@
     "users": {
       "title": "Users & Roles",
       "description": "Accounts, roles, status and sessions."
+    },
+    "roles": {
+      "title": "Roles & Permissions",
+      "description": "Permission matrix, data scope and sensitive fields."
     }
   },
   "dashboard": {
@@ -243,7 +248,51 @@
     "procurement_officer": "Procurement Officer",
     "hcbp_officer": "HCBP Officer",
     "client_rep": "Client Representative",
-    "vendor": "Vendor"
+    "vendor": "Vendor",
+    "intro": "System roles can have their permissions edited but cannot be deleted. Custom roles can be created, cloned and deactivated. Changes apply immediately.",
+    "caption": "Roles",
+    "newTitle": "New custom role",
+    "create": "Create role",
+    "code": "Code",
+    "codeHint": "Lowercase letters, digits, underscore. Cannot be changed.",
+    "name": "Role name",
+    "description": "Description",
+    "cloneFrom": "Copy permissions from",
+    "cloneHint": "Optional; start from another role.",
+    "empty": "Empty (no permissions)",
+    "requires2fa": "Requires 2FA",
+    "type": "Type",
+    "users": "Users",
+    "system": "System",
+    "custom": "Custom",
+    "external": "external",
+    "back": "Back to roles",
+    "locked": "Locked",
+    "userCount": "{{count}} users",
+    "viewAs": "View as this role",
+    "viewAsTitle": "Viewing as {{name}}",
+    "viewAsHelp": "Read-only preview: visible menus and sensitive data access. No session is created; recorded in the audit trail.",
+    "sensitiveAccess": "Sensitive data",
+    "none": "none",
+    "matrix": "Permission matrix",
+    "matrixHelp": "Each cell: data scope for that action (Own, Department, Project, All) or – for no permission.",
+    "module": "Module",
+    "sensitiveFields": "Sensitive fields (PDP law)",
+    "savePermissions": "Save permissions",
+    "savedNow": "Permissions saved; they apply to the next request.",
+    "scope": {
+      "own": "Own",
+      "department": "Dept",
+      "project": "Project",
+      "all": "All"
+    },
+    "temporary": "Temporary roles",
+    "temporaryHelp": "E.g. cover during leave. Revoked automatically after the end date.",
+    "from": "From",
+    "until": "Until",
+    "addTemporary": "Add temporary role",
+    "until_label": "until {{date}}",
+    "since_label": "from {{date}}"
   },
   "workflow": {
     "tabsLabel": "Approvals",

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router-dom';
-import { visibleNav } from '@/app/nav';
+import { NAV, visibleNav } from '@/app/nav';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { Icon } from '@/components/ui/icon';
 import { cn } from '@/lib/utils';
@@ -21,6 +21,11 @@ export function Sidebar({
   const { t } = useTranslation();
   const { can } = useAuth();
   const groups = visibleNav(import.meta.env.DEV, (m) => can(m, 'view'));
+  // A path with another menu item below it (/, /pengaturan) must match exactly.
+  const allPaths = NAV.flatMap((g) => g.items.map((i) => i.path));
+  const exactPaths = new Set(
+    allPaths.filter((p) => p === '/' || allPaths.some((o) => o !== p && o.startsWith(`${p}/`))),
+  );
 
   return (
     <div className="sidebar flex h-full flex-col border-r border-border bg-sidebar text-sidebar-fg">
@@ -54,7 +59,7 @@ export function Sidebar({
                   <li key={item.key}>
                     <NavLink
                       to={item.path}
-                      end={item.path === '/'}
+                      end={exactPaths.has(item.path)}
                       onClick={onNavigate}
                       title={collapsed ? label : undefined}
                       aria-label={collapsed ? label : undefined}

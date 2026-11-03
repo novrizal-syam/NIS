@@ -95,7 +95,7 @@ async def load_principal(
             await session.execute(
                 select(Role)
                 .join(UserRole, UserRole.role_id == Role.id)
-                .where(UserRole.user_id == user.id, Role.is_active.is_(True))
+                .where(UserRole.user_id == user.id, Role.is_active.is_(True), UserRole.active_now())
                 .order_by(Role.name)
             )
         )

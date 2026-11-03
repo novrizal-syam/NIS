@@ -217,7 +217,20 @@ async def import_users(
 async def detail(user_id: uuid.UUID, _: Viewer, session: Session) -> dict[str, Any]:
     user = await admin.get_user(session, user_id)
     row = (await _rows(session, [user]))[0]
-    return {**row.model_dump(), "sessions": await admin.sessions(session, user.id)}
+    assignments = await session.execute(
+        select(Role.code, Role.name, UserRole.valid_from, UserRole.valid_until, UserRole.reason)
+        .join(Role, Role.id == UserRole.role_id)
+        .where(UserRole.user_id == user.id)
+        .order_by(Role.name)
+    )
+    return {
+        **row.model_dump(),
+        "sessions": await admin.sessions(session, user.id),
+        "assignments": [
+            {"code": c, "name": n, "valid_from": f, "valid_until": u, "reason": r}
+            for c, n, f, u, r in assignments.all()
+        ],
+    }
 
 
 class UpdateIn(BaseModel):
@@ -305,6 +318,33 @@ async def resend_invite(user_id: uuid.UUID, actor: Creator, session: Session) ->
     await admin.create_invite(session, actor.id, user)
     await session.commit()
     return Response(status_code=204)
+
+
+class TemporaryRoleIn(BaseModel):
+    role: str
+    valid_from: datetime | None = None
+    valid_until: datetime
+    reason: str = Field(min_length=5, max_length=300)
+
+
+@router.post("/{user_id}/roles/temporary", status_code=201)
+async def add_temporary_role(
+    user_id: uuid.UUID, body: TemporaryRoleIn, actor: Editor, session: Session
+) -> dict[str, str]:
+    user = await admin.get_user(session, user_id)
+    hook = ROLE_CHANGE_HOOKS[0] if ROLE_CHANGE_HOOKS else None
+    await admin.add_temporary_role(
+        session,
+        actor,
+        user,
+        code=body.role,
+        valid_from=body.valid_from,
+        valid_until=body.valid_until,
+        reason=body.reason,
+        hook=hook,
+    )
+    await session.commit()
+    return {"status": "ok"}
 
 
 @router.post("/{user_id}/sessions/{family_id}/revoke", status_code=204)

@@ -34,6 +34,9 @@ export function usePageMeta(): PageMeta {
       description: t('pages.approvalDetail.description'),
     };
   }
+  if (pathname === '/pengaturan/peran' || matchPath('/pengaturan/peran/:id', pathname)) {
+    return { title: t('pages.roles.title'), description: t('pages.roles.description') };
+  }
   if (pathname === '/pengguna') {
     return { title: t('pages.users.title'), description: t('pages.users.description') };
   }

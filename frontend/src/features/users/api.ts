@@ -25,6 +25,14 @@ export interface SessionRow {
   ip: string | null;
 }
 
+export interface Assignment {
+  code: string;
+  name: string;
+  valid_from: string | null;
+  valid_until: string | null;
+  reason: string | null;
+}
+
 export interface RoleRow {
   id: string;
   code: string;
@@ -65,7 +73,8 @@ export function useUsers(params: Record<string, string | number | undefined>) {
 export function useUser(id: string | null) {
   return useQuery({
     queryKey: ['users', 'detail', id],
-    queryFn: () => api<UserRow & { sessions: SessionRow[] }>(`/users/${id}`),
+    queryFn: () =>
+      api<UserRow & { sessions: SessionRow[]; assignments: Assignment[] }>(`/users/${id}`),
     enabled: id !== null,
   });
 }
@@ -134,5 +143,18 @@ export function useImportUsers() {
     onSuccess: (r) => {
       if (r.ok) void invalidate();
     },
+  });
+}
+
+export function useAddTemporaryRole(id: string) {
+  const invalidate = useInvalidate();
+  return useMutation({
+    mutationFn: (v: {
+      role: string;
+      valid_from: string | null;
+      valid_until: string;
+      reason: string;
+    }) => postJson<{ status: string }>(`/users/${id}/roles/temporary`, v),
+    onSuccess: invalidate,
   });
 }

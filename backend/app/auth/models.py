@@ -2,6 +2,7 @@
 
 import uuid
 from datetime import datetime
+from typing import Any
 
 from sqlalchemy import (
     Boolean,
@@ -11,7 +12,9 @@ from sqlalchemy import (
     Integer,
     String,
     UniqueConstraint,
+    and_,
     func,
+    or_,
     text,
 )
 from sqlalchemy.dialects.postgresql import UUID
@@ -105,6 +108,19 @@ class UserRole(Base):
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
     assigned_by: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
+    # Temporary assignment (e.g. acting role during leave); auto-revoked after valid_until.
+    valid_from: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    valid_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    reason: Mapped[str | None] = mapped_column(String(300))
+
+    @classmethod
+    def active_now(cls) -> Any:
+        """SQL condition: the assignment is in force right now."""
+        now = func.now()
+        return and_(
+            or_(cls.valid_from.is_(None), cls.valid_from <= now),
+            or_(cls.valid_until.is_(None), cls.valid_until > now),
+        )
 
 
 class RefreshToken(Base):

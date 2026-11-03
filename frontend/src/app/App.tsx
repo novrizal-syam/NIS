@@ -19,6 +19,8 @@ import { InboxPage } from '@/features/workflow/InboxPage';
 import { RequestDetailPage } from '@/features/workflow/RequestDetailPage';
 import { PrivacyPage } from '@/features/onboarding/PrivacyPage';
 import { ProfilePage } from '@/features/onboarding/ProfilePage';
+import { RoleDetailPage } from '@/features/roles/RoleDetailPage';
+import { RolesPage } from '@/features/roles/RolesPage';
 import { SettingsPage } from '@/features/settings/SettingsPage';
 import { AcceptInvitePage } from '@/features/users/AcceptInvitePage';
 import { UsersPage } from '@/features/users/UsersPage';
@@ -78,6 +80,8 @@ export function AppRoutes() {
           <Route path="persetujuan/:id" element={<RequestDetailPage />} />
           <Route path="pengaturan" element={<SettingsPage />} />
           <Route path="pengguna" element={<UsersPage />} />
+          <Route path="pengaturan/peran" element={<RolesPage />} />
+          <Route path="pengaturan/peran/:id" element={<RoleDetailPage />} />
           <Route path="pengaturan/doa" element={<DoaRulesPage />} />
           <Route path="master" element={<MasterIndexPage />} />
           <Route path="master/:entity" element={<MasterListPage />} />

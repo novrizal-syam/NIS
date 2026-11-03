@@ -119,7 +119,12 @@ async def holders_of_role(session: AsyncSession, role_code: str) -> list[uuid.UU
         select(User.id)
         .join(UserRole, UserRole.user_id == User.id)
         .join(Role, Role.id == UserRole.role_id)
-        .where(Role.code == role_code, Role.is_active.is_(True), User.is_active.is_(True))
+        .where(
+            Role.code == role_code,
+            Role.is_active.is_(True),
+            User.is_active.is_(True),
+            UserRole.active_now(),
+        )
     )
     return list(rows.scalars())
 
@@ -144,6 +149,7 @@ async def _active_delegations(
             Delegation.start_date <= today,
             Delegation.end_date >= today,
             User.is_active.is_(True),
+            UserRole.active_now(),
             or_(Delegation.role_code.is_(None), Delegation.role_code == Role.code),
         )
     )

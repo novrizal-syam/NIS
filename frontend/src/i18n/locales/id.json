@@ -63,7 +63,8 @@
       "components": "Komponen (dev)",
       "doaRules": "Aturan DOA",
       "masterData": "Data Master",
-      "auditTrail": "Jejak Audit"
+      "auditTrail": "Jejak Audit",
+      "roles": "Peran & Izin"
     }
   },
   "topbar": {
@@ -130,6 +131,10 @@
     "users": {
       "title": "Pengguna & Peran",
       "description": "Akun, peran, status, dan sesi pengguna."
+    },
+    "roles": {
+      "title": "Peran & Izin",
+      "description": "Matriks izin, lingkup data, dan field sensitif."
     }
   },
   "dashboard": {
@@ -243,7 +248,51 @@
     "procurement_officer": "Procurement Officer",
     "hcbp_officer": "HCBP Officer",
     "client_rep": "Client Representative",
-    "vendor": "Vendor"
+    "vendor": "Vendor",
+    "intro": "Peran sistem dapat diubah izinnya tetapi tidak dapat dihapus. Peran kustom dapat dibuat, diklon, dan dinonaktifkan. Perubahan berlaku langsung.",
+    "caption": "Daftar peran",
+    "newTitle": "Peran kustom baru",
+    "create": "Buat peran",
+    "code": "Kode",
+    "codeHint": "Huruf kecil, angka, garis bawah. Tidak bisa diubah.",
+    "name": "Nama peran",
+    "description": "Keterangan",
+    "cloneFrom": "Salin izin dari",
+    "cloneHint": "Opsional; mulai dari izin peran lain.",
+    "empty": "Kosong (tanpa izin)",
+    "requires2fa": "Wajib 2FA",
+    "type": "Jenis",
+    "users": "Pengguna",
+    "system": "Sistem",
+    "custom": "Kustom",
+    "external": "eksternal",
+    "back": "Kembali ke daftar peran",
+    "locked": "Terkunci",
+    "userCount": "{{count}} pengguna",
+    "viewAs": "Lihat sebagai peran ini",
+    "viewAsTitle": "Tampilan sebagai {{name}}",
+    "viewAsHelp": "Pratinjau hanya-baca: menu yang terlihat dan akses data sensitif. Tidak membuat sesi; tercatat di jejak audit.",
+    "sensitiveAccess": "Data sensitif",
+    "none": "tidak ada",
+    "matrix": "Matriks izin",
+    "matrixHelp": "Setiap sel: lingkup data untuk aksi itu (Sendiri, Departemen, Proyek, Semua) atau – untuk tidak ada izin.",
+    "module": "Modul",
+    "sensitiveFields": "Field sensitif (UU PDP)",
+    "savePermissions": "Simpan izin",
+    "savedNow": "Izin disimpan dan berlaku untuk permintaan berikutnya.",
+    "scope": {
+      "own": "Sendiri",
+      "department": "Dept",
+      "project": "Proyek",
+      "all": "Semua"
+    },
+    "temporary": "Peran sementara",
+    "temporaryHelp": "Misalnya pengganti selama cuti. Dicabut otomatis setelah tanggal berakhir.",
+    "from": "Mulai",
+    "until": "Berakhir",
+    "addTemporary": "Tambah peran sementara",
+    "until_label": "sampai {{date}}",
+    "since_label": "mulai {{date}}"
   },
   "workflow": {
     "tabsLabel": "Persetujuan",

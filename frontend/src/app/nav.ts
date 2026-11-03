@@ -102,6 +102,13 @@ export const NAV: NavGroup[] = [
       { key: 'settings', path: '/pengaturan', icon: 'settings', ready: true, module: 'settings' },
       { key: 'masterData', path: '/master', icon: 'database', ready: true, module: 'master' },
       { key: 'users', path: '/pengguna', icon: 'manage_accounts', ready: true, module: 'users' },
+      {
+        key: 'roles',
+        path: '/pengaturan/peran',
+        icon: 'admin_panel_settings',
+        ready: true,
+        module: 'users',
+      },
       { key: 'doaRules', path: '/pengaturan/doa', icon: 'rule', ready: true, module: 'workflow' },
       { key: 'auditTrail', path: '/audit', icon: 'policy', ready: true, module: 'audit' },
       { key: 'components', path: '/dev/komponen', icon: 'widgets', ready: true, devOnly: true },

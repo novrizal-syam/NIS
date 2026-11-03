@@ -14,7 +14,15 @@ import { ApiError } from '@/lib/api';
 import { formatDateTime } from '@/lib/format';
 import { RolePicker } from './RolePicker';
 import { TempPassword } from './TempPassword';
-import { useCreateUser, useUpdateUser, useUser, useUserAction, type UserAction } from './api';
+import {
+  useAddTemporaryRole,
+  useCreateUser,
+  useRoles,
+  useUpdateUser,
+  useUser,
+  useUserAction,
+  type UserAction,
+} from './api';
 import { StatusBadge } from './StatusBadge';
 
 const err = (e: unknown, fallback: string) =>
@@ -324,6 +332,23 @@ export function UserDialog({ id, onClose }: { id: string; onClose: () => void })
 
           {tab === 'roles' && (
             <div className="flex flex-col gap-3">
+              {u.assignments.some((a) => a.valid_until) && (
+                <ul className="flex flex-col gap-1 rounded-control border border-border p-2 text-small">
+                  {u.assignments
+                    .filter((a) => a.valid_until)
+                    .map((a) => (
+                      <li key={a.code} className="flex flex-wrap items-center gap-2">
+                        <StatusPill tone="info">{a.name}</StatusPill>
+                        <span className="text-fg-secondary">
+                          {a.valid_from &&
+                            t('roles.since_label', { date: formatDateTime(a.valid_from) })}{' '}
+                          {t('roles.until_label', { date: formatDateTime(a.valid_until!) })}
+                          {a.reason && ` · ${a.reason}`}
+                        </span>
+                      </li>
+                    ))}
+                </ul>
+              )}
               <RolePicker
                 value={draft.roles}
                 onChange={(r) => setDraft({ ...draft, roles: r })}
@@ -347,6 +372,8 @@ export function UserDialog({ id, onClose }: { id: string; onClose: () => void })
               )}
             </div>
           )}
+
+          {tab === 'roles' && canEdit && <TemporaryRoleForm userId={u.id} isSA={isSA} />}
 
           {tab === 'sessions' && (
             <ul className="flex flex-col gap-2">
@@ -385,5 +412,69 @@ export function UserDialog({ id, onClose }: { id: string; onClose: () => void })
         </div>
       )}
     </Dialog>
+  );
+}
+
+function TemporaryRoleForm({ userId, isSA }: { userId: string; isSA: boolean }) {
+  const { t } = useTranslation();
+  const roles = useRoles();
+  const add = useAddTemporaryRole(userId);
+  const [v, setV] = useState({ role: '', from: '', until: '', reason: '' });
+  const toIso = (d: string) => (d ? new Date(`${d}T00:00:00+07:00`).toISOString() : null);
+  return (
+    <fieldset className="flex flex-col gap-3 border-t border-border pt-3">
+      <legend className="text-small font-semibold text-fg">{t('roles.temporary')}</legend>
+      <p className="text-caption text-fg-muted">{t('roles.temporaryHelp')}</p>
+      <FormError message={err(add.error, t('auth.unexpected'))} />
+      <div className="grid gap-3 sm:grid-cols-3">
+        <Field label={t('users.role')}>
+          <Select value={v.role} onChange={(e) => setV({ ...v, role: e.target.value })}>
+            <option value="">{t('master.choose')}</option>
+            {roles.data
+              ?.filter((r) => r.is_active && (isSA || r.code !== 'super_admin'))
+              .map((r) => (
+                <option key={r.code} value={r.code}>
+                  {r.name}
+                </option>
+              ))}
+          </Select>
+        </Field>
+        <Field label={t('roles.from')}>
+          <Input
+            type="date"
+            value={v.from}
+            onChange={(e) => setV({ ...v, from: e.target.value })}
+          />
+        </Field>
+        <Field label={t('roles.until')} required>
+          <Input
+            type="date"
+            value={v.until}
+            onChange={(e) => setV({ ...v, until: e.target.value })}
+          />
+        </Field>
+      </div>
+      <Field label={t('workflow.reason')} required>
+        <Input value={v.reason} onChange={(e) => setV({ ...v, reason: e.target.value })} />
+      </Field>
+      <Button
+        variant="secondary"
+        className="self-start"
+        disabled={!v.role || !v.until || v.reason.trim().length < 5 || add.isPending}
+        onClick={() =>
+          add.mutate(
+            {
+              role: v.role,
+              valid_from: toIso(v.from),
+              valid_until: toIso(v.until)!,
+              reason: v.reason,
+            },
+            { onSuccess: () => setV({ role: '', from: '', until: '', reason: '' }) },
+          )
+        }
+      >
+        {t('roles.addTemporary')}
+      </Button>
+    </fieldset>
   );
 }
