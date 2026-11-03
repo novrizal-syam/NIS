@@ -41,7 +41,7 @@ from app.master.models import (
     Warehouse,
 )
 from app.notifications.models import Notification
-from app.project.models import Project
+from app.project.models import BudgetVersion, Project
 from app.services import audit, numbering
 from app.services.numbering import today_jakarta
 from app.tender.models import Tender
@@ -383,6 +383,7 @@ async def remove(session: AsyncSession, *, actor_id: uuid.UUID | None) -> Summar
             # Sales records first: bid decisions reference approval requests.
             crm_tables: tuple[Any, ...] = (
                 Tender,
+                BudgetVersion,
                 Project,
                 Contract,
                 Quotation,

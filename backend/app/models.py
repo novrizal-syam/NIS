@@ -32,7 +32,13 @@ from app.master.models import (
     Warehouse,
 )
 from app.notifications.models import Notification
-from app.project.models import Project, ProjectBudgetLine
+from app.project.models import (
+    BudgetVersion,
+    BudgetVersionLine,
+    Project,
+    ProjectBudgetLine,
+    ProjectWbs,
+)
 from app.services.audit import AuditLog
 from app.services.email_log import EmailLog
 from app.services.numbering import DocCounter
@@ -57,6 +63,8 @@ __all__ = [
     "AuditLog",
     "Base",
     "BidDecision",
+    "BudgetVersion",
+    "BudgetVersionLine",
     "Client",
     "Contract",
     "ContractRate",
@@ -83,6 +91,7 @@ __all__ = [
     "PriceItem",
     "Project",
     "ProjectBudgetLine",
+    "ProjectWbs",
     "Quotation",
     "QuotationLine",
     "RecoveryCode",

@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { session } from '@/lib/api';
 import { json, makeMe, mockApi } from '@/test/mockApi';
@@ -198,50 +198,4 @@ it('edits the rate schedule: standby rate and a consumable with markup', async (
     unit_cost: '1000000',
     markup_pct: '15',
   });
-});
-
-it('shows the draft project budget per cost element, read-only', async () => {
-  mockApi({
-    me: hos,
-    handlers: {
-      'GET /api/projects/p1': () =>
-        json({
-          id: 'p1',
-          number: 'PRJ-26-001',
-          name: 'Well testing Blok X',
-          company_name: 'PT Migas Contoh',
-          status: 'draft',
-          revenue: '132750000',
-          budget_total: '104475000',
-          planned_margin: '28275000',
-          contract_id: 'c1',
-          contract_number: 'CTR-26-001',
-          start_date: null,
-          end_date: null,
-          contingency_pct: '5.00',
-          budget: [
-            {
-              cost_element_code: 'CONTINGENCY',
-              cost_element_name: 'Kontinjensi',
-              amount: '4975000',
-              source: 'contingency',
-              share_of_revenue: '3.7',
-            },
-            {
-              cost_element_code: 'EQUIP-OWN',
-              cost_element_name: 'Peralatan milik (tarif internal)',
-              amount: '95000000',
-              source: 'quotation',
-              share_of_revenue: '71.6',
-            },
-          ],
-        }),
-    },
-  });
-  renderApp('/proyek/p1');
-  const table = await screen.findByRole('table');
-  expect(within(table).getByText('Rp 95.000.000')).toBeInTheDocument();
-  expect(within(table).getByText('Rp 99.975.000')).toBeInTheDocument();
-  expect(screen.getByText(/kontinjensi 5%/)).toBeInTheDocument();
-  expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
 });

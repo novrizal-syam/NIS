@@ -8,12 +8,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.auth.principal import Principal
 from app.contract.models import Contract
 from app.crm.models import QuotationLine
-from app.project.models import Project, ProjectBudgetLine
+from app.project.models import Project, ProjectBudgetLine, ProjectWbs
 from app.services import audit, numbering
 from app.services.audit import AuditAction
 from app.setup import service as settings_store
 
 CONTINGENCY = "CONTINGENCY"
+DEFAULT_WBS = ("EXEC", "Execution")
 CONTINGENCY_SETTING = "project.contingency_pct"
 DEFAULT_CONTINGENCY = 5
 
@@ -62,11 +63,15 @@ async def create_draft(
     )
     session.add(project)
     await session.flush()
+    wbs = ProjectWbs(project_id=project.id, code=DEFAULT_WBS[0], name=DEFAULT_WBS[1], seq=1)
+    session.add(wbs)
+    await session.flush()
     for code, amount in per.items():
         session.add(
             ProjectBudgetLine(
                 project_id=project.id,
                 version=0,
+                wbs_id=wbs.id,
                 cost_element_code=code,
                 amount=amount,
                 source="quotation",
@@ -76,9 +81,11 @@ async def create_draft(
         ProjectBudgetLine(
             project_id=project.id,
             version=0,
+            wbs_id=wbs.id,
             cost_element_code=CONTINGENCY,
             amount=contingency,
             source="contingency",
+            locked_reserve=True,
         )
     )
     await session.flush()
@@ -99,9 +106,17 @@ async def create_draft(
 
 
 async def budget_of(session: AsyncSession, project_id: Any) -> list[ProjectBudgetLine]:
+    """Current budget lines (all WBS)."""
     rows = await session.execute(
         select(ProjectBudgetLine)
-        .where(ProjectBudgetLine.project_id == project_id, ProjectBudgetLine.version == 0)
+        .where(ProjectBudgetLine.project_id == project_id)
         .order_by(ProjectBudgetLine.cost_element_code)
+    )
+    return list(rows.scalars())
+
+
+async def wbs_of(session: AsyncSession, project_id: Any) -> list[ProjectWbs]:
+    rows = await session.execute(
+        select(ProjectWbs).where(ProjectWbs.project_id == project_id).order_by(ProjectWbs.seq)
     )
     return list(rows.scalars())

@@ -33,6 +33,8 @@ PENDING, APPROVED, REJECTED, CANCELLED = "pending", "approved", "rejected", "can
 WAITING, SKIPPED = "waiting", "skipped"
 
 Hook = Callable[[AsyncSession, ApprovalRequest], Awaitable[None]]
+# Runs before a step is approved; raises AppError to refuse (e.g. margin below threshold).
+ApproveCheck = Callable[[AsyncSession, ApprovalRequest, ApprovalStep, Principal], Awaitable[None]]
 EventHandler = Callable[[AsyncSession, str, ApprovalRequest, list[uuid.UUID]], Awaitable[None]]
 
 
@@ -40,6 +42,8 @@ EventHandler = Callable[[AsyncSession, str, ApprovalRequest, list[uuid.UUID]], A
 class _DocHooks:
     on_approved: Hook | None = None
     on_rejected: Hook | None = None
+    on_step_activated: Hook | None = None
+    before_approve: ApproveCheck | None = None
 
 
 _hooks: dict[str, _DocHooks] = {}
@@ -47,12 +51,18 @@ _event_handlers: list[EventHandler] = []
 
 
 def register_document(
-    doc_type: str, *, on_approved: Hook | None = None, on_rejected: Hook | None = None
+    doc_type: str,
+    *,
+    on_approved: Hook | None = None,
+    on_rejected: Hook | None = None,
+    on_step_activated: Hook | None = None,
+    before_approve: ApproveCheck | None = None,
 ) -> None:
-    """Document modules: react to the final decision (e.g. PR -> Approved / back to Draft)."""
+    """Document modules: react to the final decision (e.g. PR -> Approved / back to Draft),
+    optionally to a later step becoming active, and veto an approval with `before_approve`."""
     if doc_type not in DOC_TYPES:
         raise ValueError(f"unknown doc_type {doc_type!r}")
-    _hooks[doc_type] = _DocHooks(on_approved, on_rejected)
+    _hooks[doc_type] = _DocHooks(on_approved, on_rejected, on_step_activated, before_approve)
 
 
 def on_event(handler: EventHandler) -> None:
@@ -314,6 +324,9 @@ async def approve(
 ) -> ApprovalRequest:
     request = await _lock(session, request_id)
     step, on_behalf = await _actionable_step(session, principal, request)
+    hooks = _hooks.get(request.doc_type)
+    if hooks and hooks.before_approve:
+        await hooks.before_approve(session, request, step, principal)
     now = _now()
     step.status, step.acted_by, step.on_behalf_of = APPROVED, principal.id, on_behalf
     step.acted_at, step.comment = now, (comment or "").strip() or None
@@ -339,13 +352,14 @@ async def approve(
                     s.status, s.activated_at = PENDING, now
                     s.due_at = now + timedelta(hours=hours)
             await session.flush()
+            if hooks and hooks.on_step_activated:
+                await hooks.on_step_activated(session, request)
             await _emit(
                 session, "step_activated", request, await _step_recipients(session, request)
             )
         else:
             request.status, request.decided_at = APPROVED, now
             await session.flush()
-            hooks = _hooks.get(request.doc_type)
             if hooks and hooks.on_approved:
                 await hooks.on_approved(session, request)
             await _emit(session, "approved", request, [request.requester_id])

@@ -1106,7 +1106,31 @@
     "source": "Source",
     "amount": "Amount",
     "ofRevenue": "% of revenue",
-    "total": "Total budget"
+    "total": "Total budget",
+    "stepper": "Budget stages",
+    "editorHelp": "Enter the budget per cost element and WBS (whole rupiah). Contingency is a locked reserve. Totals and margin are computed by the server on save.",
+    "readOnlyBudget": "Read-only. After lock the budget changes through a BCR.",
+    "removeWbs": "Remove WBS",
+    "lockedReserve": "Locked reserve",
+    "addElement": "Add cost element",
+    "addRow": "Add row",
+    "wbsCode": "WBS code",
+    "wbsName": "WBS name",
+    "wbsHint": "Mobilisation, Demobilisation, Well 1 …",
+    "addWbs": "Add WBS",
+    "saveFirst": "Save changes first",
+    "planner": "Planner",
+    "marginBelow": "Planned margin {{value}}% is below {{min}}%: the Lead Controller cannot approve.",
+    "returnedNote": "Returned with note",
+    "baselineInfo": "Baseline v0: {{total}}, approved {{at}}.",
+    "assignPlanner": "Planner (Lead Engineer)",
+    "submitBudget": "Submit to Lead Controller",
+    "submittedTo": "Submitted: {{roles}}.",
+    "roles": {
+      "lead_controller": "Lead Controller",
+      "head_of_operation": "Head of Operation",
+      "director": "Director"
+    }
   },
   "tender": {
     "title": "Tender",

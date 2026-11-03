@@ -2,10 +2,20 @@
 locking come in phase 03; here a Draft project is created from a won opportunity."""
 
 import uuid
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal
 
-from sqlalchemy import Date, ForeignKey, Integer, Numeric, String, UniqueConstraint, text
+from sqlalchemy import (
+    Boolean,
+    Date,
+    DateTime,
+    ForeignKey,
+    Integer,
+    Numeric,
+    String,
+    UniqueConstraint,
+    text,
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -44,13 +54,40 @@ class Project(EntityMixin, Base):
     manager_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="RESTRICT"), index=True
     )
+    # Budget approval (DOA project_budget)
+    budget_request_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("approval_requests.id", ondelete="RESTRICT")
+    )
+    budget_comment: Mapped[str | None] = mapped_column(String(1000))
+    locked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class ProjectWbs(Base):
+    """Work breakdown: default EXEC (Execution); MOB, DEMOB and per well (WELL-01 ...)."""
+
+    __tablename__ = "project_wbs"
+    __table_args__ = (UniqueConstraint("project_id", "code"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")
+    )
+    project_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("projects.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    code: Mapped[str] = mapped_column(String(20), nullable=False)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    seq: Mapped[int] = mapped_column(Integer, nullable=False)
 
 
 class ProjectBudgetLine(Base):
-    """Budget per cost element, version 0 = the draft from the quotation."""
+    """Current budget: cost element x WBS. Editable only while the project is Draft; after
+    lock it changes only through a BCR (phase 03c). `version` = budget version it belongs to."""
 
     __tablename__ = "project_budget_lines"
-    __table_args__ = (UniqueConstraint("project_id", "version", "cost_element_code"),)
+    __table_args__ = (UniqueConstraint("project_id", "version", "wbs_id", "cost_element_code"),)
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")
@@ -62,8 +99,57 @@ class ProjectBudgetLine(Base):
         index=True,
     )
     version: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+    wbs_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("project_wbs.id", ondelete="RESTRICT"), nullable=False
+    )
     cost_element_code: Mapped[str] = mapped_column(
         String(20), ForeignKey("cost_elements.code", ondelete="RESTRICT"), nullable=False
     )
     amount: Mapped[Decimal] = mapped_column(Numeric(18, 0), nullable=False)
-    source: Mapped[str] = mapped_column(String(20), nullable=False)  # quotation | contingency
+    source: Mapped[str] = mapped_column(
+        String(20), nullable=False
+    )  # quotation | contingency | manual
+    # Contingency: a locked reserve, released only through a BCR, never posted directly.
+    locked_reserve: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
+
+
+class BudgetVersion(EntityMixin, Base):
+    """Approved budget snapshot. v0 = baseline at lock; v1, v2 ... from BCRs. Immutable
+    (database trigger rejects UPDATE; DELETE only for demo data)."""
+
+    __tablename__ = "budget_versions"
+    __table_args__ = (UniqueConstraint("project_id", "version"),)
+
+    project_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("projects.id", ondelete="RESTRICT"), nullable=False
+    )
+    version: Mapped[int] = mapped_column(Integer, nullable=False)
+    kind: Mapped[str] = mapped_column(String(20), nullable=False)  # baseline | bcr
+    revenue: Mapped[Decimal] = mapped_column(Numeric(18, 0), nullable=False)
+    total_cost: Mapped[Decimal] = mapped_column(Numeric(18, 0), nullable=False)
+    margin_pct: Mapped[Decimal] = mapped_column(Numeric(7, 2), nullable=False)
+    request_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("approval_requests.id", ondelete="RESTRICT")
+    )
+    approved_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class BudgetVersionLine(Base):
+    __tablename__ = "budget_version_lines"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")
+    )
+    version_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("budget_versions.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    wbs_code: Mapped[str] = mapped_column(String(20), nullable=False)
+    wbs_name: Mapped[str] = mapped_column(String(120), nullable=False)
+    cost_element_code: Mapped[str] = mapped_column(String(20), nullable=False)
+    amount: Mapped[Decimal] = mapped_column(Numeric(18, 0), nullable=False)
+    locked_reserve: Mapped[bool] = mapped_column(Boolean, nullable=False)

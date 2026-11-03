@@ -1,5 +1,5 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { api } from '@/lib/api';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { api, postJson } from '@/lib/api';
 
 export type ProjectStatus =
   'draft' | 'controller_review' | 'awaiting_approval' | 'locked' | 'closed';
@@ -26,8 +26,32 @@ export interface ProjectRow {
   end_date: string | null;
 }
 
+export interface BudgetCell {
+  wbs_code: string;
+  cost_element_code: string;
+  amount: string;
+  locked_reserve?: boolean;
+}
+
 export interface ProjectDetail extends ProjectRow {
   contingency_pct: string;
+  status_label: string;
+  total_cost: string;
+  margin_pct: string;
+  min_margin_pct: string;
+  margin_warning: boolean;
+  manager_id: string | null;
+  manager_name: string | null;
+  budget_request_id: string | null;
+  budget_comment: string | null;
+  locked_at: string | null;
+  baseline: { version: number; total_cost: string; margin_pct: string; approved_at: string } | null;
+  can_edit_budget: boolean;
+  can_submit_budget: boolean;
+  can_assign: boolean;
+  wbs: { id: string; code: string; name: string }[];
+  cells: BudgetCell[];
+  cost_elements: { code: string; name: string }[];
   budget: {
     cost_element_code: string;
     cost_element_name: string;
@@ -60,5 +84,49 @@ export function useProject(id: string) {
   return useQuery({
     queryKey: ['projects', 'detail', id],
     queryFn: () => api<ProjectDetail>(`/projects/${id}`),
+  });
+}
+
+function useProjectMutation<V, R = ProjectDetail>(fn: (v: V) => Promise<R>) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: fn,
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['projects'] }),
+  });
+}
+
+export const useSaveBudget = (id: string) =>
+  useProjectMutation((cells: BudgetCell[]) =>
+    api<ProjectDetail>(`/projects/${id}/budget`, {
+      method: 'PUT',
+      body: JSON.stringify({ cells }),
+    }),
+  );
+export const useAddWbs = (id: string) =>
+  useProjectMutation((body: { code: string; name: string }) =>
+    postJson<ProjectDetail>(`/projects/${id}/wbs`, body),
+  );
+export const useDeleteWbs = (id: string) =>
+  useProjectMutation((wid: string) =>
+    api<ProjectDetail>(`/projects/${id}/wbs/${wid}`, { method: 'DELETE' }),
+  );
+export const useSubmitBudget = (id: string) =>
+  useProjectMutation(() =>
+    postJson<ProjectDetail & { approvers: string[] }>(`/projects/${id}/submit-budget`),
+  );
+export const useSetManager = (id: string) =>
+  useProjectMutation((manager_id: string | null) =>
+    api<ProjectDetail>(`/projects/${id}/manager`, {
+      method: 'PUT',
+      body: JSON.stringify({ manager_id }),
+    }),
+  );
+
+export function usePlanners(enabled: boolean) {
+  return useQuery({
+    queryKey: ['projects', 'planners'],
+    queryFn: () => api<{ id: string; full_name: string }[]>('/projects/planners'),
+    enabled,
+    staleTime: 60_000,
   });
 }

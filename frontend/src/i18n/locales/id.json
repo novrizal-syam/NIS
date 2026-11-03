@@ -1106,7 +1106,31 @@
     "source": "Sumber",
     "amount": "Jumlah",
     "ofRevenue": "% pendapatan",
-    "total": "Total anggaran"
+    "total": "Total anggaran",
+    "stepper": "Tahapan anggaran",
+    "editorHelp": "Isi anggaran per elemen biaya dan WBS (rupiah bulat). Kontinjensi adalah cadangan terkunci. Total dan margin dihitung server saat disimpan.",
+    "readOnlyBudget": "Hanya baca. Setelah terkunci, anggaran berubah lewat BCR.",
+    "removeWbs": "Hapus WBS",
+    "lockedReserve": "Cadangan terkunci",
+    "addElement": "Tambah elemen biaya",
+    "addRow": "Tambah baris",
+    "wbsCode": "Kode WBS",
+    "wbsName": "Nama WBS",
+    "wbsHint": "Mobilisasi, Demobilisasi, Sumur 1 …",
+    "addWbs": "Tambah WBS",
+    "saveFirst": "Simpan perubahan dahulu",
+    "planner": "Planner",
+    "marginBelow": "Margin rencana {{value}}% di bawah {{min}}%: Lead Controller tidak dapat menyetujui.",
+    "returnedNote": "Dikembalikan dengan catatan",
+    "baselineInfo": "Baseline v0: {{total}}, disetujui {{at}}.",
+    "assignPlanner": "Planner (Lead Engineer)",
+    "submitBudget": "Ajukan ke Lead Controller",
+    "submittedTo": "Diajukan: {{roles}}.",
+    "roles": {
+      "lead_controller": "Lead Controller",
+      "head_of_operation": "Head of Operation",
+      "director": "Direktur"
+    }
   },
   "tender": {
     "title": "Tender",
