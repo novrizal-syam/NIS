@@ -40,6 +40,15 @@ export function usePageMeta(): PageMeta {
       description: t('pages.opportunityDetail.description'),
     };
   }
+  if (pathname === '/penawaran') {
+    return { title: t('pages.quotations.title'), description: t('pages.quotations.description') };
+  }
+  if (matchPath('/penawaran/:id', pathname)) {
+    return {
+      title: t('pages.quotationDetail.title'),
+      description: t('pages.quotationDetail.description'),
+    };
+  }
   if (pathname === '/persetujuan') {
     return { title: t('pages.approvals.title'), description: t('pages.approvals.description') };
   }

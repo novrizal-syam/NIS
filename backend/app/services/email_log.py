@@ -38,9 +38,17 @@ class EmailLog(Base):
     )
 
 
-async def deliver(kind: str, to: str, message: Rendered, user_id: uuid.UUID | None) -> email.Result:
+async def deliver(
+    kind: str,
+    to: str,
+    message: Rendered,
+    user_id: uuid.UUID | None,
+    attachments: tuple[email.Attachment, ...] = (),
+) -> email.Result:
     """Send and record the outcome. Meant for BackgroundTasks (runs after the response)."""
-    result = await email.send_email(to, message.subject, message.html, message.text)
+    result = await email.send_email(
+        to, message.subject, message.html, message.text, attachments=attachments
+    )
     async with session_scope() as session:
         session.add(
             EmailLog(to=to, kind=kind, status=result.status, error=result.error, user_id=user_id)

@@ -162,6 +162,30 @@ export async function mockSignedIn(page: Page) {
           summary: Object.fromEntries(stages.map((s) => [s, { count: 1, value: '6800000000' }])),
         });
       }
+      case 'GET /api/quotations':
+        return json({
+          items: (['draft', 'submitted', 'approved', 'sent'] as const).map((status, i) => ({
+            id: `q${i}`,
+            number: `QT-26-00${i + 1}`,
+            revision: i % 2,
+            label: `QT-26-00${i + 1} Rev.${i % 2}`,
+            status,
+            opportunity_id: 'o1',
+            opportunity_number: 'OPP-26-001',
+            opportunity_title: 'Well clean-up 4 sumur Rokan',
+            company_name: 'PT Energi Rokan Hulu',
+            owner_name: 'Rina Wijaya',
+            total_price: '147500000',
+            margin_pct: i === 1 ? '12.50' : '32.54',
+            margin_warning: i === 1,
+            valid_until: '2026-12-31',
+            submitted_at: null,
+            sent_at: null,
+            created_at: '2026-11-01T02:00:00Z',
+          })),
+          total: 4,
+          counts: { draft: 1, submitted: 1, approved: 1, rejected: 0, sent: 1, superseded: 0 },
+        });
       default:
         return json({ code: 'NOT_FOUND', message: 'Tidak ada mock.' }, 404);
     }

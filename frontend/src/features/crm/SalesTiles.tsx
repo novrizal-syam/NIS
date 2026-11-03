@@ -35,7 +35,9 @@ export function SalesTiles() {
         <Card>
           <CardHeader>
             <CardDescription>{t('crm.dash.open')}</CardDescription>
-            <CardTitle className="text-section-title tabular-nums">{formatIDR(d.open_pipeline)}</CardTitle>
+            <CardTitle className="text-section-title tabular-nums">
+              {formatIDR(d.open_pipeline)}
+            </CardTitle>
           </CardHeader>
           <CardContent className="text-small text-fg-secondary">
             <Link to="/peluang" className="underline">
@@ -46,7 +48,9 @@ export function SalesTiles() {
         <Card>
           <CardHeader>
             <CardDescription>{t('crm.dash.weighted')}</CardDescription>
-            <CardTitle className="text-section-title tabular-nums">{formatIDR(d.weighted_pipeline)}</CardTitle>
+            <CardTitle className="text-section-title tabular-nums">
+              {formatIDR(d.weighted_pipeline)}
+            </CardTitle>
           </CardHeader>
           <CardContent className="text-small text-fg-secondary">
             {t('crm.dash.weightedHelp')}
@@ -55,7 +59,9 @@ export function SalesTiles() {
         <Card>
           <CardHeader>
             <CardDescription>{t('crm.dash.winRate')}</CardDescription>
-            <CardTitle className="text-section-title tabular-nums">{d.win_rate ? pct(d.win_rate) : '–'}</CardTitle>
+            <CardTitle className="text-section-title tabular-nums">
+              {d.win_rate ? pct(d.win_rate) : '–'}
+            </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-wrap items-center gap-2 text-small text-fg-secondary">
             {d.win_rate !== null && (
@@ -69,7 +75,9 @@ export function SalesTiles() {
         <Card>
           <CardHeader>
             <CardDescription>{t('crm.dash.newContracts')}</CardDescription>
-            <CardTitle className="text-section-title tabular-nums">{formatIDR(d.new_contract_value)}</CardTitle>
+            <CardTitle className="text-section-title tabular-nums">
+              {formatIDR(d.new_contract_value)}
+            </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-1 text-small text-fg-secondary">
             <div

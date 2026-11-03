@@ -157,6 +157,14 @@
     "opportunityDetail": {
       "title": "Opportunity",
       "description": "Value, stage, bid/no-bid decision and history."
+    },
+    "quotations": {
+      "title": "Quotations",
+      "description": "Price quotations per opportunity: revisions, margin approval and sending to the client."
+    },
+    "quotationDetail": {
+      "title": "Quotation",
+      "description": "Lines from the price database, discount, margin, revisions and the client letter."
     }
   },
   "dashboard": {
@@ -911,5 +919,85 @@
     "bidHistory": "Bid/no-bid history",
     "directorComment": "Director's note",
     "openApproval": "Open approval document"
+  },
+  "quotation": {
+    "status": {
+      "draft": "Draft",
+      "submitted": "Waiting for approval",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "sent": "Sent",
+      "superseded": "Superseded"
+    },
+    "next": {
+      "draft": "Complete the lines, save, then submit. Margin ≥ 25% goes to the Head of Sales, below that to the Director.",
+      "submitted": "Waiting for the approval decision.",
+      "approved": "Ready to send to the client with an official letter number.",
+      "rejected": "Rejected. Create a revision to fix it.",
+      "sent": "Sent to the client. Create a revision if the client asks for changes.",
+      "superseded": "Older revision (history, read-only)."
+    },
+    "approver": {
+      "head_of_sales": "Head of Sales",
+      "director": "Director"
+    },
+    "emailStatus": {
+      "queued": "The email is being sent.",
+      "not_configured": "Email is not configured; send the PDF manually.",
+      "skipped": ""
+    },
+    "title": "Quotation",
+    "search": "Search number, opportunity, client",
+    "empty": "No quotations match the filters.",
+    "fromOppHint": "Quotations are created from the opportunity page at the Quotation stage.",
+    "total": "Total",
+    "subtotal": "Subtotal",
+    "discount": "Discount {{pct}}%",
+    "cost": "Cost",
+    "margin": "Margin",
+    "marginLow": "{{value}} (low)",
+    "lowMargin": "Margin below the warning level",
+    "lowMarginBanner": "Margin {{value}}% is below {{threshold}}%. Check prices and discount before submitting; Director approval is required.",
+    "validUntil": "Valid until",
+    "approverNote": "Approver's note",
+    "revisionReason": "Revision reason",
+    "lines": "Quotation lines",
+    "linesHelp": "Add lines from the price database; quantity, cost and price can be edited. Totals and margin are computed by the server on save.",
+    "readOnly": "Read-only. Create a revision to change it.",
+    "description": "Description",
+    "qty": "Qty",
+    "unit": "Unit",
+    "unitCost": "Unit cost",
+    "unitPrice": "Unit price",
+    "amount": "Amount",
+    "noLines": "No lines yet.",
+    "removeLine": "Remove line",
+    "addFromPrice": "Add from price database",
+    "choosePrice": "Choose a price item",
+    "freeLine": "Free line",
+    "discountPct": "Discount",
+    "terms": "Terms and conditions",
+    "notes": "Notes for the client",
+    "saveRecalc": "Save & recalculate",
+    "unsaved": "Unsaved changes; the totals above are not updated yet.",
+    "actions": "Actions",
+    "submit": "Submit for approval",
+    "submittedTo": "Submitted to {{role}}.",
+    "sendToClient": "Send to client",
+    "preview": "Preview PDF",
+    "openLetter": "Open letter PDF",
+    "revise": "Create revision",
+    "reviseHelp": "The new revision copies the lines of this one. The old revision is kept as history.",
+    "createRevision": "Create revision",
+    "sentInfo": "Letter {{number}} dated {{date}}",
+    "sendHelp": "Issues letter number 001/GEK-SLS/…, stores the PDF in documents and moves the opportunity to Submitted.",
+    "alsoEmail": "Also email the client contact (PDF attached)",
+    "emailNotConfigured": "Email is not configured: the letter is still issued, send the PDF manually.",
+    "emailMessage": "Email message",
+    "confirmSend": "Issue letter & send",
+    "sentDone": "Letter {{number}} issued and stored.",
+    "revisions": "Revisions",
+    "startHelp": "The opportunity is at the Quotation stage. Create a quotation from the price database.",
+    "create": "Create quotation"
   }
 }

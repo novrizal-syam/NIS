@@ -22,9 +22,10 @@ from app.auth import service as auth_service
 from app.auth.models import RefreshToken, User, UserRole
 from app.core.db import SessionLocal
 from app.core.errors import ConflictError
-from app.crm.models import BidDecision, Lead, Opportunity
+from app.crm.models import BidDecision, Lead, Opportunity, Quotation
 from app.crm.service import QUALIFICATION
 from app.demo import data as d
+from app.letters.models import OutgoingLetter
 from app.master.models import (
     Asset,
     Client,
@@ -74,7 +75,16 @@ async def demo_exists(session: AsyncSession) -> bool:
 
 async def demo_counts(session: AsyncSession) -> dict[str, int]:
     out: dict[str, int] = {}
-    for model in (Lead, Opportunity, BidDecision, *DEMO_TABLES, User, Department):
+    for model in (
+        Lead,
+        Opportunity,
+        BidDecision,
+        Quotation,
+        OutgoingLetter,
+        *DEMO_TABLES,
+        User,
+        Department,
+    ):
         n = await session.execute(select(func.count()).where(model.is_demo.is_(True)))
         out[model.__tablename__] = int(n.scalar_one())
     return out
@@ -365,7 +375,13 @@ async def remove(session: AsyncSession, *, actor_id: uuid.UUID | None) -> Summar
     try:
         async with session.begin_nested():
             # Sales records first: bid decisions reference approval requests.
-            crm_tables: tuple[Any, ...] = (BidDecision, Opportunity, Lead)
+            crm_tables: tuple[Any, ...] = (
+                Quotation,
+                OutgoingLetter,
+                BidDecision,
+                Opportunity,
+                Lead,
+            )
             for crm_model in crm_tables:
                 res = await session.execute(delete(crm_model).where(crm_model.is_demo.is_(True)))
                 s.add(crm_model.__tablename__, res.rowcount or 0)  # type: ignore[attr-defined]

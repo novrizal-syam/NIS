@@ -112,3 +112,33 @@ def notification(name: str, title: str, body: str, path: str | None) -> Rendered
         "Notifikasi otomatis; atur preferensi di aplikasi.",
     )
     return Rendered(title, html, f"{body}\n\nBuka: {link}\n\n{FOOTER}")
+
+
+def quotation_to_client(
+    *,
+    contact: str | None,
+    company: str,
+    sender_company: str,
+    subject: str,
+    letter: str,
+    message: str | None,
+    signer: str,
+) -> Rendered:
+    """To the client (not an ERP user): plain letter, no app links; the PDF is attached."""
+    greeting = f"Yth. {contact}," if contact else f"Yth. Bapak/Ibu di {company},"
+    body = (
+        message.strip()
+        if message and message.strip()
+        else "Bersama email ini kami lampirkan surat penawaran harga kami. "
+        "Kami siap menjelaskan bila ada pertanyaan."
+    )
+    paragraphs = [greeting, body, f"Nomor surat: {letter}", "Hormat kami,", signer, sender_company]
+    html_body = "".join(
+        f'<p style="margin:0 0 12px;font-size:14px;line-height:22px">{escape(p)}</p>'
+        for p in paragraphs
+    )
+    page = f"""<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><title>{escape(subject)}</title></head>
+<body style="margin:0;padding:24px;font-family:Arial,sans-serif;color:{BODY};background:#FFFFFF">
+{html_body}</body></html>"""
+    return Rendered(subject, page, "\n\n".join(paragraphs))

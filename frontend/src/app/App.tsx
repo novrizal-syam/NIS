@@ -16,6 +16,8 @@ import { LeadsPage } from '@/features/crm/LeadsPage';
 import { OpportunitiesPage } from '@/features/crm/OpportunitiesPage';
 import { OpportunityDetailPage } from '@/features/crm/OpportunityDetailPage';
 import { DashboardPage } from '@/features/home/DashboardPage';
+import { QuotationPage } from '@/features/quotations/QuotationPage';
+import { QuotationsPage } from '@/features/quotations/QuotationsPage';
 import { NotFoundPage } from '@/features/home/NotFoundPage';
 import { MasterIndexPage } from '@/features/master/MasterIndexPage';
 import { MasterListPage } from '@/features/master/MasterListPage';
@@ -91,6 +93,8 @@ export function AppRoutes() {
           <Route path="lead" element={<LeadsPage />} />
           <Route path="peluang" element={<OpportunitiesPage />} />
           <Route path="peluang/:id" element={<OpportunityDetailPage />} />
+          <Route path="penawaran" element={<QuotationsPage />} />
+          <Route path="penawaran/:id" element={<QuotationPage />} />
           <Route path="pengaturan" element={<SettingsPage />} />
           <Route path="pengguna" element={<UsersPage />} />
           <Route path="pengaturan/peran" element={<RolesPage />} />

@@ -3,6 +3,7 @@ returns sent / failed / not_configured so callers can log it and carry on. Crede
 only from the environment."""
 
 import asyncio
+import base64
 import smtplib
 import ssl
 from dataclasses import dataclass
@@ -16,6 +17,13 @@ from app.core.config import get_settings
 
 Status = Literal["sent", "failed", "not_configured"]
 RESEND_URL = "https://api.resend.com/emails"
+
+
+@dataclass(frozen=True)
+class Attachment:
+    filename: str
+    data: bytes
+    content_type: str = "application/pdf"
 
 
 @dataclass(frozen=True)
@@ -40,7 +48,13 @@ def _sender() -> str:
     return formataddr((s.email_from_name, s.email_from))
 
 
-def build_message(to: str, subject: str, html: str, text: str) -> EmailMessage:
+def build_message(
+    to: str,
+    subject: str,
+    html: str,
+    text: str,
+    attachments: tuple[Attachment, ...] = (),
+) -> EmailMessage:
     msg = EmailMessage()
     msg["From"] = _sender()
     msg["To"] = to
@@ -50,6 +64,9 @@ def build_message(to: str, subject: str, html: str, text: str) -> EmailMessage:
     )
     msg.set_content(text)
     msg.add_alternative(html, subtype="html")
+    for a in attachments:
+        maintype, subtype = a.content_type.split("/", 1)
+        msg.add_attachment(a.data, maintype=maintype, subtype=subtype, filename=a.filename)
     return msg
 
 
@@ -69,26 +86,47 @@ def _smtp_send(msg: EmailMessage) -> None:
         smtp.send_message(msg)
 
 
-async def _resend_send(to: str, subject: str, html: str, text: str) -> None:
+async def _resend_send(
+    to: str, subject: str, html: str, text: str, attachments: tuple[Attachment, ...] = ()
+) -> None:
+    payload: dict[str, object] = {
+        "from": _sender(),
+        "to": [to],
+        "subject": subject,
+        "html": html,
+        "text": text,
+    }
+    if attachments:
+        payload["attachments"] = [
+            {"filename": a.filename, "content": base64.b64encode(a.data).decode()}
+            for a in attachments
+        ]
     async with httpx.AsyncClient(timeout=15) as client:
         res = await client.post(
             RESEND_URL,
             headers={"Authorization": f"Bearer {get_settings().resend_api_key}"},
-            json={"from": _sender(), "to": [to], "subject": subject, "html": html, "text": text},
+            json=payload,
         )
     if res.status_code >= 300:
         raise RuntimeError(f"Resend {res.status_code}: {res.text[:200]}")
 
 
-async def send_email(to: str, subject: str, html: str, text: str) -> Result:
+async def send_email(
+    to: str,
+    subject: str,
+    html: str,
+    text: str,
+    *,
+    attachments: tuple[Attachment, ...] = (),
+) -> Result:
     p = provider()
     if p is None:
         return Result("not_configured")
     try:
         if p == "smtp":
-            await asyncio.to_thread(_smtp_send, build_message(to, subject, html, text))
+            await asyncio.to_thread(_smtp_send, build_message(to, subject, html, text, attachments))
         else:
-            await _resend_send(to, subject, html, text)
+            await _resend_send(to, subject, html, text, attachments)
     except Exception as exc:  # network, auth, provider errors: logged, never raised
         return Result("failed", f"{type(exc).__name__}: {exc}"[:500])
     return Result("sent")

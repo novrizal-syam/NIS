@@ -15,6 +15,7 @@ from sqlalchemy import (
     Numeric,
     String,
     Text,
+    UniqueConstraint,
     text,
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
@@ -118,3 +119,75 @@ class BidDecision(EntityMixin, Base):
     )
     decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     decision_comment: Mapped[str | None] = mapped_column(String(1000))
+
+
+class Quotation(EntityMixin, Base):
+    """One revision of a quotation. Revisions share `number` (QT-26-001) and count up from 0;
+    only the latest revision can change, older ones are the history.
+
+    Draft -> Submitted -> Approved | Rejected; Approved -> Sent ("Kirim ke klien").
+    A new revision (from Approved, Rejected or Sent) marks the previous one Superseded.
+    Totals and margin are computed in the backend (services: crm.quotation_service)."""
+
+    __tablename__ = "crm_quotations"
+    __table_args__ = (UniqueConstraint("number", "revision"),)
+
+    number: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
+    revision: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+    opportunity_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("crm_opportunities.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    owner_id: Mapped[uuid.UUID] = _user_fk()
+    status: Mapped[str] = mapped_column(String(20), nullable=False, server_default="draft")
+    discount_pct: Mapped[Decimal] = mapped_column(Numeric(5, 2), nullable=False, server_default="0")
+    subtotal: Mapped[Decimal] = mapped_column(Numeric(18, 0), nullable=False, server_default="0")
+    discount_amount: Mapped[Decimal] = mapped_column(
+        Numeric(18, 0), nullable=False, server_default="0"
+    )
+    total_price: Mapped[Decimal] = mapped_column(Numeric(18, 0), nullable=False, server_default="0")
+    total_cost: Mapped[Decimal] = mapped_column(Numeric(18, 0), nullable=False, server_default="0")
+    margin: Mapped[Decimal] = mapped_column(Numeric(18, 0), nullable=False, server_default="0")
+    margin_pct: Mapped[Decimal] = mapped_column(Numeric(7, 2), nullable=False, server_default="0")
+    valid_until: Mapped[date | None] = mapped_column(Date)
+    notes: Mapped[str | None] = mapped_column(Text)
+    terms: Mapped[str | None] = mapped_column(Text)
+    revision_reason: Mapped[str | None] = mapped_column(String(500))
+    request_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("approval_requests.id", ondelete="RESTRICT")
+    )
+    submitted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    decision_comment: Mapped[str | None] = mapped_column(String(1000))
+    sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    letter_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("outgoing_letters.id", ondelete="RESTRICT")
+    )
+    sent_to_email: Mapped[str | None] = mapped_column(String(254))
+
+
+class QuotationLine(Base):
+    __tablename__ = "crm_quotation_lines"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")
+    )
+    quotation_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("crm_quotations.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    seq: Mapped[int] = mapped_column(Integer, nullable=False)
+    price_item_code: Mapped[str | None] = mapped_column(
+        String(30), ForeignKey("price_items.code", ondelete="RESTRICT")
+    )
+    description: Mapped[str] = mapped_column(String(300), nullable=False)
+    unit: Mapped[str] = mapped_column(String(20), nullable=False)
+    qty: Mapped[Decimal] = mapped_column(Numeric(18, 2), nullable=False)
+    unit_cost: Mapped[Decimal] = mapped_column(Numeric(18, 0), nullable=False)
+    unit_price: Mapped[Decimal] = mapped_column(Numeric(18, 0), nullable=False)
+    line_cost: Mapped[Decimal] = mapped_column(Numeric(18, 0), nullable=False)
+    line_price: Mapped[Decimal] = mapped_column(Numeric(18, 0), nullable=False)

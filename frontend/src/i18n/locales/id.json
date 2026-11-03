@@ -157,6 +157,14 @@
     "opportunityDetail": {
       "title": "Detail peluang",
       "description": "Nilai, tahap, keputusan bid/no-bid dan riwayat."
+    },
+    "quotations": {
+      "title": "Penawaran",
+      "description": "Penawaran harga per peluang: revisi, persetujuan margin, dan pengiriman ke klien."
+    },
+    "quotationDetail": {
+      "title": "Penawaran",
+      "description": "Baris dari database harga, diskon, margin, revisi dan surat ke klien."
     }
   },
   "dashboard": {
@@ -911,5 +919,85 @@
     "bidHistory": "Riwayat bid/no-bid",
     "directorComment": "Catatan Direktur",
     "openApproval": "Buka dokumen persetujuan"
+  },
+  "quotation": {
+    "status": {
+      "draft": "Draf",
+      "submitted": "Menunggu persetujuan",
+      "approved": "Disetujui",
+      "rejected": "Ditolak",
+      "sent": "Terkirim",
+      "superseded": "Digantikan revisi"
+    },
+    "next": {
+      "draft": "Lengkapi baris, simpan, lalu ajukan. Margin ≥ 25% disetujui Head of Sales, di bawah itu Direktur.",
+      "submitted": "Menunggu keputusan persetujuan.",
+      "approved": "Siap dikirim ke klien dengan nomor surat resmi.",
+      "rejected": "Ditolak. Buat revisi untuk memperbaiki.",
+      "sent": "Sudah dikirim ke klien. Buat revisi bila klien minta perubahan.",
+      "superseded": "Revisi lama (riwayat, hanya baca)."
+    },
+    "approver": {
+      "head_of_sales": "Head of Sales",
+      "director": "Direktur"
+    },
+    "emailStatus": {
+      "queued": "Email sedang dikirim.",
+      "not_configured": "Email belum dikonfigurasi; kirim PDF secara manual.",
+      "skipped": ""
+    },
+    "title": "Penawaran",
+    "search": "Cari nomor, peluang, klien",
+    "empty": "Belum ada penawaran yang cocok dengan filter.",
+    "fromOppHint": "Penawaran dibuat dari halaman peluang di tahap Quotation.",
+    "total": "Total",
+    "subtotal": "Subtotal",
+    "discount": "Diskon {{pct}}%",
+    "cost": "Biaya",
+    "margin": "Margin",
+    "marginLow": "{{value}} (rendah)",
+    "lowMargin": "Margin di bawah batas peringatan",
+    "lowMarginBanner": "Margin {{value}}% di bawah {{threshold}}%. Periksa harga dan diskon sebelum diajukan; persetujuan Direktur diperlukan.",
+    "validUntil": "Berlaku sampai",
+    "approverNote": "Catatan penyetuju",
+    "revisionReason": "Alasan revisi",
+    "lines": "Rincian penawaran",
+    "linesHelp": "Tambah baris dari database harga; kuantitas, biaya dan harga dapat diubah. Total dan margin dihitung server saat disimpan.",
+    "readOnly": "Hanya baca. Buat revisi untuk mengubah.",
+    "description": "Uraian",
+    "qty": "Qty",
+    "unit": "Satuan",
+    "unitCost": "Biaya satuan",
+    "unitPrice": "Harga satuan",
+    "amount": "Jumlah",
+    "noLines": "Belum ada baris.",
+    "removeLine": "Hapus baris",
+    "addFromPrice": "Tambah dari database harga",
+    "choosePrice": "Pilih item harga",
+    "freeLine": "Baris bebas",
+    "discountPct": "Diskon",
+    "terms": "Syarat dan ketentuan",
+    "notes": "Catatan untuk klien",
+    "saveRecalc": "Simpan & hitung ulang",
+    "unsaved": "Ada perubahan yang belum disimpan; total di atas belum diperbarui.",
+    "actions": "Tindakan",
+    "submit": "Ajukan persetujuan",
+    "submittedTo": "Diajukan ke {{role}}.",
+    "sendToClient": "Kirim ke klien",
+    "preview": "Pratinjau PDF",
+    "openLetter": "Buka surat PDF",
+    "revise": "Buat revisi",
+    "reviseHelp": "Revisi baru menyalin baris dari revisi ini. Revisi lama disimpan sebagai riwayat.",
+    "createRevision": "Buat revisi",
+    "sentInfo": "Surat {{number}} tanggal {{date}}",
+    "sendHelp": "Membuat nomor surat 001/GEK-SLS/…, menyimpan PDF di dokumen, dan memindahkan peluang ke Submitted.",
+    "alsoEmail": "Kirim juga lewat email ke kontak klien (PDF terlampir)",
+    "emailNotConfigured": "Email belum dikonfigurasi: surat tetap dibuat, kirim PDF secara manual.",
+    "emailMessage": "Pesan email",
+    "confirmSend": "Buat surat & kirim",
+    "sentDone": "Surat {{number}} dibuat dan disimpan.",
+    "revisions": "Revisi",
+    "startHelp": "Peluang sudah di tahap Quotation. Buat penawaran dari database harga.",
+    "create": "Buat penawaran"
   }
 }

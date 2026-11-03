@@ -386,7 +386,7 @@ async def update_opportunity(
     return opp
 
 
-async def _set_stage(
+async def set_stage(
     session: AsyncSession,
     opp: Opportunity,
     to: str,
@@ -433,7 +433,7 @@ async def move_stage(
     reason = (reason or "").strip() or None
     if to == "lost" and (not reason or len(reason) < 5):
         raise AppError("REASON_REQUIRED", "Alasan kalah/batal wajib diisi.", status_code=422)
-    await _set_stage(session, opp, to, actor_id=actor.id, reason=reason)
+    await set_stage(session, opp, to, actor_id=actor.id, reason=reason)
     return opp
 
 
@@ -557,11 +557,11 @@ async def _on_approved(session: AsyncSession, request: ApprovalRequest) -> None:
     )
     if decision.proposal == "bid":
         opp.bid_status = "bid"
-        await _set_stage(session, opp, "quotation", actor_id=decider, note="Bid disetujui")
+        await set_stage(session, opp, "quotation", actor_id=decider, note="Bid disetujui")
     else:
         opp.bid_status = "no_bid"
         reason = f"No-bid disetujui Direktur. {decision.note or comment or ''}".strip()
-        await _set_stage(session, opp, "lost", actor_id=decider, reason=reason[:500])
+        await set_stage(session, opp, "lost", actor_id=decider, reason=reason[:500])
 
 
 async def _on_rejected(session: AsyncSession, request: ApprovalRequest) -> None:
@@ -577,7 +577,7 @@ async def _on_rejected(session: AsyncSession, request: ApprovalRequest) -> None:
     if decision.proposal == "bid":
         opp.bid_status = "no_bid"
         reason = f"Bid ditolak Direktur: {comment or '-'}"
-        await _set_stage(session, opp, "lost", actor_id=decider, reason=reason[:500])
+        await set_stage(session, opp, "lost", actor_id=decider, reason=reason[:500])
     else:
         # The Director does not accept walking away: stays Qualified for a bid proposal.
         opp.bid_status = "none"

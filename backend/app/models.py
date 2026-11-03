@@ -11,8 +11,9 @@ from app.auth.models import (
 )
 from app.auth.password_reset import PasswordReset, PasswordResetRequest
 from app.core.models import Base
-from app.crm.models import BidDecision, Lead, Opportunity
+from app.crm.models import BidDecision, Lead, Opportunity, Quotation, QuotationLine
 from app.dms.models import Attachment
+from app.letters.models import OutgoingLetter
 from app.master.models import (
     Account,
     Asset,
@@ -71,9 +72,12 @@ __all__ = [
     "Lead",
     "Notification",
     "Opportunity",
+    "OutgoingLetter",
     "PasswordReset",
     "PasswordResetRequest",
     "PriceItem",
+    "Quotation",
+    "QuotationLine",
     "RecoveryCode",
     "RefreshToken",
     "Role",
