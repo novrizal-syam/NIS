@@ -1,5 +1,5 @@
 import uuid
-from collections.abc import Awaitable, Callable
+from collections.abc import Awaitable, Callable, Iterator
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from typing import Any
@@ -38,10 +38,21 @@ async def _record_event(
 engine.on_event(_record_event)
 
 
+FAKE_DOC_TYPES = ("purchase_requisition", "capex", "tender_package", "payment_run")
+
+
 @pytest.fixture(autouse=True)
-def _reset() -> None:
+def _reset() -> Iterator[None]:
+    """Fake document hooks for this module only; the real ones (e.g. tender_package from
+    phase 02d) are restored afterwards so other test modules see them."""
     EVENTS.clear()
     HOOKS.clear()
+    saved = dict(engine._hooks)
+    for dt in FAKE_DOC_TYPES:
+        engine.register_document(dt, on_approved=_approved, on_rejected=_rejected)
+    yield
+    engine._hooks.clear()
+    engine._hooks.update(saved)
 
 
 async def _approved(_: AsyncSession, r: ApprovalRequest) -> None:
@@ -50,10 +61,6 @@ async def _approved(_: AsyncSession, r: ApprovalRequest) -> None:
 
 async def _rejected(_: AsyncSession, r: ApprovalRequest) -> None:
     HOOKS.append(("rejected", r.doc_number))
-
-
-for _dt in ("purchase_requisition", "capex", "tender_package", "payment_run"):
-    engine.register_document(_dt, on_approved=_approved, on_rejected=_rejected)
 
 
 async def _submit(

@@ -38,6 +38,7 @@ from app.services.email_log import EmailLog
 from app.services.numbering import DocCounter
 from app.setup.models import SystemSetting
 from app.sod.models import SodException, SodRule
+from app.tender.models import Tender, TenderClarification, TenderDocument
 from app.workflow.models import (
     ApprovalRequest,
     ApprovalStep,
@@ -91,6 +92,9 @@ __all__ = [
     "SodException",
     "SodRule",
     "SystemSetting",
+    "Tender",
+    "TenderClarification",
+    "TenderDocument",
     "User",
     "UserInvite",
     "UserRole",

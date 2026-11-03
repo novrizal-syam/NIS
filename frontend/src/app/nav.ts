@@ -50,7 +50,7 @@ export const NAV: NavGroup[] = [
         ready: true,
         module: 'quotation',
       },
-      soon('tenders', 'gavel', 'tender'),
+      { key: 'tenders', path: '/tender', icon: 'gavel', ready: true, module: 'tender' },
       { key: 'contracts', path: '/kontrak', icon: 'handshake', ready: true, module: 'contract' },
     ],
   },

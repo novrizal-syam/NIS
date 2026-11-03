@@ -35,6 +35,7 @@ from app.reporting.access_review import router as reports_router
 from app.setup import service as setup_service
 from app.setup.router import router as setup_router
 from app.sod.router import router as sod_router
+from app.tender.router import router as tender_router
 from app.workflow.jobs import scheduler_loop
 from app.workflow.router import router as workflow_router
 
@@ -125,6 +126,7 @@ def create_app() -> FastAPI:
     api.include_router(quotation_router)
     api.include_router(contract_router)
     api.include_router(project_router)
+    api.include_router(tender_router)
     app.include_router(api)
     return app
 

@@ -67,6 +67,15 @@ export function usePageMeta(): PageMeta {
       description: t('pages.projectDetail.description'),
     };
   }
+  if (pathname === '/tender') {
+    return { title: t('pages.tenders.title'), description: t('pages.tenders.description') };
+  }
+  if (matchPath('/tender/:id', pathname)) {
+    return {
+      title: t('pages.tenderDetail.title'),
+      description: t('pages.tenderDetail.description'),
+    };
+  }
   if (pathname === '/persetujuan') {
     return { title: t('pages.approvals.title'), description: t('pages.approvals.description') };
   }

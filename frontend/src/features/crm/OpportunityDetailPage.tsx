@@ -12,6 +12,7 @@ import { HistoryPanel } from '@/features/audit/HistoryPanel';
 import { FormError } from '@/features/auth/AuthLayout';
 import { AttachmentsPanel } from '@/features/dms/AttachmentsPanel';
 import { OpportunityQuotationCard } from '@/features/quotations/OpportunityQuotationCard';
+import { OpportunityTenderCard } from '@/features/tenders/OpportunityTenderCard';
 import { ApiError } from '@/lib/api';
 import { formatDate, formatDateTime, formatIDR, formatNumber } from '@/lib/format';
 import {
@@ -125,6 +126,7 @@ export function OpportunityDetailPage() {
       {tab === 'detail' && (
         <div className="grid gap-4 lg:grid-cols-2">
           <div className="flex flex-col gap-4">
+            {o.is_tender && <OpportunityTenderCard opportunityId={o.id} open={open} />}
             <OpportunityQuotationCard opportunityId={o.id} stage={o.stage} canCreate={o.can_edit} />
             {o.can_edit && open && <EditCard o={o} />}
             {o.can_edit && open && <StageCard o={o} />}

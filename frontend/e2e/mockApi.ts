@@ -229,6 +229,28 @@ export async function mockSignedIn(page: Page) {
           total: 1,
           counts: { draft: 1, controller_review: 0, awaiting_approval: 0, locked: 0, closed: 0 },
         });
+      case 'GET /api/tenders':
+        return json({
+          items: (['none', 'pending', 'approved', 'rejected'] as const).map((pkg, i) => ({
+            id: `t${i}`,
+            opportunity_id: 'o1',
+            opportunity_number: `OPP-26-00${i + 1}`,
+            opportunity_title: 'Tender well testing Blok Rokan',
+            opportunity_stage: 'quotation',
+            company_name: 'PT Energi Rokan Hulu',
+            owner_name: 'Rina Wijaya',
+            tender_number: `TND-2026-004${i}`,
+            method: 'open',
+            closing_at: new Date(Date.now() + (i + 1) * 3 * 86_400_000).toISOString(),
+            price: '950000000',
+            package_status: pkg,
+            submitted_at: null,
+            result: i === 3 ? 'lost' : null,
+          })),
+          total: 4,
+        });
+      case 'GET /api/tenders/closing-soon':
+        return json([]);
       default:
         return json({ code: 'NOT_FOUND', message: 'Tidak ada mock.' }, 404);
     }

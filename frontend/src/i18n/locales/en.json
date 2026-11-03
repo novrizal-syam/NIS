@@ -181,6 +181,14 @@
     "projectDetail": {
       "title": "Project",
       "description": "Revenue, budget per cost element and project documents."
+    },
+    "tenders": {
+      "title": "Tenders",
+      "description": "Tenders we bid on: schedule, documents, clarifications, package approval, submission and result."
+    },
+    "tenderDetail": {
+      "title": "Tender",
+      "description": "Tender data, document checklist, clarifications, technical ‖ commercial package approval and result."
     }
   },
   "dashboard": {
@@ -1099,5 +1107,120 @@
     "amount": "Amount",
     "ofRevenue": "% of revenue",
     "total": "Total budget"
+  },
+  "tender": {
+    "title": "Tender",
+    "methods": {
+      "open": "Open tender",
+      "limited": "Limited tender",
+      "selection": "Direct selection",
+      "direct": "Direct appointment"
+    },
+    "package": {
+      "none": "Package not submitted",
+      "pending": "Package awaiting approval",
+      "approved": "Package approved",
+      "rejected": "Package rejected"
+    },
+    "docStatus": {
+      "present": "Present",
+      "missing": "Missing",
+      "na": "N/A",
+      "expired": "Expired"
+    },
+    "results": {
+      "won": "Won",
+      "lost": "Lost",
+      "disqualified": "Disqualified",
+      "cancelled": "Cancelled"
+    },
+    "sections": {
+      "admin": "Administrative",
+      "technical": "Technical",
+      "commercial": "Commercial"
+    },
+    "channels": {
+      "eproc": "e-Procurement",
+      "civd": "CIVD",
+      "hardcopy": "Hard copy",
+      "email": "Email"
+    },
+    "tabs": {
+      "data": "Tender data",
+      "documents": "Documents",
+      "clarifications": "Clarifications",
+      "submission": "Submission & result"
+    },
+    "search": "Search tender number, opportunity, client",
+    "openOnly": "Only without a result",
+    "fromOppHint": "Tender data is created from an opportunity marked as a tender.",
+    "empty": "No tenders yet.",
+    "closing": "Closing",
+    "price": "Bid price",
+    "packageCol": "Package",
+    "resultCol": "Result",
+    "closed": "passed",
+    "daysLeft_one": "{{count}} day left",
+    "daysLeft_other": "{{count}} days left",
+    "noNumber": "(tender number not set)",
+    "mandatoryMissing": "Mandatory documents missing",
+    "number": "Tender number",
+    "method": "Method",
+    "aanwijzing": "Pre-bid meeting (aanwijzing)",
+    "clarificationDeadline": "Clarification deadline",
+    "opening": "Bid opening",
+    "validity": "Bid valid until",
+    "priceLocked": "Locked while the package is processed",
+    "bondRequired": "Bid bond required",
+    "bondAmount": "Bid bond amount",
+    "bondNumber": "Bid bond number",
+    "tkdnRequired": "Minimum TKDN",
+    "tkdnOffered": "Offered TKDN",
+    "checklistHelp": "Status is computed: Present when a file is attached and still valid at closing; expired = missing. Mark N/A when not requested.",
+    "document": "Document",
+    "mandatory": "Mandatory",
+    "na": "N/A",
+    "expiry": "Valid until",
+    "files": "Files",
+    "removeDoc": "Remove document",
+    "section": "Section",
+    "addDoc": "Add document",
+    "filesHelp": "Upload documents for this checklist item (PDF/JPG/PNG).",
+    "noClarifications": "No clarifications yet.",
+    "answer": "Answer",
+    "saveAnswer": "Save answer",
+    "newQuestion": "New clarification question",
+    "question": "Question",
+    "askedAt": "Asked",
+    "reference": "Reference (letter/minutes no.)",
+    "addQuestion": "Add question",
+    "packageTitle": "Tender package approval",
+    "packageHelp": "Technical by the Head of Operation and commercial by the Director, in parallel. Enabled with 0 missing mandatory documents and a price.",
+    "notReady": "Not ready to submit",
+    "submitPackage": "Submit package",
+    "submissionTitle": "Bid submission",
+    "submissionHelp": "Record time, channel and receipt after the package is approved; attach the proof.",
+    "submittedAt": "Submitted at",
+    "channel": "Channel",
+    "receipt": "Receipt number",
+    "saveSubmission": "Save submission",
+    "submittedInfo": "Submitted {{at}}.",
+    "resultTitle": "Tender result",
+    "resultHelp": "Lost, disqualified or cancelled closes the opportunity as Lost. Won: mark the opportunity won to create the contract and project.",
+    "rank": "Rank",
+    "winner": "Winner",
+    "winningPrice": "Winning price",
+    "lessons": "Lessons learned",
+    "saveResult": "Save result",
+    "wonHint": "Continue with \"Mark won\" on the opportunity:",
+    "startHelp": "This opportunity is a tender. Create the tender data for schedule, documents and package approval.",
+    "openTender": "Open tender data",
+    "create": "Create tender data",
+    "closingSoonTitle": "Tenders closing ≤ 7 days",
+    "closingSoonHelp": "Open tenders closing within 7 days.",
+    "noneClosing": "No tenders close within 7 days.",
+    "missingDocs_one": "{{count}} document missing",
+    "missingDocs_other": "{{count}} documents missing",
+    "docsComplete": "Documents complete"
   }
 }

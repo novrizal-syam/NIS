@@ -52,6 +52,9 @@ for (const theme of THEMES) {
       await page.goto('/penawaran');
       await expect(page.getByText('QT-26-002 Rev.1')).toBeVisible();
       expect(await contrastViolations(page)).toEqual([]);
+      await page.goto('/tender');
+      await expect(page.getByText('TND-2026-0043')).toBeVisible();
+      expect(await contrastViolations(page)).toEqual([]);
       await page.goto('/kontrak');
       await expect(page.getByText('CTR-26-002')).toBeVisible();
       expect(await contrastViolations(page)).toEqual([]);

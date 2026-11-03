@@ -181,6 +181,14 @@
     "projectDetail": {
       "title": "Proyek",
       "description": "Pendapatan, anggaran per elemen biaya dan dokumen proyek."
+    },
+    "tenders": {
+      "title": "Tender",
+      "description": "Tender yang diikuti: jadwal, dokumen, klarifikasi, persetujuan paket, pemasukan dan hasil."
+    },
+    "tenderDetail": {
+      "title": "Tender",
+      "description": "Data tender, checklist dokumen, klarifikasi, persetujuan paket teknis ‖ komersial dan hasil."
     }
   },
   "dashboard": {
@@ -1099,5 +1107,120 @@
     "amount": "Jumlah",
     "ofRevenue": "% pendapatan",
     "total": "Total anggaran"
+  },
+  "tender": {
+    "title": "Tender",
+    "methods": {
+      "open": "Pelelangan umum",
+      "limited": "Pelelangan terbatas",
+      "selection": "Pemilihan langsung",
+      "direct": "Penunjukan langsung"
+    },
+    "package": {
+      "none": "Paket belum diajukan",
+      "pending": "Paket menunggu persetujuan",
+      "approved": "Paket disetujui",
+      "rejected": "Paket ditolak"
+    },
+    "docStatus": {
+      "present": "Ada",
+      "missing": "Belum ada",
+      "na": "N/A",
+      "expired": "Kedaluwarsa"
+    },
+    "results": {
+      "won": "Menang",
+      "lost": "Kalah",
+      "disqualified": "Gugur",
+      "cancelled": "Dibatalkan"
+    },
+    "sections": {
+      "admin": "Administrasi",
+      "technical": "Teknis",
+      "commercial": "Komersial"
+    },
+    "channels": {
+      "eproc": "e-Procurement",
+      "civd": "CIVD",
+      "hardcopy": "Dokumen fisik",
+      "email": "Email"
+    },
+    "tabs": {
+      "data": "Data tender",
+      "documents": "Dokumen",
+      "clarifications": "Klarifikasi",
+      "submission": "Pengajuan & hasil"
+    },
+    "search": "Cari nomor tender, peluang, klien",
+    "openOnly": "Hanya yang belum ada hasil",
+    "fromOppHint": "Data tender dibuat dari halaman peluang yang ditandai sebagai tender.",
+    "empty": "Belum ada tender.",
+    "closing": "Penutupan",
+    "price": "Harga penawaran",
+    "packageCol": "Paket",
+    "resultCol": "Hasil",
+    "closed": "sudah lewat",
+    "daysLeft_one": "{{count}} hari lagi",
+    "daysLeft_other": "{{count}} hari lagi",
+    "noNumber": "(nomor tender belum diisi)",
+    "mandatoryMissing": "Dokumen wajib belum ada",
+    "number": "Nomor tender",
+    "method": "Metode",
+    "aanwijzing": "Aanwijzing",
+    "clarificationDeadline": "Batas klarifikasi",
+    "opening": "Pembukaan penawaran",
+    "validity": "Masa berlaku penawaran s.d.",
+    "priceLocked": "Terkunci selama paket diproses",
+    "bondRequired": "Wajib jaminan penawaran",
+    "bondAmount": "Nilai jaminan penawaran",
+    "bondNumber": "No. jaminan penawaran",
+    "tkdnRequired": "TKDN minimum",
+    "tkdnOffered": "TKDN ditawarkan",
+    "checklistHelp": "Status dihitung: Ada bila file terlampir dan masih berlaku saat penutupan; kedaluwarsa = belum ada. Tandai N/A bila tidak diminta.",
+    "document": "Dokumen",
+    "mandatory": "Wajib",
+    "na": "N/A",
+    "expiry": "Berlaku s.d.",
+    "files": "File",
+    "removeDoc": "Hapus dokumen",
+    "section": "Bagian",
+    "addDoc": "Tambah dokumen",
+    "filesHelp": "Unggah dokumen untuk checklist ini (PDF/JPG/PNG).",
+    "noClarifications": "Belum ada klarifikasi.",
+    "answer": "Jawaban",
+    "saveAnswer": "Simpan jawaban",
+    "newQuestion": "Pertanyaan klarifikasi baru",
+    "question": "Pertanyaan",
+    "askedAt": "Diajukan",
+    "reference": "Referensi (no. surat/berita acara)",
+    "addQuestion": "Tambah pertanyaan",
+    "packageTitle": "Persetujuan paket tender",
+    "packageHelp": "Teknis oleh Head of Operation dan komersial oleh Direktur, paralel. Tombol aktif bila 0 dokumen wajib kurang dan harga terisi.",
+    "notReady": "Belum siap diajukan",
+    "submitPackage": "Ajukan paket",
+    "submissionTitle": "Pemasukan dokumen",
+    "submissionHelp": "Catat waktu, saluran dan tanda terima setelah paket disetujui; lampirkan bukti.",
+    "submittedAt": "Waktu pemasukan",
+    "channel": "Saluran",
+    "receipt": "No. tanda terima",
+    "saveSubmission": "Simpan pemasukan",
+    "submittedInfo": "Dimasukkan {{at}}.",
+    "resultTitle": "Hasil tender",
+    "resultHelp": "Kalah, gugur atau dibatalkan menutup peluang sebagai Lost. Menang: tandai menang di peluang untuk membuat kontrak dan proyek.",
+    "rank": "Peringkat",
+    "winner": "Pemenang",
+    "winningPrice": "Harga pemenang",
+    "lessons": "Pelajaran yang dipetik",
+    "saveResult": "Simpan hasil",
+    "wonHint": "Lanjutkan dengan \"Tandai Menang\" di peluang:",
+    "startHelp": "Peluang ini tender. Buat data tender untuk jadwal, dokumen dan persetujuan paket.",
+    "openTender": "Buka data tender",
+    "create": "Buat data tender",
+    "closingSoonTitle": "Tender tutup ≤ 7 hari",
+    "closingSoonHelp": "Tender terbuka yang penutupannya dalam 7 hari.",
+    "noneClosing": "Tidak ada tender yang tutup dalam 7 hari.",
+    "missingDocs_one": "{{count}} dokumen kurang",
+    "missingDocs_other": "{{count}} dokumen kurang",
+    "docsComplete": "Dokumen lengkap"
   }
 }

@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { StatusPill } from '@/components/ui/status-pill';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { SalesTiles } from '@/features/crm/SalesTiles';
+import { ClosingSoonCard } from '@/features/tenders/ClosingSoonCard';
 import { getHealth } from '@/lib/api';
 import { formatDate } from '@/lib/format';
 
@@ -26,6 +27,7 @@ export function DashboardPage() {
       <p className="text-body text-fg-secondary">{t('dashboard.welcome')}</p>
       {can('crm', 'view') && <SalesTiles />}
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {can('tender', 'view') && <ClosingSoonCard />}
         <Card>
           <CardHeader>
             <CardTitle>{t('dashboard.systemStatus')}</CardTitle>
