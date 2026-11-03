@@ -65,9 +65,8 @@ class Summary:
 
 
 async def demo_exists(session: AsyncSession) -> bool:
-    found = await session.execute(
-        select(Department.id).where(Department.is_demo.is_(True)).limit(1)
-    )
+    # Demo users mark demo data (departments may be real ones from the setup wizard).
+    found = await session.execute(select(User.id).where(User.is_demo.is_(True)).limit(1))
     return found.first() is not None
 
 
@@ -92,13 +91,16 @@ async def load(
     s = Summary()
     demo = {"is_demo": True, "created_by": actor_id}
 
-    session.add_all(Department(code=c, name=n, **demo) for c, n in d.DEPARTMENTS)
+    # Departments may already exist (setup wizard); demo only adds the missing ones.
+    have_depts = set((await session.execute(select(Department.code))).scalars())
+    new_depts = [(c, n) for c, n in d.DEPARTMENTS if c not in have_depts]
+    session.add_all(Department(code=c, name=n, **demo) for c, n in new_depts)
     await session.flush()
-    session.add_all(
-        CostCenter(code=c, name=n, department_code=dep, **demo) for c, n, dep in d.COST_CENTERS
-    )
-    s.add("departments", len(d.DEPARTMENTS))
-    s.add("cost_centers", len(d.COST_CENTERS))
+    have_cc = set((await session.execute(select(CostCenter.code))).scalars())
+    new_cc = [x for x in d.COST_CENTERS if x[0] not in have_cc]
+    session.add_all(CostCenter(code=c, name=n, department_code=dep, **demo) for c, n, dep in new_cc)
+    s.add("departments", len(new_depts))
+    s.add("cost_centers", len(new_cc))
 
     dept_ids = dict((await session.execute(select(Department.code, Department.id))).tuples().all())
     for role, (name, dept) in d.USERS.items():

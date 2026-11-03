@@ -2,6 +2,7 @@
 
 import base64
 import hashlib
+import hmac
 import re
 import secrets
 import uuid
@@ -43,11 +44,21 @@ def needs_rehash(password_hash: str) -> bool:
     return _hasher.check_needs_rehash(password_hash)
 
 
-def validate_password_policy(password: str, *, email: str) -> None:
+def validate_password_policy(password: str, *, email: str, strong: bool = False) -> None:
+    """Default: 10+ chars, letters and digits. `strong` (Super Admin): 12+ chars with upper,
+    lower, digit and symbol."""
     problems = []
-    if len(password) < 10:
-        problems.append("Kata sandi minimal 10 karakter.")
-    if not re.search(r"[A-Za-z]", password) or not re.search(r"\d", password):
+    min_len = 12 if strong else 10
+    if len(password) < min_len:
+        problems.append(f"Kata sandi minimal {min_len} karakter.")
+    if strong and not (
+        re.search(r"\d", password)
+        and re.search(r"[a-z]", password)
+        and re.search(r"[A-Z]", password)
+        and re.search(r"[^A-Za-z0-9]", password)
+    ):
+        problems.append("Kata sandi harus berisi huruf besar, huruf kecil, angka, dan simbol.")
+    if not strong and (not re.search(r"[A-Za-z]", password) or not re.search(r"\d", password)):
         problems.append("Kata sandi harus berisi huruf dan angka.")
     name = email.split("@")[0].lower() if email else ""
     if len(name) >= 3 and name in password.lower():
@@ -62,6 +73,24 @@ def generate_temp_password() -> str:
         pwd = secrets.token_urlsafe(10)
         if re.search(r"[A-Za-z]", pwd) and re.search(r"\d", pwd):
             return pwd
+
+
+# --- recovery codes ---------------------------------------------------------------------------
+
+RECOVERY_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"  # no 0/O/1/I confusion
+
+
+def new_recovery_codes(count: int = 10) -> list[str]:
+    return [
+        "-".join("".join(secrets.choice(RECOVERY_ALPHABET) for _ in range(4)) for _ in range(2))
+        for _ in range(count)
+    ]
+
+
+def hash_recovery_code(code: str) -> str:
+    normalized = code.strip().upper().replace(" ", "").replace("-", "")
+    key = ("recovery:" + get_settings().secret_key).encode()
+    return hmac.new(key, normalized.encode(), hashlib.sha256).hexdigest()
 
 
 # --- access tokens --------------------------------------------------------------------------

@@ -213,7 +213,7 @@ async def test_totp_required_by_role(
     bad = await client.post("/api/auth/totp/verify", headers=headers, json={"code": "000000"})
     assert bad.status_code == 422
     good = await client.post("/api/auth/totp/verify", headers=headers, json={"code": totp.now()})
-    assert good.status_code == 204
+    assert good.status_code == 200 and len(good.json()["recovery_codes"]) == 10
     assert (await client.get("/api/auth/ping", headers=headers)).status_code == 200
 
     # From now on login needs a code, and a used code cannot be replayed.

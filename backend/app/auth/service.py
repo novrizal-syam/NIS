@@ -4,10 +4,10 @@ import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 
-from sqlalchemy import func, select, update
+from sqlalchemy import delete, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth.models import RefreshToken, Role, User, UserRole
+from app.auth.models import RecoveryCode, RefreshToken, Role, User, UserRole
 from app.auth.principal import PENDING_TOTP, Principal, load_principal
 from app.auth.security import (
     create_access_token,
@@ -15,8 +15,10 @@ from app.auth.security import (
     encrypt_secret,
     generate_temp_password,
     hash_password,
+    hash_recovery_code,
     hash_refresh_token,
     needs_rehash,
+    new_recovery_codes,
     new_refresh_token,
     new_totp_secret,
     totp_qr_svg,
@@ -111,6 +113,8 @@ async def _register_failure(session: AsyncSession, user: User, reason: str) -> A
         return _auth_error(
             "TOTP_INVALID", "Kode 2FA salah atau sudah dipakai. Masukkan kode terbaru."
         )
+    if reason == "recovery":
+        return _auth_error("RECOVERY_INVALID", "Kode pemulihan salah atau sudah pernah dipakai.")
     return _auth_error("INVALID_CREDENTIALS", INVALID_LOGIN)
 
 
@@ -120,6 +124,7 @@ async def login(
     email: str,
     password: str,
     totp_code: str | None,
+    recovery_code: str | None = None,
     user_agent: str | None = None,
     ip: str | None = None,
 ) -> tuple[User, IssuedTokens]:
@@ -139,7 +144,18 @@ async def login(
     if not user.is_active:
         raise _auth_error("ACCOUNT_INACTIVE", "Akun tidak aktif. Hubungi admin.", 403)
 
-    if user.totp_enabled and user.totp_secret_enc:
+    if user.totp_enabled and user.totp_secret_enc and recovery_code:
+        if not await _use_recovery_code(session, user, recovery_code):
+            raise await _register_failure(session, user, "recovery")
+        await audit.record(
+            session,
+            action="totp_recovery_used",
+            entity_type="user",
+            entity_id=user.id,
+            actor_id=user.id,
+            note="2FA direset dengan kode pemulihan",
+        )
+    elif user.totp_enabled and user.totp_secret_enc:
         if not totp_code:
             raise _auth_error(
                 "TOTP_REQUIRED", "Masukkan kode 2FA dari aplikasi authenticator Anda."
@@ -292,7 +308,36 @@ async def start_totp_setup(session: AsyncSession, principal: Principal) -> dict[
     return {"secret": secret, "otpauth_uri": uri, "qr_svg": totp_qr_svg(uri)}
 
 
-async def confirm_totp_setup(session: AsyncSession, principal: Principal, code: str) -> None:
+async def issue_recovery_codes(session: AsyncSession, user: User) -> list[str]:
+    """Replace the user's recovery codes; the plain codes are returned once."""
+    await session.execute(delete(RecoveryCode).where(RecoveryCode.user_id == user.id))
+    codes = new_recovery_codes()
+    session.add_all(RecoveryCode(user_id=user.id, code_hash=hash_recovery_code(c)) for c in codes)
+    await session.flush()
+    return codes
+
+
+async def _use_recovery_code(session: AsyncSession, user: User, code: str) -> bool:
+    row = (
+        await session.execute(
+            select(RecoveryCode)
+            .where(
+                RecoveryCode.user_id == user.id,
+                RecoveryCode.code_hash == hash_recovery_code(code),
+                RecoveryCode.used_at.is_(None),
+            )
+            .with_for_update()
+        )
+    ).scalar_one_or_none()
+    if row is None:
+        return False
+    row.used_at = _now()
+    # Break-glass: the lost authenticator is unlinked; the user must enrol again.
+    user.totp_enabled, user.totp_secret_enc, user.totp_last_step = False, None, None
+    return True
+
+
+async def confirm_totp_setup(session: AsyncSession, principal: Principal, code: str) -> list[str]:
     user = principal.user
     if user.totp_enabled:
         raise ConflictError("TOTP_ALREADY_ENABLED", "2FA sudah aktif untuk akun ini.")
@@ -305,10 +350,12 @@ async def confirm_totp_setup(session: AsyncSession, principal: Principal, code: 
         )
     user.totp_enabled = True
     user.totp_last_step = step
+    codes = await issue_recovery_codes(session, user)
     await audit.record(
         session, action="totp_enabled", entity_type="user", entity_id=user.id, actor_id=user.id
     )
     await session.commit()
+    return codes
 
 
 async def create_user(

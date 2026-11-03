@@ -149,7 +149,11 @@
     "passwordRequired": "Password is required.",
     "totp": "2FA code",
     "totpHint": "6 digits from your authenticator app.",
-    "submitting": "Signing in…"
+    "submitting": "Signing in…",
+    "useRecovery": "Lost your phone? Use a recovery code",
+    "useTotp": "Use 2FA code",
+    "recovery": "Recovery code",
+    "recoveryHint": "Format XXXX-XXXX. After signing in you must enable 2FA again."
   },
   "status": {
     "draft": "Draft",
@@ -453,5 +457,65 @@
     "demoConfirmTitle": "Remove all demo data?",
     "demoConfirmHelp": "This cannot be undone and is recorded in the audit trail. Type {{word}} to continue.",
     "demoConfirmLabel": "Type {{word}}"
+  },
+  "setup": {
+    "subtitle": "First-run setup of Nustrad ERP. Done only once.",
+    "progress": "Setup steps",
+    "steps": {
+      "admin": "Super Admin",
+      "totp": "2FA",
+      "company": "Company",
+      "departments": "Departments",
+      "demo": "Data",
+      "finish": "Finish"
+    },
+    "titles": {
+      "token": "Setup token",
+      "admin": "Create Super Admin",
+      "resume": "Continue setup",
+      "totp": "Enable 2FA",
+      "codes": "Save recovery codes",
+      "company": "Company profile",
+      "departments": "Departments & cost centers",
+      "demo": "Initial data",
+      "finish": "Finish setup"
+    },
+    "token": "Setup token",
+    "tokenHint": "SETUP_TOKEN value from IT (server .env file).",
+    "tokenMissing": "SETUP_TOKEN is not set on the server. Ask IT to set it, then reload this page.",
+    "continue": "Continue",
+    "adminName": "Full name",
+    "strongPolicy": "At least 12 characters with upper case, lower case, digit and symbol.",
+    "createAdmin": "Create Super Admin",
+    "resumeHelp": "The Super Admin exists. Sign in to continue.",
+    "totpHelp": "2FA is mandatory for the Super Admin. Scan the QR code with an authenticator app, then enter the 6 digits.",
+    "legalName": "Legal name",
+    "address": "Address",
+    "phone": "Phone",
+    "fiscalYear": "Fiscal year",
+    "janDec": "January – December",
+    "fixedHint": "Currency IDR, time zone Asia/Jakarta, Indonesian language.",
+    "logoLater": "The GEK logo for documents can be uploaded later in Settings.",
+    "deptHelp": "The list is prefilled; edit, remove or add. Each department gets a cost center.",
+    "deptCode": "Code",
+    "deptName": "Department name",
+    "addDept": "Add department",
+    "removeDept": "Remove department {{code}}",
+    "demoHelp": "Load demo data to try the application (can be removed at once later), or start empty.",
+    "loadDemo": "Load demo data",
+    "startEmpty": "Start empty",
+    "finishHelp": "After finishing, the setup page closes for good and other users can be invited.",
+    "finish": "Finish and open the application",
+    "doneTitle": "Setup is complete",
+    "doneHelp": "The setup page is closed and cannot be opened again.",
+    "toLogin": "Go to sign in"
+  },
+  "recovery": {
+    "help": "Store these 10 codes somewhere safe (e.g. a password vault). Each code signs you in once if your authenticator phone is lost. They will not be shown again.",
+    "download": "Download .txt",
+    "copy": "Copy",
+    "confirm": "I have saved my recovery codes",
+    "continue": "Continue",
+    "fileHeader": "Nustrad ERP 2FA recovery codes — PT Global Energi KITA. Each code works once."
   }
 }

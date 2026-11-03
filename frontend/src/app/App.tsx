@@ -18,49 +18,54 @@ import { DoaRulesPage } from '@/features/workflow/DoaRulesPage';
 import { InboxPage } from '@/features/workflow/InboxPage';
 import { RequestDetailPage } from '@/features/workflow/RequestDetailPage';
 import { SettingsPage } from '@/features/settings/SettingsPage';
+import { SetupGate } from '@/features/setup/SetupGate';
+import { SetupPage } from '@/features/setup/SetupPage';
 import { ThemeProvider } from '@/theme/ThemeProvider';
 import { ROUTER_FUTURE } from './routerConfig';
 
 export function AppRoutes() {
   return (
-    <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route
-        path="/akun/ganti-password"
-        element={
-          <RequireAuth allowPending>
-            <ChangePasswordPage />
-          </RequireAuth>
-        }
-      />
-      <Route
-        path="/akun/2fa"
-        element={
-          <RequireAuth allowPending>
-            <TotpSetupPage />
-          </RequireAuth>
-        }
-      />
-      <Route
-        element={
-          <RequireAuth>
-            <AppShell />
-          </RequireAuth>
-        }
-      >
-        <Route index element={<DashboardPage />} />
-        <Route path="persetujuan" element={<InboxPage />} />
-        <Route path="persetujuan/:id" element={<RequestDetailPage />} />
-        <Route path="pengaturan" element={<SettingsPage />} />
-        <Route path="pengaturan/doa" element={<DoaRulesPage />} />
-        <Route path="master" element={<MasterIndexPage />} />
-        <Route path="master/:entity" element={<MasterListPage />} />
-        <Route path="audit" element={<AuditPage />} />
-        <Route path="segera/:key" element={<ComingSoonPage />} />
-        {import.meta.env.DEV && <Route path="dev/komponen" element={<KomponenPage />} />}
-        <Route path="*" element={<NotFoundPage />} />
-      </Route>
-    </Routes>
+    <SetupGate>
+      <Routes>
+        <Route path="/setup" element={<SetupPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/akun/ganti-password"
+          element={
+            <RequireAuth allowPending>
+              <ChangePasswordPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/akun/2fa"
+          element={
+            <RequireAuth allowPending>
+              <TotpSetupPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          element={
+            <RequireAuth>
+              <AppShell />
+            </RequireAuth>
+          }
+        >
+          <Route index element={<DashboardPage />} />
+          <Route path="persetujuan" element={<InboxPage />} />
+          <Route path="persetujuan/:id" element={<RequestDetailPage />} />
+          <Route path="pengaturan" element={<SettingsPage />} />
+          <Route path="pengaturan/doa" element={<DoaRulesPage />} />
+          <Route path="master" element={<MasterIndexPage />} />
+          <Route path="master/:entity" element={<MasterListPage />} />
+          <Route path="audit" element={<AuditPage />} />
+          <Route path="segera/:key" element={<ComingSoonPage />} />
+          {import.meta.env.DEV && <Route path="dev/komponen" element={<KomponenPage />} />}
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
+      </Routes>
+    </SetupGate>
   );
 }
 

@@ -17,11 +17,8 @@ cp .env.example .env
 make up          # docker compose up -d --build: api, web, db, minio, mailpit
 make migrate     # alembic upgrade head
 ```
-- First user (until the setup wizard in phase 01a): the command prints a one-time temporary password; the user must change it and, for roles that require it, enrol 2FA at first sign-in.
-  ```bash
-  docker compose exec api python -m app.auth.cli create-user --email you@gek.co.id --name "Your Name" --role super_admin
-  ```
-  Also: `... app.auth.cli unlock --email ...` and `... app.auth.cli reset-2fa --email ...` (audited).
+- First run: set `SETUP_TOKEN` in `.env` (a random value), open http://localhost:5173/setup and follow the wizard: Super Admin (strong password) → mandatory 2FA + 10 recovery codes shown once → company profile → departments → demo data or empty → finish. After that `/setup` is closed for good. Databases that already had users are treated as set up.
+- Lost authenticator: sign in with a recovery code (2FA must then be enrolled again), or the audited CLI `docker compose exec api python -m app.auth.cli reset-2fa --email ...`. Also `... app.auth.cli unlock --email ...`.
 - App: http://localhost:5173 · component catalogue (dev only): http://localhost:5173/dev/komponen
 - API: http://localhost:8000/api/health · docs: http://localhost:8000/api/docs
 - Mailpit: http://localhost:8025 · MinIO console: http://localhost:9001

@@ -49,6 +49,8 @@ export function mockApi(
     'POST /api/auth/logout': () => new Response(null, { status: 204 }),
     'GET /api/health': () => json({ status: 'ok', db: 'ok', version: '0.1.0' }),
     'GET /api/workflow/inbox/count': () => json({ count: 0 }),
+    'GET /api/setup/status': () =>
+      json({ setup_completed: true, token_configured: true, steps: {} }),
     'GET /api/notifications/count': () => json({ unread: 0 }),
     'GET /api/workflow/doc-types': () =>
       json([

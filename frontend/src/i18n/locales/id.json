@@ -149,7 +149,11 @@
     "passwordRequired": "Kata sandi wajib diisi.",
     "totp": "Kode 2FA",
     "totpHint": "6 angka dari aplikasi authenticator.",
-    "submitting": "Memproses…"
+    "submitting": "Memproses…",
+    "useRecovery": "Ponsel hilang? Pakai kode pemulihan",
+    "useTotp": "Pakai kode 2FA",
+    "recovery": "Kode pemulihan",
+    "recoveryHint": "Format XXXX-XXXX. Setelah masuk, Anda wajib mengaktifkan 2FA lagi."
   },
   "status": {
     "draft": "Draft",
@@ -453,5 +457,65 @@
     "demoConfirmTitle": "Hapus semua data demo?",
     "demoConfirmHelp": "Tindakan ini tidak dapat dibatalkan dan tercatat di jejak audit. Ketik {{word}} untuk melanjutkan.",
     "demoConfirmLabel": "Ketik {{word}}"
+  },
+  "setup": {
+    "subtitle": "Penyiapan awal Nustrad ERP. Langkah ini hanya dilakukan sekali.",
+    "progress": "Langkah penyiapan",
+    "steps": {
+      "admin": "Super Admin",
+      "totp": "2FA",
+      "company": "Perusahaan",
+      "departments": "Departemen",
+      "demo": "Data",
+      "finish": "Selesai"
+    },
+    "titles": {
+      "token": "Token penyiapan",
+      "admin": "Buat Super Admin",
+      "resume": "Lanjutkan penyiapan",
+      "totp": "Aktifkan 2FA",
+      "codes": "Simpan kode pemulihan",
+      "company": "Profil perusahaan",
+      "departments": "Departemen & cost center",
+      "demo": "Data awal",
+      "finish": "Selesaikan penyiapan"
+    },
+    "token": "Token penyiapan",
+    "tokenHint": "Nilai SETUP_TOKEN dari tim IT (file .env server).",
+    "tokenMissing": "SETUP_TOKEN belum diatur di server. Minta tim IT mengisinya lalu muat ulang halaman ini.",
+    "continue": "Lanjut",
+    "adminName": "Nama lengkap",
+    "strongPolicy": "Minimal 12 karakter dengan huruf besar, huruf kecil, angka, dan simbol.",
+    "createAdmin": "Buat Super Admin",
+    "resumeHelp": "Super Admin sudah dibuat. Masuk untuk melanjutkan langkah berikutnya.",
+    "totpHelp": "2FA wajib untuk Super Admin. Pindai kode QR dengan aplikasi authenticator, lalu masukkan 6 angka.",
+    "legalName": "Nama badan usaha",
+    "address": "Alamat",
+    "phone": "Telepon",
+    "fiscalYear": "Tahun buku",
+    "janDec": "Januari – Desember",
+    "fixedHint": "Mata uang IDR, zona waktu Asia/Jakarta, bahasa Indonesia.",
+    "logoLater": "Logo GEK untuk dokumen dapat diunggah nanti di Pengaturan.",
+    "deptHelp": "Daftar sudah terisi; ubah, hapus, atau tambah. Setiap departemen otomatis mendapat cost center.",
+    "deptCode": "Kode",
+    "deptName": "Nama departemen",
+    "addDept": "Tambah departemen",
+    "removeDept": "Hapus departemen {{code}}",
+    "demoHelp": "Muat data demo untuk mencoba aplikasi (dapat dihapus sekaligus nanti), atau mulai dengan data kosong.",
+    "loadDemo": "Muat data demo",
+    "startEmpty": "Mulai kosong",
+    "finishHelp": "Setelah selesai, halaman penyiapan tertutup permanen dan pengguna lain dapat diundang.",
+    "finish": "Selesai dan buka aplikasi",
+    "doneTitle": "Penyiapan sudah selesai",
+    "doneHelp": "Halaman penyiapan sudah ditutup dan tidak bisa dibuka lagi.",
+    "toLogin": "Ke halaman masuk"
+  },
+  "recovery": {
+    "help": "Simpan 10 kode ini di tempat aman (mis. brankas kata sandi). Setiap kode dapat dipakai sekali untuk masuk jika ponsel authenticator hilang. Kode tidak akan ditampilkan lagi.",
+    "download": "Unduh .txt",
+    "copy": "Salin",
+    "confirm": "Saya sudah menyimpan kode pemulihan",
+    "continue": "Lanjut",
+    "fileHeader": "Kode pemulihan 2FA Nustrad ERP — PT Global Energi KITA. Setiap kode hanya berlaku sekali."
   }
 }

@@ -162,12 +162,18 @@ export interface TotpSetup {
 }
 
 export const authApi = {
-  login: (email: string, password: string, totp_code?: string) =>
-    postJson<TokenOut>('/auth/login', { email, password, totp_code: totp_code || null }),
+  login: (email: string, password: string, totp_code?: string, recovery_code?: string) =>
+    postJson<TokenOut>('/auth/login', {
+      email,
+      password,
+      totp_code: totp_code || null,
+      recovery_code: recovery_code || null,
+    }),
   logout: () => postJson<null>('/auth/logout'),
   me: () => api<Me>('/auth/me'),
   changePassword: (current_password: string, new_password: string) =>
     postJson<TokenOut>('/auth/change-password', { current_password, new_password }),
   totpSetup: () => postJson<TotpSetup>('/auth/totp/setup'),
-  totpVerify: (code: string) => postJson<null>('/auth/totp/verify', { code }),
+  totpVerify: (code: string) =>
+    postJson<{ recovery_codes: string[] }>('/auth/totp/verify', { code }),
 };

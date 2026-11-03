@@ -16,7 +16,12 @@ const ROLE_KEY = 'nustrad.activeRole';
 interface AuthContextValue {
   status: Status;
   me: Me | null;
-  login: (email: string, password: string, totpCode?: string) => Promise<void>;
+  login: (
+    email: string,
+    password: string,
+    totpCode?: string,
+    recoveryCode?: string,
+  ) => Promise<void>;
   logout: () => Promise<void>;
   reload: () => Promise<void>;
   /** Called with a fresh access token, e.g. after a password change. */
@@ -92,8 +97,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const login = useCallback(
-    async (email: string, password: string, totpCode?: string) => {
-      const out = await authApi.login(email, password, totpCode);
+    async (email: string, password: string, totpCode?: string, recoveryCode?: string) => {
+      const out = await authApi.login(email, password, totpCode, recoveryCode);
       await acceptToken(out.access_token);
     },
     [acceptToken],

@@ -9,6 +9,7 @@ from app.auth.schemas import (
     ChangePasswordIn,
     LoginIn,
     MeOut,
+    RecoveryCodesOut,
     TokenOut,
     TotpSetupOut,
     TotpVerifyIn,
@@ -55,6 +56,7 @@ async def login(body: LoginIn, request: Request, response: Response, session: Se
         email=body.email,
         password=body.password,
         totp_code=body.totp_code,
+        recovery_code=body.recovery_code,
         **_client(request),
     )
     return _token_out(response, tokens)
@@ -100,10 +102,13 @@ async def totp_setup(principal: PendingUser, session: Session) -> TotpSetupOut:
     return TotpSetupOut.model_validate(await service.start_totp_setup(session, principal))
 
 
-@router.post("/totp/verify", status_code=204)
-async def totp_verify(body: TotpVerifyIn, principal: PendingUser, session: Session) -> Response:
-    await service.confirm_totp_setup(session, principal, body.code)
-    return Response(status_code=204)
+@router.post("/totp/verify")
+async def totp_verify(
+    body: TotpVerifyIn, principal: PendingUser, session: Session
+) -> RecoveryCodesOut:
+    """Enables 2FA and returns 10 single-use recovery codes (shown once)."""
+    codes = await service.confirm_totp_setup(session, principal, body.code)
+    return RecoveryCodesOut(recovery_codes=codes)
 
 
 @router.get("/ping")

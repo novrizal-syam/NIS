@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { ApiError, authApi } from '@/lib/api';
+import { RecoveryCodes } from '@/features/setup/RecoveryCodes';
 import { AuthLayout, FormError } from './AuthLayout';
 import { useAuth } from './AuthProvider';
 
@@ -15,6 +16,7 @@ export function TotpSetupPage() {
   const navigate = useNavigate();
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [codes, setCodes] = useState<string[] | null>(null);
   const setup = useMutation({ mutationFn: authApi.totpSetup });
 
   const enabled = me?.totp_enabled ?? false;
@@ -24,15 +26,24 @@ export function TotpSetupPage() {
   }, [me, enabled, mutate]);
 
   if (!me) return <Navigate to="/login" replace />;
+  if (codes) {
+    return (
+      <AuthLayout title={t('setup.titles.codes')}>
+        <RecoveryCodes
+          codes={codes}
+          onDone={() => void reload().then(() => navigate('/', { replace: true }))}
+        />
+      </AuthLayout>
+    );
+  }
   if (enabled) return <Navigate to="/" replace />;
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
     try {
-      await authApi.totpVerify(code);
-      await reload();
-      navigate('/', { replace: true });
+      // Recovery codes are shown once before continuing.
+      setCodes((await authApi.totpVerify(code)).recovery_codes);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t('auth.unexpected'));
     }

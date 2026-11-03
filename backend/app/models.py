@@ -1,6 +1,6 @@
 """Import every model module so Base.metadata is complete (used by Alembic and tests)."""
 
-from app.auth.models import RefreshToken, Role, RolePermission, User, UserRole
+from app.auth.models import RecoveryCode, RefreshToken, Role, RolePermission, User, UserRole
 from app.core.models import Base
 from app.dms.models import Attachment
 from app.master.models import (
@@ -22,6 +22,7 @@ from app.master.models import (
 from app.notifications.models import Notification
 from app.services.audit import AuditLog
 from app.services.numbering import DocCounter
+from app.setup.models import SystemSetting
 from app.workflow.models import (
     ApprovalRequest,
     ApprovalStep,
@@ -55,9 +56,11 @@ __all__ = [
     "Item",
     "Notification",
     "PriceItem",
+    "RecoveryCode",
     "RefreshToken",
     "Role",
     "RolePermission",
+    "SystemSetting",
     "User",
     "UserRole",
     "Vendor",

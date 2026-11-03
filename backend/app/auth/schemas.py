@@ -5,6 +5,8 @@ class LoginIn(BaseModel):
     email: EmailStr
     password: str = Field(min_length=1, max_length=200)
     totp_code: str | None = Field(default=None, max_length=10)
+    # Break-glass when the authenticator is lost: signs in once and resets 2FA.
+    recovery_code: str | None = Field(default=None, max_length=20)
 
 
 class TokenOut(BaseModel):
@@ -44,3 +46,7 @@ class MeOut(BaseModel):
     pending: list[str]
     totp_enabled: bool
     totp_required: bool
+
+
+class RecoveryCodesOut(BaseModel):
+    recovery_codes: list[str]

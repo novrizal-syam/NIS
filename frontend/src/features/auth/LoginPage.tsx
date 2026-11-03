@@ -15,6 +15,7 @@ const schema = z.object({
   email: z.string().trim().min(1, 'login.emailRequired').email('login.emailInvalid'),
   password: z.string().min(1, 'login.passwordRequired'),
   totp: z.string().trim().optional(),
+  recovery: z.string().trim().optional(),
 });
 type LoginForm = z.infer<typeof schema>;
 
@@ -23,6 +24,7 @@ export function LoginPage() {
   const { status, login } = useAuth();
   const location = useLocation();
   const [needTotp, setNeedTotp] = useState(false);
+  const [useRecovery, setUseRecovery] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const {
     register,
@@ -38,7 +40,12 @@ export function LoginPage() {
   const onSubmit = handleSubmit(async (values) => {
     setError(null);
     try {
-      await login(values.email, values.password, needTotp ? values.totp : undefined);
+      await login(
+        values.email,
+        values.password,
+        needTotp && !useRecovery ? values.totp : undefined,
+        needTotp && useRecovery ? values.recovery : undefined,
+      );
     } catch (err) {
       if (err instanceof ApiError && err.code === 'TOTP_REQUIRED') {
         setNeedTotp(true);
@@ -60,7 +67,7 @@ export function LoginPage() {
         <Field label={t('login.password')} error={err(errors.password?.message)} required>
           <Input type="password" autoComplete="current-password" {...register('password')} />
         </Field>
-        {needTotp && (
+        {needTotp && !useRecovery && (
           <Field label={t('login.totp')} hint={t('login.totpHint')} required>
             <Input
               inputMode="numeric"
@@ -70,6 +77,20 @@ export function LoginPage() {
               {...register('totp')}
             />
           </Field>
+        )}
+        {needTotp && useRecovery && (
+          <Field label={t('login.recovery')} hint={t('login.recoveryHint')} required>
+            <Input autoComplete="off" maxLength={12} autoFocus {...register('recovery')} />
+          </Field>
+        )}
+        {needTotp && (
+          <button
+            type="button"
+            onClick={() => setUseRecovery((v) => !v)}
+            className="self-start text-small font-semibold text-fg-accent underline"
+          >
+            {useRecovery ? t('login.useTotp') : t('login.useRecovery')}
+          </button>
         )}
         <Button type="submit" variant="primary" className="mt-2 w-full" disabled={isSubmitting}>
           {isSubmitting ? t('login.submitting') : t('login.submit')}

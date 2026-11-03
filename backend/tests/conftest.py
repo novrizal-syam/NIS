@@ -70,6 +70,11 @@ async def engine() -> AsyncIterator[AsyncEngine]:
     cfg = _alembic_config()
     async with eng.begin() as conn:
         await conn.run_sync(lambda sync_conn: _upgrade(cfg, sync_conn))
+        # A fresh database starts the first-run wizard; tests outside test_setup run as an
+        # installation that is already set up.
+        await conn.execute(
+            text("UPDATE system_settings SET value = 'true' WHERE key = 'setup_completed'")
+        )
     yield eng
     await eng.dispose()
 
