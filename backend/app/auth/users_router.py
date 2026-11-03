@@ -19,6 +19,7 @@ from app.master.models import Department
 from app.services.export import Column, xlsx_response
 from app.services.numbering import today_jakarta
 from app.setup import service as setup_service
+from app.sod import service as sod
 
 router = APIRouter(prefix="/users", tags=["users"])
 access.register("user", access.module_checker("users", "users"))
@@ -27,9 +28,6 @@ Viewer = Annotated[Principal, Depends(require("users", "view"))]
 Creator = Annotated[Principal, Depends(require("users", "create"))]
 Editor = Annotated[Principal, Depends(require("users", "edit"))]
 Admin = Annotated[Principal, Depends(require("users", "admin"))]
-
-# Called with (session, actor, user, old_roles, new_roles) before roles change (SoD checks).
-ROLE_CHANGE_HOOKS: list[Any] = []
 
 
 class UserLookup(BaseModel):
@@ -238,11 +236,13 @@ class UpdateIn(BaseModel):
     department_code: str | None = None
     employee_code: str | None = None
     roles: list[str] | None = Field(default=None, min_length=1)
+    # Required when the new roles conflict (SoD); starts a Director approval.
+    sod_reason: str | None = Field(default=None, max_length=500)
 
 
 @router.patch("/{user_id}")
 async def update_user(
-    user_id: uuid.UUID, body: UpdateIn, actor: Editor, session: Session
+    user_id: uuid.UUID, body: UpdateIn, actor: Editor, session: Session, response: Response
 ) -> dict[str, Any]:
     user = await admin.get_user(session, user_id)
     fields = body.model_fields_set
@@ -256,8 +256,20 @@ async def update_user(
         fields_set=fields,
     )
     if body.roles is not None:
-        hook = ROLE_CHANGE_HOOKS[0] if ROLE_CHANGE_HOOKS else None
-        await admin.set_roles(session, actor, user, body.roles, hook)
+        try:
+            await admin.set_roles(session, actor, user, body.roles, sod.make_hook(body.sod_reason))
+        except sod.PendingException as pending:
+            req = await sod.request_exception(
+                session,
+                actor,
+                user,
+                pairs=pending.pairs,
+                reason=sod.check_reason(body.sod_reason),
+                change={"kind": "set_roles", "roles": sorted(body.roles)},
+            )
+            await session.commit()
+            response.status_code = 202
+            return {"pending_approval": req.doc_number, "request_id": str(req.id)}
     await session.commit()
     return (await _rows(session, [user]))[0].model_dump(mode="json")
 
@@ -325,24 +337,48 @@ class TemporaryRoleIn(BaseModel):
     valid_from: datetime | None = None
     valid_until: datetime
     reason: str = Field(min_length=5, max_length=300)
+    # Required when the role conflicts with the user's roles (SoD); starts a Director approval.
+    sod_reason: str | None = Field(default=None, max_length=500)
 
 
 @router.post("/{user_id}/roles/temporary", status_code=201)
 async def add_temporary_role(
-    user_id: uuid.UUID, body: TemporaryRoleIn, actor: Editor, session: Session
+    user_id: uuid.UUID,
+    body: TemporaryRoleIn,
+    actor: Editor,
+    session: Session,
+    response: Response,
 ) -> dict[str, str]:
     user = await admin.get_user(session, user_id)
-    hook = ROLE_CHANGE_HOOKS[0] if ROLE_CHANGE_HOOKS else None
-    await admin.add_temporary_role(
-        session,
-        actor,
-        user,
-        code=body.role,
-        valid_from=body.valid_from,
-        valid_until=body.valid_until,
-        reason=body.reason,
-        hook=hook,
-    )
+    try:
+        await admin.add_temporary_role(
+            session,
+            actor,
+            user,
+            code=body.role,
+            valid_from=body.valid_from,
+            valid_until=body.valid_until,
+            reason=body.reason,
+            hook=sod.make_hook(body.sod_reason),
+        )
+    except sod.PendingException as pending:
+        req = await sod.request_exception(
+            session,
+            actor,
+            user,
+            pairs=pending.pairs,
+            reason=sod.check_reason(body.sod_reason),
+            change={
+                "kind": "temporary",
+                "role": body.role,
+                "reason": body.reason,
+                "valid_from": body.valid_from.isoformat() if body.valid_from else None,
+                "valid_until": body.valid_until.isoformat(),
+            },
+        )
+        await session.commit()
+        response.status_code = 202
+        return {"pending_approval": req.doc_number, "request_id": str(req.id)}
     await session.commit()
     return {"status": "ok"}
 

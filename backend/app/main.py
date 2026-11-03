@@ -28,6 +28,7 @@ from app.master.router import router as master_router
 from app.notifications.router import router as notifications_router
 from app.setup import service as setup_service
 from app.setup.router import router as setup_router
+from app.sod.router import router as sod_router
 from app.workflow.jobs import scheduler_loop
 from app.workflow.router import router as workflow_router
 
@@ -115,6 +116,7 @@ def create_app() -> FastAPI:
     api.include_router(notifications_router)
     api.include_router(demo_router)
     api.include_router(setup_router)
+    api.include_router(sod_router)
     app.include_router(api)
     return app
 

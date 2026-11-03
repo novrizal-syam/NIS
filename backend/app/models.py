@@ -31,6 +31,7 @@ from app.notifications.models import Notification
 from app.services.audit import AuditLog
 from app.services.numbering import DocCounter
 from app.setup.models import SystemSetting
+from app.sod.models import SodException, SodRule
 from app.workflow.models import (
     ApprovalRequest,
     ApprovalStep,
@@ -68,6 +69,8 @@ __all__ = [
     "RefreshToken",
     "Role",
     "RolePermission",
+    "SodException",
+    "SodRule",
     "SystemSetting",
     "User",
     "UserInvite",

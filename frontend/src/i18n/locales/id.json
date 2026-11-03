@@ -64,7 +64,8 @@
       "doaRules": "Aturan DOA",
       "masterData": "Data Master",
       "auditTrail": "Jejak Audit",
-      "roles": "Peran & Izin"
+      "roles": "Peran & Izin",
+      "sod": "Pemisahan Tugas"
     }
   },
   "topbar": {
@@ -135,6 +136,10 @@
     "roles": {
       "title": "Peran & Izin",
       "description": "Matriks izin, lingkup data, dan field sensitif."
+    },
+    "sod": {
+      "title": "Pemisahan Tugas (SoD)",
+      "description": "Aturan konflik peran dan register pengecualian."
     }
   },
   "dashboard": {
@@ -669,5 +674,32 @@
     "back": "Kembali",
     "next": "Berikutnya",
     "done": "Selesai"
+  },
+  "sod": {
+    "title": "Pemisahan tugas",
+    "intro": "Pasangan peran yang tidak boleh dipegang orang yang sama. Kombinasi yang melanggar perlu alasan dan persetujuan Direktur, lalu tercatat di register dan ditinjau bulanan oleh Lead Controller.",
+    "register": "Register pengecualian",
+    "rules": "Aturan konflik",
+    "violations": "{{count}} konflik tanpa pengecualian disetujui",
+    "violationsCaption": "Konflik peran tanpa pengecualian",
+    "pair": "Pasangan peran",
+    "why": "Keterangan",
+    "reviewed": "Tinjauan terakhir",
+    "reviewDue": "Perlu ditinjau",
+    "markReviewed": "Tandai sudah ditinjau",
+    "revoke": "Cabut",
+    "noExceptions": "Belum ada pengecualian.",
+    "status": {
+      "pending": "Menunggu Direktur",
+      "approved": "Disetujui",
+      "rejected": "Ditolak",
+      "revoked": "Dicabut"
+    },
+    "role_a": "Peran A",
+    "role_b": "Peran B",
+    "addRule": "Tambah aturan",
+    "conflictHelp": "Isi alasan untuk mengajukan pengecualian ke Direktur. Peran baru berlaku setelah disetujui.",
+    "submitException": "Ajukan pengecualian",
+    "pending": "Perubahan peran menunggu persetujuan Direktur ({{number}})."
   }
 }

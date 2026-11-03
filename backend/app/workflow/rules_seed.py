@@ -22,6 +22,7 @@ DOC_TYPES: dict[str, tuple[str, str]] = {
     "outgoing_letter": ("Surat keluar", "letters"),
     "sop_release": ("Rilis SOP", "dms"),
     "doa_change": ("Perubahan aturan DOA", "workflow"),
+    "sod_exception": ("Pengecualian SoD", "users"),
 }
 
 M = 1_000_000
@@ -176,4 +177,5 @@ RULES: tuple[RuleDef, ...] = (
     single("outgoing_letter", "director", "Semua surat keluar"),
     single("sop_release", "director", "Semua rilis SOP"),
     single("doa_change", "director", "Semua perubahan DOA", escalate_to_role=None),
+    single("sod_exception", "director", "Semua pengecualian SoD", escalate_to_role=None),
 )

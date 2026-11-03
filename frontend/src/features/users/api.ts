@@ -108,8 +108,13 @@ export function useUpdateUser(id: string) {
         department_code: string | null;
         employee_code: string | null;
         roles: string[];
+        sod_reason: string;
       }>,
-    ) => api<UserRow>(`/users/${id}`, { method: 'PATCH', body: JSON.stringify(v) }),
+    ) =>
+      api<UserRow | { pending_approval: string; request_id: string }>(`/users/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(v),
+      }),
     onSuccess: invalidate,
   });
 }

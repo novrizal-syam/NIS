@@ -22,6 +22,7 @@ import { ProfilePage } from '@/features/onboarding/ProfilePage';
 import { RoleDetailPage } from '@/features/roles/RoleDetailPage';
 import { RolesPage } from '@/features/roles/RolesPage';
 import { SettingsPage } from '@/features/settings/SettingsPage';
+import { SodPage } from '@/features/sod/SodPage';
 import { AcceptInvitePage } from '@/features/users/AcceptInvitePage';
 import { UsersPage } from '@/features/users/UsersPage';
 import { SetupGate } from '@/features/setup/SetupGate';
@@ -81,6 +82,7 @@ export function AppRoutes() {
           <Route path="pengaturan" element={<SettingsPage />} />
           <Route path="pengguna" element={<UsersPage />} />
           <Route path="pengaturan/peran" element={<RolesPage />} />
+          <Route path="pengaturan/sod" element={<SodPage />} />
           <Route path="pengaturan/peran/:id" element={<RoleDetailPage />} />
           <Route path="pengaturan/doa" element={<DoaRulesPage />} />
           <Route path="master" element={<MasterIndexPage />} />

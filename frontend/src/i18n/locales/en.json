@@ -64,7 +64,8 @@
       "doaRules": "DOA rules",
       "masterData": "Master Data",
       "auditTrail": "Audit Trail",
-      "roles": "Roles & Permissions"
+      "roles": "Roles & Permissions",
+      "sod": "Segregation of Duties"
     }
   },
   "topbar": {
@@ -135,6 +136,10 @@
     "roles": {
       "title": "Roles & Permissions",
       "description": "Permission matrix, data scope and sensitive fields."
+    },
+    "sod": {
+      "title": "Segregation of Duties (SoD)",
+      "description": "Role conflict rules and exception register."
     }
   },
   "dashboard": {
@@ -669,5 +674,32 @@
     "back": "Back",
     "next": "Next",
     "done": "Done"
+  },
+  "sod": {
+    "title": "Segregation of duties",
+    "intro": "Role pairs that one person must not hold. A conflicting combination needs a reason and Director approval, is recorded in the register and reviewed monthly by the Lead Controller.",
+    "register": "Exception register",
+    "rules": "Conflict rules",
+    "violations": "{{count}} conflicts without an approved exception",
+    "violationsCaption": "Role conflicts without an exception",
+    "pair": "Role pair",
+    "why": "Description",
+    "reviewed": "Last review",
+    "reviewDue": "Review due",
+    "markReviewed": "Mark reviewed",
+    "revoke": "Revoke",
+    "noExceptions": "No exceptions yet.",
+    "status": {
+      "pending": "Awaiting Director",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "revoked": "Revoked"
+    },
+    "role_a": "Role A",
+    "role_b": "Role B",
+    "addRule": "Add rule",
+    "conflictHelp": "Give a reason to request an exception from the Director. The new roles apply after approval.",
+    "submitException": "Request exception",
+    "pending": "Role change awaiting Director approval ({{number}})."
   }
 }

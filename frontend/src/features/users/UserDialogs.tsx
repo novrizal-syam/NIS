@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
 import { Field } from '@/components/ui/field';
-import { Input, Select } from '@/components/ui/input';
+import { Input, Select, Textarea } from '@/components/ui/input';
 import { StatusPill } from '@/components/ui/status-pill';
 import { Tabs } from '@/components/ui/tabs';
 import { HistoryPanel } from '@/features/audit/HistoryPanel';
@@ -193,6 +193,8 @@ export function UserDialog({ id, onClose }: { id: string; onClose: () => void })
   } | null>(null);
   const [temp, setTemp] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [sodConflict, setSodConflict] = useState(false);
+  const [sodReason, setSodReason] = useState('');
   const u = user.data;
   const isSA = me?.roles.some((r) => r.code === 'super_admin') ?? false;
   useEffect(() => {
@@ -355,19 +357,46 @@ export function UserDialog({ id, onClose }: { id: string; onClose: () => void })
                 canGrantSuperAdmin={isSA}
                 disabled={!canEdit}
               />
+              {sodConflict && (
+                <Field label={t('workflow.reason')} hint={t('sod.conflictHelp')} required>
+                  <Textarea
+                    rows={2}
+                    value={sodReason}
+                    onChange={(e) => setSodReason(e.target.value)}
+                  />
+                </Field>
+              )}
               {canEdit && (
                 <Button
                   variant="primary"
                   className="self-start"
-                  disabled={update.isPending || draft.roles.length === 0}
+                  disabled={
+                    update.isPending ||
+                    draft.roles.length === 0 ||
+                    (sodConflict && sodReason.trim().length < 10)
+                  }
                   onClick={() =>
                     update.mutate(
-                      { roles: draft.roles },
-                      { onSuccess: () => setNotice(t('users.saved')) },
+                      { roles: draft.roles, ...(sodConflict ? { sod_reason: sodReason } : {}) },
+                      {
+                        onSuccess: (res) => {
+                          setSodConflict(false);
+                          setSodReason('');
+                          setNotice(
+                            'pending_approval' in res
+                              ? t('sod.pending', { number: res.pending_approval })
+                              : t('users.saved'),
+                          );
+                        },
+                        onError: (e) => {
+                          if (e instanceof ApiError && e.code === 'SOD_CONFLICT')
+                            setSodConflict(true);
+                        },
+                      },
                     )
                   }
                 >
-                  {t('users.saveRoles')}
+                  {sodConflict ? t('sod.submitException') : t('users.saveRoles')}
                 </Button>
               )}
             </div>
