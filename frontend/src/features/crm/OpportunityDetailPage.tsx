@@ -20,12 +20,12 @@ import {
   scorePercent,
   useBidDecision,
   useCrmConfig,
+  useMarkWon,
   useMoveStage,
   useOpportunity,
   useSaveOpportunity,
   type BidDecisionRow,
   type OpportunityDetail,
-  type Stage,
 } from './api';
 import { StagePill } from './CrmPills';
 
@@ -78,6 +78,31 @@ export function OpportunityDetailPage() {
             />
             <Stat label={t('crm.owner')} value={o.owner_name ?? '–'} />
           </dl>
+          {(o.contract || o.project) && (
+            <p className="mt-3 flex flex-wrap gap-3 text-small">
+              {o.contract && (
+                <Link
+                  to={`/kontrak/${o.contract.id}`}
+                  className="font-semibold text-fg-accent underline"
+                >
+                  {t('crm.contractLink', { number: o.contract.number })}
+                </Link>
+              )}
+              {o.project && (
+                <Link
+                  to={`/proyek/${o.project.id}`}
+                  className="font-semibold text-fg-accent underline"
+                >
+                  {t('crm.projectLink', { number: o.project.number })}
+                </Link>
+              )}
+            </p>
+          )}
+          {o.winner_price && (
+            <p className="mt-1 text-small text-fg-secondary">
+              {t('crm.winnerPrice')}: {formatIDR(o.winner_price)}
+            </p>
+          )}
           {o.lost_reason && (
             <p className="mt-3 text-small text-danger">
               {t('crm.lostReason')}: {o.lost_reason}
@@ -224,14 +249,14 @@ function EditCard({ o }: { o: OpportunityDetail }) {
   );
 }
 
-const NEXT: Partial<Record<Stage, Stage>> = { quotation: 'submitted', submitted: 'won' };
-
 function StageCard({ o }: { o: OpportunityDetail }) {
   const { t } = useTranslation();
   const move = useMoveStage(o.id);
-  const [losing, setLosing] = useState(false);
+  const won = useMarkWon(o.id);
+  const [mode, setMode] = useState<'won' | 'lost' | null>(null);
   const [reason, setReason] = useState('');
-  const next = NEXT[o.stage];
+  const [winner, setWinner] = useState('');
+  const [w, setW] = useState({ po: '', start: '', end: '', term: '' });
   const pending = o.bid_status === 'pending';
 
   return (
@@ -239,40 +264,104 @@ function StageCard({ o }: { o: OpportunityDetail }) {
       <CardHeader>
         <CardTitle>{t('crm.stageLabel')}</CardTitle>
         <CardDescription>
-          {o.stage === 'qualified' ? t('crm.qualifiedHint') : t('crm.stageHint')}
+          {o.stage === 'qualified'
+            ? t('crm.qualifiedHint')
+            : o.stage === 'submitted'
+              ? t('crm.submittedHint')
+              : t('crm.stageHint')}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
-        <FormError message={errText(move.error, t('auth.unexpected'))} />
+        <FormError message={errText(move.error ?? won.error, t('auth.unexpected'))} />
         {pending && (
           <p role="note" className="text-small text-warning">
             {t('crm.bidPendingNote')}
           </p>
         )}
         <div className="flex flex-wrap gap-2">
-          {next && (
+          {o.stage === 'quotation' && (
             <Button
-              variant="primary"
-              disabled={pending || move.isPending}
-              onClick={() => move.mutate({ to: next })}
+              variant="secondary"
+              disabled={move.isPending}
+              onClick={() => move.mutate({ to: 'submitted' })}
             >
-              {t(`crm.moveTo.${next}`)}
+              {t('crm.moveTo.submitted')}
             </Button>
           )}
-          <Button variant="destructive" disabled={pending} onClick={() => setLosing(true)}>
+          {o.stage === 'submitted' && (
+            <Button variant="primary" onClick={() => setMode('won')}>
+              <Icon name="emoji_events" /> {t('crm.markWon')}
+            </Button>
+          )}
+          <Button variant="destructive" disabled={pending} onClick={() => setMode('lost')}>
             {t('crm.markLost')}
           </Button>
         </div>
-        {losing && (
-          <div className="flex flex-col gap-2">
+        {mode === 'won' && (
+          <div className="flex flex-col gap-3 rounded-card border border-border p-3">
+            <p className="text-small text-fg-secondary">{t('crm.wonHelp')}</p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Field label={t('crm.poNumber')}>
+                <Input value={w.po} onChange={(e) => setW({ ...w, po: e.target.value })} />
+              </Field>
+              <Field label={t('crm.paymentTerm')} hint={t('crm.paymentTermHint')}>
+                <Input
+                  type="number"
+                  min={0}
+                  max={365}
+                  value={w.term}
+                  onChange={(e) => setW({ ...w, term: e.target.value })}
+                />
+              </Field>
+              <Field label={t('crm.startDate')}>
+                <Input
+                  type="date"
+                  value={w.start}
+                  onChange={(e) => setW({ ...w, start: e.target.value })}
+                />
+              </Field>
+              <Field label={t('crm.endDate')}>
+                <Input
+                  type="date"
+                  value={w.end}
+                  onChange={(e) => setW({ ...w, end: e.target.value })}
+                />
+              </Field>
+            </div>
+            <Button
+              variant="primary"
+              className="self-start"
+              disabled={won.isPending}
+              onClick={() =>
+                won.mutate({
+                  po_number: w.po || undefined,
+                  start_date: w.start || null,
+                  end_date: w.end || null,
+                  payment_term_days: w.term ? Number(w.term) : null,
+                })
+              }
+            >
+              {t('crm.confirmWon')}
+            </Button>
+          </div>
+        )}
+        {mode === 'lost' && (
+          <div className="flex flex-col gap-2 rounded-card border border-border p-3">
             <Field label={t('crm.lostReason')} required>
               <Textarea rows={2} value={reason} onChange={(e) => setReason(e.target.value)} />
+            </Field>
+            <Field label={t('crm.winnerPrice')} hint={t('crm.winnerPriceHint')}>
+              <Input
+                inputMode="numeric"
+                value={winner}
+                onChange={(e) => setWinner(e.target.value)}
+              />
             </Field>
             <Button
               variant="destructive"
               className="self-start"
               disabled={reason.trim().length < 5 || move.isPending}
-              onClick={() => move.mutate({ to: 'lost', reason })}
+              onClick={() => move.mutate({ to: 'lost', reason, winner_price: moneyToApi(winner) })}
             >
               {t('crm.confirmLost')}
             </Button>

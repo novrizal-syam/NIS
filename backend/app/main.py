@@ -19,6 +19,7 @@ from app.auth.onboarding import router as onboarding_router
 from app.auth.roles_router import router as roles_router
 from app.auth.router import router as auth_router
 from app.auth.users_router import router as users_router
+from app.contract.router import router as contract_router
 from app.core.config import get_settings
 from app.core.db import get_session, session_scope, use_session_provider
 from app.core.errors import install_error_handlers
@@ -29,6 +30,7 @@ from app.demo.router import router as demo_router
 from app.dms.router import router as dms_router
 from app.master.router import router as master_router
 from app.notifications.router import router as notifications_router
+from app.project.router import router as project_router
 from app.reporting.access_review import router as reports_router
 from app.setup import service as setup_service
 from app.setup.router import router as setup_router
@@ -121,6 +123,8 @@ def create_app() -> FastAPI:
     api.include_router(reports_router)
     api.include_router(crm_router)
     api.include_router(quotation_router)
+    api.include_router(contract_router)
+    api.include_router(project_router)
     app.include_router(api)
     return app
 

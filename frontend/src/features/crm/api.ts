@@ -65,6 +65,7 @@ export interface Opportunity {
   stage: Stage;
   bid_status: 'none' | 'pending' | 'bid' | 'no_bid';
   lost_reason: string | null;
+  winner_price: string | null;
   won_at: string | null;
   lost_at: string | null;
   is_demo: boolean;
@@ -87,6 +88,8 @@ export interface BidDecisionRow {
 }
 
 export interface OpportunityDetail extends Opportunity {
+  contract: { id: string; number: string } | null;
+  project: { id: string; number: string } | null;
   can_edit: boolean;
   can_submit: boolean;
   bid_decisions: BidDecisionRow[];
@@ -219,8 +222,24 @@ export const useSaveOpportunity = (id: string) =>
     api<Opportunity>(`/crm/opportunities/${id}`, { method: 'PATCH', body: JSON.stringify(body) }),
   );
 
+export const useMarkWon = (id: string) =>
+  useCrmMutation(
+    (body: {
+      po_number?: string;
+      start_date?: string | null;
+      end_date?: string | null;
+      payment_term_days?: number | null;
+    }) =>
+      postJson<{
+        contract_id: string;
+        contract_number: string;
+        project_id: string;
+        project_number: string;
+      }>(`/crm/opportunities/${id}/won`, body),
+  );
+
 export const useMoveStage = (id: string) =>
-  useCrmMutation((body: { to: Stage; reason?: string }) =>
+  useCrmMutation((body: { to: Stage; reason?: string; winner_price?: string | null }) =>
     postJson<Opportunity>(`/crm/opportunities/${id}/stage`, body),
   );
 

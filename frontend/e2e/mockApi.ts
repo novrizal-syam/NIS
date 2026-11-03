@@ -186,6 +186,49 @@ export async function mockSignedIn(page: Page) {
           total: 4,
           counts: { draft: 1, submitted: 1, approved: 1, rejected: 0, sent: 1, superseded: 0 },
         });
+      case 'GET /api/contracts':
+        return json({
+          items: [0, 1].map((i) => ({
+            id: `c${i}`,
+            number: `CTR-26-00${i + 1}`,
+            title: 'Well clean-up 4 sumur Rokan',
+            company_name: 'PT Energi Rokan Hulu',
+            status: i === 0 ? 'active' : 'completed',
+            value: '132750000',
+            used_value: i === 0 ? '112000000' : '0',
+            usage_pct: i === 0 ? '84.4' : '0.0',
+            po_number: 'PO-4500012345',
+            start_date: '2027-01-05',
+            end_date: '2027-03-31',
+            payment_term_days: 45,
+            owner_name: 'Rina Wijaya',
+            project_id: `p${i}`,
+            project_number: `PRJ-26-00${i + 1}`,
+          })),
+          total: 2,
+          total_value: '265500000',
+        });
+      case 'GET /api/projects':
+        return json({
+          items: [
+            {
+              id: 'p0',
+              number: 'PRJ-26-001',
+              name: 'Well clean-up 4 sumur Rokan',
+              company_name: 'PT Energi Rokan Hulu',
+              status: 'draft',
+              revenue: '132750000',
+              budget_total: '104475000',
+              planned_margin: '28275000',
+              contract_id: 'c0',
+              contract_number: 'CTR-26-001',
+              start_date: null,
+              end_date: null,
+            },
+          ],
+          total: 1,
+          counts: { draft: 1, controller_review: 0, awaiting_approval: 0, locked: 0, closed: 0 },
+        });
       default:
         return json({ code: 'NOT_FOUND', message: 'Tidak ada mock.' }, 404);
     }

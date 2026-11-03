@@ -52,6 +52,12 @@ for (const theme of THEMES) {
       await page.goto('/penawaran');
       await expect(page.getByText('QT-26-002 Rev.1')).toBeVisible();
       expect(await contrastViolations(page)).toEqual([]);
+      await page.goto('/kontrak');
+      await expect(page.getByText('CTR-26-002')).toBeVisible();
+      expect(await contrastViolations(page)).toEqual([]);
+      await page.goto('/proyek');
+      await expect(page.getByText('PRJ-26-001')).toBeVisible();
+      expect(await contrastViolations(page)).toEqual([]);
     });
 
     test('login page passes the contrast check', async ({ page }) => {
@@ -75,7 +81,15 @@ test('full WCAG A/AA scan of the Komponen page', async ({ page }) => {
 test('works at 400 px width without horizontal scrolling', async ({ page }) => {
   await mockSignedIn(page);
   await page.setViewportSize({ width: 400, height: 800 });
-  for (const path of ['/', '/dev/komponen', '/lead', '/peluang', '/penawaran']) {
+  for (const path of [
+    '/',
+    '/dev/komponen',
+    '/lead',
+    '/peluang',
+    '/penawaran',
+    '/kontrak',
+    '/proyek',
+  ]) {
     await page.goto(path);
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,

@@ -25,6 +25,10 @@ from app.services.storage import Storage, get_storage
 TEST_DB_URL = os.environ.get("TEST_DATABASE_URL", get_settings().test_database_url)
 # Seeded configuration (system roles and their permissions) survives between tests.
 TABLES = (
+    "project_budget_lines",
+    "projects",
+    "contract_rates",
+    "contracts",
     "outgoing_letters",
     "crm_quotation_lines",
     "crm_quotations",

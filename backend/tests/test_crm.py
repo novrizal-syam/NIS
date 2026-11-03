@@ -1,5 +1,6 @@
 """Phase 02a: leads, opportunities, bid/no-bid (score threshold, SoD, status machines)."""
 
+import uuid
 from collections.abc import Awaitable, Callable
 from decimal import Decimal
 from typing import Any
@@ -351,11 +352,14 @@ async def test_opportunity_stage_machine(
     assert r.status_code == 200 and r.json()["stage"] == "submitted"
     r = await client.post(f"{url}/stage", json={"to": "lost"}, headers=ae)
     assert r.status_code == 422 and r.json()["code"] == "REASON_REQUIRED"
+    # Won only through "Tandai Menang" (contract + project, phase 02c: tests/test_won.py).
     r = await client.post(f"{url}/stage", json={"to": "won"}, headers=ae)
-    assert r.status_code == 200 and r.json()["probability"] == 100 and r.json()["won_at"]
+    assert r.status_code == 409 and r.json()["code"] == "USE_WON_ACTION"
+    r = await client.post(f"{url}/stage", json={"to": "lost", "reason": "Kalah harga"}, headers=ae)
+    assert r.status_code == 200 and r.json()["probability"] == 0 and r.json()["lost_at"]
 
-    # Won is final.
-    r = await client.post(f"{url}/stage", json={"to": "lost", "reason": "salah klik"}, headers=ae)
+    # Lost is final.
+    r = await client.post(f"{url}/stage", json={"to": "submitted"}, headers=ae)
     assert r.status_code == 409
     r = await client.patch(url, json={"value": "1"}, headers=ae)
     assert r.status_code == 409 and r.json()["code"] == "OPPORTUNITY_CLOSED"
@@ -363,7 +367,7 @@ async def test_opportunity_stage_machine(
     history = await client.get(f"/api/audit/history/opportunity/{opp['id']}", headers=ae)
     assert history.status_code == 200, history.text
     actions = [e["action"] for e in history.json()["items"]]
-    assert actions.count("stage_change") == 3  # quotation (Director), submitted, won
+    assert actions.count("stage_change") == 3  # quotation (Director), submitted, lost
 
 
 # ---------------------------------------------------------------- RBAC / scope / dashboard
@@ -428,7 +432,9 @@ async def test_lead_validation_messages(
     assert r.status_code == 422
 
 
-async def test_sales_dashboard(client: AsyncClient, make_user: MakeUser, login: Login) -> None:
+async def test_sales_dashboard(
+    client: AsyncClient, make_user: MakeUser, login: Login, session: Any
+) -> None:
     ae = await login(await make_user("account_executive"))
     hos = await login(await make_user("head_of_sales"))
     director = await login(await make_user("director"))
@@ -448,7 +454,13 @@ async def test_sales_dashboard(client: AsyncClient, make_user: MakeUser, login: 
     await client.post(
         f"/api/crm/opportunities/{b['id']}/stage", json={"to": "submitted"}, headers=ae
     )
-    await client.post(f"/api/crm/opportunities/{b['id']}/stage", json={"to": "won"}, headers=ae)
+    # Won normally comes with a contract (tests/test_won.py); here only the stage matters.
+    from app.crm.models import Opportunity
+    from app.services.numbering import today_jakarta
+
+    row = await session.get(Opportunity, uuid.UUID(b["id"]))
+    row.stage, row.won_at, row.probability = "won", today_jakarta(), 100
+    await session.commit()
     c = await _opportunity(client, ae)
     await client.post(
         f"/api/crm/opportunities/{c['id']}/stage",

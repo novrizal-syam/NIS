@@ -165,6 +165,22 @@
     "quotationDetail": {
       "title": "Penawaran",
       "description": "Baris dari database harga, diskon, margin, revisi dan surat ke klien."
+    },
+    "contracts": {
+      "title": "Kontrak",
+      "description": "Kontrak dari peluang yang dimenangkan: nilai, periode, PO/SPK dan rate schedule."
+    },
+    "contractDetail": {
+      "title": "Kontrak",
+      "description": "Rate schedule, PO/SPK, periode, termin dan pemakaian kontrak."
+    },
+    "projects": {
+      "title": "Proyek",
+      "description": "Proyek dari kontrak. Anggaran diubah dan dikunci di fase anggaran."
+    },
+    "projectDetail": {
+      "title": "Proyek",
+      "description": "Pendapatan, anggaran per elemen biaya dan dokumen proyek."
     }
   },
   "dashboard": {
@@ -918,7 +934,20 @@
     "submitBid": "Ajukan ke Direktur",
     "bidHistory": "Riwayat bid/no-bid",
     "directorComment": "Catatan Direktur",
-    "openApproval": "Buka dokumen persetujuan"
+    "openApproval": "Buka dokumen persetujuan",
+    "markWon": "Tandai Menang",
+    "wonHelp": "Membuat kontrak (rate schedule dari penawaran setelah diskon) dan proyek draf (anggaran dari biaya penawaran + kontinjensi) sekaligus.",
+    "poNumber": "No. PO/SPK klien",
+    "paymentTerm": "Termin pembayaran (hari)",
+    "paymentTermHint": "Kosongkan untuk memakai termin klien.",
+    "startDate": "Mulai",
+    "endDate": "Selesai",
+    "confirmWon": "Buat kontrak & proyek",
+    "winnerPrice": "Harga pemenang",
+    "winnerPriceHint": "Bila diketahui (Rp).",
+    "submittedHint": "Penawaran sudah dikirim. Tandai menang atau kalah setelah klien memutuskan.",
+    "contractLink": "Kontrak {{number}}",
+    "projectLink": "Proyek {{number}}"
   },
   "quotation": {
     "status": {
@@ -998,6 +1027,77 @@
     "sentDone": "Surat {{number}} dibuat dan disimpan.",
     "revisions": "Revisi",
     "startHelp": "Peluang sudah di tahap Quotation. Buat penawaran dari database harga.",
-    "create": "Buat penawaran"
+    "create": "Buat penawaran",
+    "costElement": "Elemen biaya"
+  },
+  "contract": {
+    "status": {
+      "active": "Aktif",
+      "completed": "Selesai",
+      "terminated": "Diakhiri"
+    },
+    "kinds": {
+      "service": "Jasa",
+      "equipment": "Peralatan",
+      "personnel": "Personel",
+      "consumable": "Bahan habis pakai",
+      "mobilisation": "Mob/demob"
+    },
+    "summary_one": "{{count}} kontrak, nilai total",
+    "summary_other": "{{count}} kontrak, nilai total",
+    "search": "Cari nomor, judul, klien, PO",
+    "fromWonHint": "Kontrak dibuat otomatis saat peluang ditandai menang.",
+    "empty": "Belum ada kontrak.",
+    "titleCol": "Judul",
+    "po": "No. PO/SPK",
+    "value": "Nilai kontrak",
+    "used": "Terpakai",
+    "usage": "Pemakaian",
+    "period": "Periode",
+    "term": "Termin",
+    "days_one": "{{count}} hari",
+    "days_other": "{{count}} hari",
+    "back": "Kembali ke daftar kontrak",
+    "header": "Data kontrak",
+    "rates": "Rate schedule",
+    "ratesHelp": "Dari penawaran setelah diskon. Tambah tarif manual: standby/breakdown peralatan, personel per hari, bahan habis pakai (biaya + markup), mob/demob.",
+    "kind": "Jenis",
+    "rate": "Tarif",
+    "standby": "Standby",
+    "breakdown": "Breakdown",
+    "markup": "Markup %",
+    "computed": "dihitung",
+    "addRate": "Tambah tarif",
+    "saveRates": "Simpan rate schedule"
+  },
+  "project": {
+    "status": {
+      "draft": "Draf",
+      "controller_review": "Review controller",
+      "awaiting_approval": "Menunggu persetujuan",
+      "locked": "Terkunci",
+      "closed": "Ditutup"
+    },
+    "sources": {
+      "quotation": "Biaya penawaran",
+      "contingency": "Kontinjensi"
+    },
+    "search": "Cari nomor, nama, klien",
+    "empty": "Belum ada proyek.",
+    "name": "Nama proyek",
+    "contract": "Kontrak",
+    "revenue": "Pendapatan",
+    "budget": "Anggaran",
+    "plannedMargin": "Margin rencana",
+    "back": "Kembali ke daftar proyek",
+    "budgetTab": "Anggaran",
+    "documents": "Dokumen proyek",
+    "budgetTitle": "Anggaran per elemen biaya",
+    "budgetHelp": "Draf dari biaya penawaran + kontinjensi {{pct}}%. Hanya baca; pengeditan dan penguncian anggaran di fase 03.",
+    "costElement": "Elemen biaya",
+    "source": "Sumber",
+    "amount": "Jumlah",
+    "ofRevenue": "% pendapatan",
+    "total": "Total anggaran"
   }
 }

@@ -49,6 +49,24 @@ export function usePageMeta(): PageMeta {
       description: t('pages.quotationDetail.description'),
     };
   }
+  if (pathname === '/kontrak') {
+    return { title: t('pages.contracts.title'), description: t('pages.contracts.description') };
+  }
+  if (matchPath('/kontrak/:id', pathname)) {
+    return {
+      title: t('pages.contractDetail.title'),
+      description: t('pages.contractDetail.description'),
+    };
+  }
+  if (pathname === '/proyek') {
+    return { title: t('pages.projects.title'), description: t('pages.projects.description') };
+  }
+  if (matchPath('/proyek/:id', pathname)) {
+    return {
+      title: t('pages.projectDetail.title'),
+      description: t('pages.projectDetail.description'),
+    };
+  }
   if (pathname === '/persetujuan') {
     return { title: t('pages.approvals.title'), description: t('pages.approvals.description') };
   }

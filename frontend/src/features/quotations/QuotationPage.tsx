@@ -192,6 +192,7 @@ function Stat({ label, value, strong }: { label: string; value: string; strong?:
 function Editor({ q }: { q: QuotationDetail }) {
   const { t } = useTranslation();
   const items = usePriceItems();
+  const config = useQuotationConfig();
   const save = useSaveQuotation(q.id);
   const [d, setD] = useState<Draft>(() => toDraft(q));
   const [dirty, setDirty] = useState(false);
@@ -215,6 +216,7 @@ function Editor({ q }: { q: QuotationDetail }) {
         ...d.lines,
         {
           price_item_code: p.code,
+          cost_element_code: p.cost_element_code,
           description: p.name,
           unit: p.unit,
           qty: '1',
@@ -235,6 +237,7 @@ function Editor({ q }: { q: QuotationDetail }) {
         terms: d.terms,
         lines: d.lines.map((x) => ({
           price_item_code: x.price_item_code,
+          cost_element_code: x.price_item_code ? null : (x.cost_element_code ?? null),
           description: x.description,
           unit: x.unit,
           qty: qtyToApi(x.qty),
@@ -286,8 +289,27 @@ function Editor({ q }: { q: QuotationDetail }) {
                         onChange={(e) => setLine(i, { description: e.target.value })}
                       />
                     )}
-                    {x.price_item_code && (
-                      <span className="block text-caption text-fg-muted">{x.price_item_code}</span>
+                    {x.price_item_code ? (
+                      <span className="block text-caption text-fg-muted">
+                        {x.price_item_code} · {x.cost_element_code}
+                      </span>
+                    ) : ro ? (
+                      <span className="block text-caption text-fg-muted">
+                        {x.cost_element_code}
+                      </span>
+                    ) : (
+                      <Select
+                        aria-label={`${t('quotation.costElement')} ${i + 1}`}
+                        className="mt-1"
+                        value={x.cost_element_code ?? ''}
+                        onChange={(e) => setLine(i, { cost_element_code: e.target.value })}
+                      >
+                        {config.data?.cost_elements.map((c) => (
+                          <option key={c.code} value={c.code}>
+                            {c.code} · {c.name}
+                          </option>
+                        ))}
+                      </Select>
                     )}
                   </TD>
                   <TD className="text-right tabular-nums">
@@ -370,6 +392,7 @@ function Editor({ q }: { q: QuotationDetail }) {
                     ...d.lines,
                     {
                       price_item_code: null,
+                      cost_element_code: config.data?.default_cost_element ?? 'SUBCONTRACT',
                       description: '',
                       unit: 'lot',
                       qty: '1',

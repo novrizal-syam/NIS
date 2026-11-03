@@ -34,6 +34,7 @@ export interface QuotationRow {
 export interface QuotationLine {
   id?: string;
   price_item_code: string | null;
+  cost_element_code?: string | null;
   description: string;
   unit: string;
   qty: string;
@@ -80,6 +81,7 @@ export interface PriceItemOption {
   code: string;
   name: string;
   unit: string;
+  cost_element_code: string;
   unit_cost: string;
   unit_price: string;
 }
@@ -127,7 +129,12 @@ export function useQuotationConfig() {
   return useQuery({
     queryKey: ['quotations', 'config'],
     queryFn: () =>
-      api<{ margin_warning_pct: string; email_configured: boolean }>('/quotations/config'),
+      api<{
+        margin_warning_pct: string;
+        email_configured: boolean;
+        cost_elements: { code: string; name: string }[];
+        default_cost_element: string;
+      }>('/quotations/config'),
     staleTime: 300_000,
   });
 }

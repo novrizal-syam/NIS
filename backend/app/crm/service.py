@@ -294,6 +294,7 @@ def opp_snapshot(opp: Opportunity) -> dict[str, Any]:
         "expected_close": opp.expected_close,
         "is_tender": opp.is_tender,
         "stage": opp.stage,
+        "winner_price": opp.winner_price,
     }
 
 
@@ -416,9 +417,19 @@ async def set_stage(
 
 
 async def move_stage(
-    session: AsyncSession, actor: Principal, opp: Opportunity, to: str, reason: str | None
+    session: AsyncSession,
+    actor: Principal,
+    opp: Opportunity,
+    to: str,
+    reason: str | None,
+    winner_price: Decimal | None = None,
 ) -> Opportunity:
     _ensure_no_pending_bid(opp)
+    if to == "won" and opp.stage == "submitted":
+        raise ConflictError(
+            "USE_WON_ACTION",
+            'Gunakan "Tandai Menang": kontrak dan proyek dibuat bersamaan.',
+        )
     if opp.stage == "qualified" and to == "quotation":
         raise ConflictError(
             "BID_DECISION_REQUIRED",
@@ -433,6 +444,10 @@ async def move_stage(
     reason = (reason or "").strip() or None
     if to == "lost" and (not reason or len(reason) < 5):
         raise AppError("REASON_REQUIRED", "Alasan kalah/batal wajib diisi.", status_code=422)
+    if to == "lost" and winner_price is not None:
+        if winner_price < 0:
+            raise AppError("PRICE_INVALID", "Harga pemenang tidak boleh negatif.", status_code=422)
+        opp.winner_price = winner_price
     await set_stage(session, opp, to, actor_id=actor.id, reason=reason)
     return opp
 

@@ -11,16 +11,19 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.models import User
 from app.auth.principal import Principal, require, scope_filter
+from app.contract.models import Contract
 from app.core import access
 from app.core.db import get_session
 from app.core.errors import AppError, NotFoundError
 from app.core.pagination import PageParams, page_params
 from app.core.types import IDR
-from app.crm import service
+from app.crm import service, won_service
 from app.crm.models import BidDecision, Lead, Opportunity
 from app.master.models import Client
+from app.project.models import Project
 from app.services.export import Column, xlsx_response
 from app.services.numbering import today_jakarta
+from app.services.storage import Storage, get_storage
 
 router = APIRouter(prefix="/crm", tags=["crm"])
 Session = Annotated[AsyncSession, Depends(get_session)]
@@ -29,6 +32,7 @@ Creator = Annotated[Principal, Depends(require("crm", "create"))]
 Editor = Annotated[Principal, Depends(require("crm", "edit"))]
 Submitter = Annotated[Principal, Depends(require("crm", "submit"))]
 Exporter = Annotated[Principal, Depends(require("crm", "export"))]
+Store = Annotated[Storage, Depends(get_storage)]
 
 Source = Literal["civd", "eproc", "invitation", "visit", "referral", "website", "exhibition"]
 
@@ -152,6 +156,7 @@ class OpportunityOut(BaseModel):
     stage: str
     bid_status: str
     lost_reason: str | None
+    winner_price: IDR | None
     stage_changed_at: datetime | None
     won_at: date | None
     lost_at: date | None
@@ -230,6 +235,7 @@ async def _opp_rows(session: AsyncSession, opps: list[Opportunity]) -> list[Oppo
             stage=x.stage,
             bid_status=x.bid_status,
             lost_reason=x.lost_reason,
+            winner_price=x.winner_price,
             stage_changed_at=x.stage_changed_at,
             won_at=x.won_at,
             lost_at=x.lost_at,
@@ -600,6 +606,8 @@ async def get_opportunity(opp_id: uuid.UUID, principal: Viewer, session: Session
     row = (await _opp_rows(session, [opp]))[0]
     return {
         **row.model_dump(mode="json"),
+        "contract": await _linked(session, Contract, opp.id),
+        "project": await _linked_project(session, opp.id),
         "can_edit": service.may(principal, "edit", opp.owner_id),
         "can_submit": service.may(principal, "submit", opp.owner_id),
         "bid_decisions": [
@@ -652,6 +660,7 @@ async def update_opportunity(
 class StageIn(BaseModel):
     to: Literal["qualified", "quotation", "submitted", "won", "lost"]
     reason: str | None = Field(default=None, max_length=500)
+    winner_price: Decimal | None = Field(default=None, ge=0, max_digits=18, decimal_places=0)
 
 
 @router.post("/opportunities/{opp_id}/stage")
@@ -660,9 +669,43 @@ async def opportunity_stage(
 ) -> OpportunityOut:
     opp = await _get_opp(session, actor, opp_id)
     service.ensure(actor, "edit", opp.owner_id, "opportunity")
-    await service.move_stage(session, actor, opp, body.to, body.reason)
+    await service.move_stage(session, actor, opp, body.to, body.reason, body.winner_price)
     await session.commit()
     return (await _opp_rows(session, [opp]))[0]
+
+
+class WonIn(BaseModel):
+    po_number: str | None = Field(default=None, max_length=60)
+    start_date: date | None = None
+    end_date: date | None = None
+    payment_term_days: int | None = Field(default=None, ge=0, le=365)
+
+
+@router.post("/opportunities/{opp_id}/won")
+async def opportunity_won(
+    opp_id: uuid.UUID, body: WonIn, actor: Editor, session: Session, storage: Store
+) -> dict[str, Any]:
+    """'Tandai Menang': contract + draft project + project documents in one transaction."""
+    opp = await _get_opp(session, actor, opp_id)
+    service.ensure(actor, "edit", opp.owner_id, "opportunity")
+    result = await won_service.mark_won(
+        session,
+        storage,
+        actor,
+        opp,
+        po_number=(body.po_number or "").strip() or None,
+        start_date=body.start_date,
+        end_date=body.end_date,
+        payment_term_days=body.payment_term_days,
+    )
+    await session.commit()
+    return {
+        "contract_id": str(result.contract.id),
+        "contract_number": result.contract.number,
+        "project_id": str(result.project.id),
+        "project_number": result.project.number,
+        "documents": result.documents,
+    }
 
 
 class BidDecisionIn(BaseModel):
@@ -687,6 +730,24 @@ async def bid_decision(
         "percent": str(decision.percent),
         "recommendation": decision.recommendation,
     }
+
+
+async def _linked(session: AsyncSession, model: Any, opp_id: uuid.UUID) -> dict[str, str] | None:
+    row = (
+        await session.execute(select(model.id, model.number).where(model.opportunity_id == opp_id))
+    ).first()
+    return {"id": str(row[0]), "number": row[1]} if row else None
+
+
+async def _linked_project(session: AsyncSession, opp_id: uuid.UUID) -> dict[str, str] | None:
+    row = (
+        await session.execute(
+            select(Project.id, Project.number)
+            .join(Contract, Contract.id == Project.contract_id)
+            .where(Contract.opportunity_id == opp_id)
+        )
+    ).first()
+    return {"id": str(row[0]), "number": row[1]} if row else None
 
 
 # ---------------------------------------------------------------- dashboard

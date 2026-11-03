@@ -51,13 +51,13 @@ export const NAV: NavGroup[] = [
         module: 'quotation',
       },
       soon('tenders', 'gavel', 'tender'),
-      soon('contracts', 'handshake', 'contract'),
+      { key: 'contracts', path: '/kontrak', icon: 'handshake', ready: true, module: 'contract' },
     ],
   },
   {
     key: 'plan',
     items: [
-      soon('projects', 'account_tree', 'project'),
+      { key: 'projects', path: '/proyek', icon: 'account_tree', ready: true, module: 'project' },
       soon('budgets', 'savings', 'budget'),
       soon('bcr', 'published_with_changes', 'budget'),
     ],

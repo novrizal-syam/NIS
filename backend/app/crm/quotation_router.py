@@ -24,7 +24,7 @@ from app.dms import service as dms
 from app.dms.models import Attachment
 from app.letters import service as letters
 from app.letters.models import OutgoingLetter
-from app.master.models import PriceItem
+from app.master.models import CostElement, PriceItem
 from app.services import email, email_log
 from app.services import email_templates as templates
 from app.services.export import Column, xlsx_response
@@ -161,6 +161,7 @@ async def price_items(_: Viewer, session: Session) -> list[dict[str, Any]]:
             "code": p.code,
             "name": p.name,
             "unit": p.unit,
+            "cost_element_code": p.cost_element_code,
             "unit_cost": format(p.unit_cost, "f"),
             "unit_price": format(p.unit_price, "f"),
         }
@@ -170,9 +171,16 @@ async def price_items(_: Viewer, session: Session) -> list[dict[str, Any]]:
 
 @router.get("/config")
 async def config(_: Viewer, session: Session) -> dict[str, Any]:
+    elements = await session.execute(
+        select(CostElement.code, CostElement.name)
+        .where(CostElement.code != "CONTINGENCY")
+        .order_by(CostElement.code)
+    )
     return {
         "margin_warning_pct": str(await svc.margin_warning_pct(session)),
         "email_configured": email.provider() is not None,
+        "cost_elements": [{"code": c, "name": n} for c, n in elements.tuples()],
+        "default_cost_element": svc.DEFAULT_COST_ELEMENT,
     }
 
 
@@ -327,6 +335,7 @@ async def _detail(session: AsyncSession, principal: Principal, q: Quotation) -> 
                 "id": str(x.id),
                 "seq": x.seq,
                 "price_item_code": x.price_item_code,
+                "cost_element_code": x.cost_element_code,
                 "description": x.description,
                 "unit": x.unit,
                 "qty": format(x.qty.normalize(), "f"),
@@ -374,13 +383,14 @@ async def create(body: CreateIn, actor: Creator, session: Session) -> dict[str, 
 
 class LineBody(BaseModel):
     price_item_code: str | None = Field(default=None, max_length=30)
+    cost_element_code: str | None = Field(default=None, max_length=20)
     description: str = Field(min_length=2, max_length=300)
     unit: str = Field(min_length=1, max_length=20)
     qty: Decimal = Field(gt=0, max_digits=16, decimal_places=2)
     unit_cost: Decimal = Field(ge=0, max_digits=18, decimal_places=0)
     unit_price: Decimal = Field(ge=0, max_digits=18, decimal_places=0)
 
-    @field_validator("price_item_code", mode="before")
+    @field_validator("price_item_code", "cost_element_code", mode="before")
     @classmethod
     def _blank(cls, v: Any) -> Any:
         return None if isinstance(v, str) and not v.strip() else v
@@ -405,6 +415,7 @@ async def save(qid: uuid.UUID, body: DraftIn, actor: Editor, session: Session) -
         lines=[
             svc.LineIn(
                 price_item_code=x.price_item_code,
+                cost_element_code=x.cost_element_code,
                 description=x.description.strip(),
                 unit=x.unit.strip(),
                 qty=x.qty,

@@ -20,6 +20,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app import models as _models  # noqa: F401  (register every model)
 from app.auth import service as auth_service
 from app.auth.models import RefreshToken, User, UserRole
+from app.contract.models import Contract
 from app.core.db import SessionLocal
 from app.core.errors import ConflictError
 from app.crm.models import BidDecision, Lead, Opportunity, Quotation
@@ -40,6 +41,7 @@ from app.master.models import (
     Warehouse,
 )
 from app.notifications.models import Notification
+from app.project.models import Project
 from app.services import audit, numbering
 from app.services.numbering import today_jakarta
 from app.workflow.models import ApprovalRequest, ApprovalStep, Delegation
@@ -81,6 +83,8 @@ async def demo_counts(session: AsyncSession) -> dict[str, int]:
         BidDecision,
         Quotation,
         OutgoingLetter,
+        Contract,
+        Project,
         *DEMO_TABLES,
         User,
         Department,
@@ -376,6 +380,8 @@ async def remove(session: AsyncSession, *, actor_id: uuid.UUID | None) -> Summar
         async with session.begin_nested():
             # Sales records first: bid decisions reference approval requests.
             crm_tables: tuple[Any, ...] = (
+                Project,
+                Contract,
                 Quotation,
                 OutgoingLetter,
                 BidDecision,

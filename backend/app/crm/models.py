@@ -89,6 +89,8 @@ class Opportunity(EntityMixin, Base):
     # none | pending | bid | no_bid  (latest bid decision outcome)
     bid_status: Mapped[str] = mapped_column(String(20), nullable=False, server_default="none")
     lost_reason: Mapped[str | None] = mapped_column(String(500))
+    # Winning competitor price when known (lost tenders, for pricing analysis).
+    winner_price: Mapped[Decimal | None] = mapped_column(Numeric(18, 0))
     stage_changed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     won_at: Mapped[date | None] = mapped_column(Date)
     lost_at: Mapped[date | None] = mapped_column(Date)
@@ -183,6 +185,10 @@ class QuotationLine(Base):
     seq: Mapped[int] = mapped_column(Integer, nullable=False)
     price_item_code: Mapped[str | None] = mapped_column(
         String(30), ForeignKey("price_items.code", ondelete="RESTRICT")
+    )
+    # From the price item; free lines choose one (budget per cost element when won).
+    cost_element_code: Mapped[str | None] = mapped_column(
+        String(20), ForeignKey("cost_elements.code", ondelete="RESTRICT")
     )
     description: Mapped[str] = mapped_column(String(300), nullable=False)
     unit: Mapped[str] = mapped_column(String(20), nullable=False)

@@ -10,6 +10,7 @@ from app.auth.models import (
     UserRole,
 )
 from app.auth.password_reset import PasswordReset, PasswordResetRequest
+from app.contract.models import Contract, ContractRate
 from app.core.models import Base
 from app.crm.models import BidDecision, Lead, Opportunity, Quotation, QuotationLine
 from app.dms.models import Attachment
@@ -31,6 +32,7 @@ from app.master.models import (
     Warehouse,
 )
 from app.notifications.models import Notification
+from app.project.models import Project, ProjectBudgetLine
 from app.services.audit import AuditLog
 from app.services.email_log import EmailLog
 from app.services.numbering import DocCounter
@@ -55,6 +57,8 @@ __all__ = [
     "Base",
     "BidDecision",
     "Client",
+    "Contract",
+    "ContractRate",
     "CostCenter",
     "CostElement",
     "Currency",
@@ -76,6 +80,8 @@ __all__ = [
     "PasswordReset",
     "PasswordResetRequest",
     "PriceItem",
+    "Project",
+    "ProjectBudgetLine",
     "Quotation",
     "QuotationLine",
     "RecoveryCode",

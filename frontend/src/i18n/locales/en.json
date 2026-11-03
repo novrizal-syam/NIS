@@ -165,6 +165,22 @@
     "quotationDetail": {
       "title": "Quotation",
       "description": "Lines from the price database, discount, margin, revisions and the client letter."
+    },
+    "contracts": {
+      "title": "Contracts",
+      "description": "Contracts from won opportunities: value, period, PO/SPK and rate schedule."
+    },
+    "contractDetail": {
+      "title": "Contract",
+      "description": "Rate schedule, PO/SPK, period, payment term and usage."
+    },
+    "projects": {
+      "title": "Projects",
+      "description": "Projects from contracts. The budget is edited and locked in the budget phase."
+    },
+    "projectDetail": {
+      "title": "Project",
+      "description": "Revenue, budget per cost element and project documents."
     }
   },
   "dashboard": {
@@ -918,7 +934,20 @@
     "submitBid": "Submit to Director",
     "bidHistory": "Bid/no-bid history",
     "directorComment": "Director's note",
-    "openApproval": "Open approval document"
+    "openApproval": "Open approval document",
+    "markWon": "Mark won",
+    "wonHelp": "Creates the contract (rate schedule from the quotation after discount) and a draft project (budget from quoted cost + contingency) in one step.",
+    "poNumber": "Client PO/SPK number",
+    "paymentTerm": "Payment term (days)",
+    "paymentTermHint": "Leave empty to use the client's term.",
+    "startDate": "Start",
+    "endDate": "End",
+    "confirmWon": "Create contract & project",
+    "winnerPrice": "Winning price",
+    "winnerPriceHint": "If known (Rp).",
+    "submittedHint": "The quotation was sent. Mark won or lost once the client decides.",
+    "contractLink": "Contract {{number}}",
+    "projectLink": "Project {{number}}"
   },
   "quotation": {
     "status": {
@@ -998,6 +1027,77 @@
     "sentDone": "Letter {{number}} issued and stored.",
     "revisions": "Revisions",
     "startHelp": "The opportunity is at the Quotation stage. Create a quotation from the price database.",
-    "create": "Create quotation"
+    "create": "Create quotation",
+    "costElement": "Cost element"
+  },
+  "contract": {
+    "status": {
+      "active": "Active",
+      "completed": "Completed",
+      "terminated": "Terminated"
+    },
+    "kinds": {
+      "service": "Service",
+      "equipment": "Equipment",
+      "personnel": "Personnel",
+      "consumable": "Consumable",
+      "mobilisation": "Mob/demob"
+    },
+    "summary_one": "{{count}} contract, total value",
+    "summary_other": "{{count}} contracts, total value",
+    "search": "Search number, title, client, PO",
+    "fromWonHint": "Contracts are created automatically when an opportunity is marked won.",
+    "empty": "No contracts yet.",
+    "titleCol": "Title",
+    "po": "PO/SPK number",
+    "value": "Contract value",
+    "used": "Used",
+    "usage": "Usage",
+    "period": "Period",
+    "term": "Payment term",
+    "days_one": "{{count}} day",
+    "days_other": "{{count}} days",
+    "back": "Back to contracts",
+    "header": "Contract data",
+    "rates": "Rate schedule",
+    "ratesHelp": "From the quotation after discount. Add manual rates: equipment standby/breakdown, personnel per day, consumables (cost + markup), mob/demob.",
+    "kind": "Kind",
+    "rate": "Rate",
+    "standby": "Standby",
+    "breakdown": "Breakdown",
+    "markup": "Markup %",
+    "computed": "computed",
+    "addRate": "Add rate",
+    "saveRates": "Save rate schedule"
+  },
+  "project": {
+    "status": {
+      "draft": "Draft",
+      "controller_review": "Controller review",
+      "awaiting_approval": "Awaiting approval",
+      "locked": "Locked",
+      "closed": "Closed"
+    },
+    "sources": {
+      "quotation": "Quoted cost",
+      "contingency": "Contingency"
+    },
+    "search": "Search number, name, client",
+    "empty": "No projects yet.",
+    "name": "Project name",
+    "contract": "Contract",
+    "revenue": "Revenue",
+    "budget": "Budget",
+    "plannedMargin": "Planned margin",
+    "back": "Back to projects",
+    "budgetTab": "Budget",
+    "documents": "Project documents",
+    "budgetTitle": "Budget per cost element",
+    "budgetHelp": "Draft from the quoted cost + {{pct}}% contingency. Read-only; budget editing and locking come in phase 03.",
+    "costElement": "Cost element",
+    "source": "Source",
+    "amount": "Amount",
+    "ofRevenue": "% of revenue",
+    "total": "Total budget"
   }
 }

@@ -14,7 +14,7 @@ from app.auth.principal import Principal
 from app.core.errors import AppError, ConflictError
 from app.crm import service as crm
 from app.crm.models import Lead, Opportunity, Quotation, QuotationLine
-from app.master.models import PriceItem
+from app.master.models import CostElement, PriceItem
 from app.services import audit, numbering
 from app.services.audit import AuditAction
 from app.setup import service as settings_store
@@ -63,6 +63,10 @@ class LineIn:
     qty: Decimal
     unit_cost: Decimal
     unit_price: Decimal
+    cost_element_code: str | None = None
+
+
+DEFAULT_COST_ELEMENT = "SUBCONTRACT"  # free lines without a price item or chosen element
 
 
 @dataclass(frozen=True)
@@ -248,15 +252,29 @@ async def save_draft(
             raise AppError("QTY_INVALID", "Kuantitas harus lebih dari 0.", status_code=422)
         if x.unit_cost < 0 or x.unit_price < 0:
             raise AppError("PRICE_INVALID", "Harga dan biaya tidak boleh negatif.", status_code=422)
+    known = set((await session.execute(select(CostElement.code))).scalars())
+    elements: list[str] = []
+    for x in lines:
+        code = (
+            items[x.price_item_code].cost_element_code
+            if x.price_item_code
+            else (x.cost_element_code or DEFAULT_COST_ELEMENT)
+        )
+        if code not in known or code == "CONTINGENCY":
+            raise AppError(
+                "COST_ELEMENT_INVALID", f"Elemen biaya {code} tidak valid.", status_code=422
+            )
+        elements.append(code)
     before = snapshot(q, await lines_of(session, q.id))
     totals = compute(lines, discount_pct)
     await session.execute(delete(QuotationLine).where(QuotationLine.quotation_id == q.id))
-    for seq, (x, t) in enumerate(zip(lines, totals.lines, strict=True), start=1):
+    for seq, (x, t, element) in enumerate(zip(lines, totals.lines, elements, strict=True), start=1):
         session.add(
             QuotationLine(
                 quotation_id=q.id,
                 seq=seq,
                 price_item_code=x.price_item_code,
+                cost_element_code=element,
                 description=x.description,
                 unit=x.unit,
                 qty=x.qty,
@@ -429,6 +447,7 @@ async def revise(
                 quotation_id=new.id,
                 seq=x.seq,
                 price_item_code=x.price_item_code,
+                cost_element_code=x.cost_element_code,
                 description=x.description,
                 unit=x.unit,
                 qty=x.qty,

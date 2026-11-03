@@ -15,7 +15,11 @@ import { ComingSoonPage } from '@/features/home/ComingSoonPage';
 import { LeadsPage } from '@/features/crm/LeadsPage';
 import { OpportunitiesPage } from '@/features/crm/OpportunitiesPage';
 import { OpportunityDetailPage } from '@/features/crm/OpportunityDetailPage';
+import { ContractPage } from '@/features/contracts/ContractPage';
+import { ContractsPage } from '@/features/contracts/ContractsPage';
 import { DashboardPage } from '@/features/home/DashboardPage';
+import { ProjectPage } from '@/features/projects/ProjectPage';
+import { ProjectsPage } from '@/features/projects/ProjectsPage';
 import { QuotationPage } from '@/features/quotations/QuotationPage';
 import { QuotationsPage } from '@/features/quotations/QuotationsPage';
 import { NotFoundPage } from '@/features/home/NotFoundPage';
@@ -95,6 +99,10 @@ export function AppRoutes() {
           <Route path="peluang/:id" element={<OpportunityDetailPage />} />
           <Route path="penawaran" element={<QuotationsPage />} />
           <Route path="penawaran/:id" element={<QuotationPage />} />
+          <Route path="kontrak" element={<ContractsPage />} />
+          <Route path="kontrak/:id" element={<ContractPage />} />
+          <Route path="proyek" element={<ProjectsPage />} />
+          <Route path="proyek/:id" element={<ProjectPage />} />
           <Route path="pengaturan" element={<SettingsPage />} />
           <Route path="pengguna" element={<UsersPage />} />
           <Route path="pengaturan/peran" element={<RolesPage />} />
