@@ -65,7 +65,8 @@
       "masterData": "Master Data",
       "auditTrail": "Audit Trail",
       "roles": "Roles & Permissions",
-      "sod": "Segregation of Duties"
+      "sod": "Segregation of Duties",
+      "accessReview": "Access Review"
     }
   },
   "topbar": {
@@ -140,6 +141,10 @@
     "sod": {
       "title": "Segregation of Duties (SoD)",
       "description": "Role conflict rules and exception register."
+    },
+    "accessReview": {
+      "title": "Access Review",
+      "description": "Quarterly report of users, roles and sensitive data."
     }
   },
   "dashboard": {
@@ -701,5 +706,22 @@
     "conflictHelp": "Give a reason to request an exception from the Director. The new roles apply after approval.",
     "submitException": "Request exception",
     "pending": "Role change awaiting Director approval ({{number}})."
+  },
+  "accessReview": {
+    "intro": "Quarterly review: every active user with roles, sensitive data access and last login. Users without a login for more than {{days}} days are flagged.",
+    "generated": "Data as of {{at}}.",
+    "caption": "User access review",
+    "sensitive": "Sensitive data",
+    "days": "Days since login",
+    "flags": "Flags",
+    "empty": "No users for this filter.",
+    "inactive": "> {{days}} days",
+    "tiles": {
+      "all": "Active users",
+      "inactive_90": "Inactive > 90 days",
+      "with_sensitive": "Sensitive data access",
+      "missing_2fa": "2FA required, not enabled",
+      "with_sod_exception": "SoD exceptions"
+    }
   }
 }

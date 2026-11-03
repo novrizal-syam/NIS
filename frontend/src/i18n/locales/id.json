@@ -65,7 +65,8 @@
       "masterData": "Data Master",
       "auditTrail": "Jejak Audit",
       "roles": "Peran & Izin",
-      "sod": "Pemisahan Tugas"
+      "sod": "Pemisahan Tugas",
+      "accessReview": "Tinjauan Akses"
     }
   },
   "topbar": {
@@ -140,6 +141,10 @@
     "sod": {
       "title": "Pemisahan Tugas (SoD)",
       "description": "Aturan konflik peran dan register pengecualian."
+    },
+    "accessReview": {
+      "title": "Tinjauan Akses",
+      "description": "Laporan triwulanan pengguna, peran, dan data sensitif."
     }
   },
   "dashboard": {
@@ -701,5 +706,22 @@
     "conflictHelp": "Isi alasan untuk mengajukan pengecualian ke Direktur. Peran baru berlaku setelah disetujui.",
     "submitException": "Ajukan pengecualian",
     "pending": "Perubahan peran menunggu persetujuan Direktur ({{number}})."
+  },
+  "accessReview": {
+    "intro": "Tinjauan triwulanan: setiap pengguna aktif dengan peran, akses data sensitif, dan login terakhir. Pengguna tanpa login lebih dari {{days}} hari ditandai.",
+    "generated": "Data per {{at}}.",
+    "caption": "Tinjauan akses pengguna",
+    "sensitive": "Data sensitif",
+    "days": "Hari sejak login",
+    "flags": "Tanda",
+    "empty": "Tidak ada pengguna untuk filter ini.",
+    "inactive": "> {{days}} hari",
+    "tiles": {
+      "all": "Pengguna aktif",
+      "inactive_90": "Tidak aktif > 90 hari",
+      "with_sensitive": "Akses data sensitif",
+      "missing_2fa": "Wajib 2FA, belum aktif",
+      "with_sod_exception": "Pengecualian SoD"
+    }
   }
 }

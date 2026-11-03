@@ -18,6 +18,7 @@ make up          # docker compose up -d --build: api, web, db, minio, mailpit
 make migrate     # alembic upgrade head
 ```
 - First run: set `SETUP_TOKEN` in `.env` (a random value), open http://localhost:5173/setup and follow the wizard: Super Admin (strong password) → mandatory 2FA + 10 recovery codes shown once → company profile → departments → demo data or empty → finish. After that `/setup` is closed for good. Databases that already had users are treated as set up.
+- Administration (Settings): Pengguna & Peran (invite, temporary password, import, deactivate, reset, unlock, sessions), Peran & Izin (permission matrix, custom roles, temporary roles, "View as role"), Pemisahan Tugas (SoD rules and exception register, Director approval), Tinjauan Akses (quarterly review, Excel/PDF). First login asks for password change, privacy notice (UU 27/2022), 2FA when the role requires it, and profile.
 - Lost authenticator: sign in with a recovery code (2FA must then be enrolled again), or the audited CLI `docker compose exec api python -m app.auth.cli reset-2fa --email ...`. Also `... app.auth.cli unlock --email ...`.
 - App: http://localhost:5173 · component catalogue (dev only): http://localhost:5173/dev/komponen
 - API: http://localhost:8000/api/health · docs: http://localhost:8000/api/docs

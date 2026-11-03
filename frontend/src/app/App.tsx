@@ -21,6 +21,7 @@ import { PrivacyPage } from '@/features/onboarding/PrivacyPage';
 import { ProfilePage } from '@/features/onboarding/ProfilePage';
 import { RoleDetailPage } from '@/features/roles/RoleDetailPage';
 import { RolesPage } from '@/features/roles/RolesPage';
+import { AccessReviewPage } from '@/features/reports/AccessReviewPage';
 import { SettingsPage } from '@/features/settings/SettingsPage';
 import { SodPage } from '@/features/sod/SodPage';
 import { AcceptInvitePage } from '@/features/users/AcceptInvitePage';
@@ -83,6 +84,7 @@ export function AppRoutes() {
           <Route path="pengguna" element={<UsersPage />} />
           <Route path="pengaturan/peran" element={<RolesPage />} />
           <Route path="pengaturan/sod" element={<SodPage />} />
+          <Route path="pengaturan/tinjauan-akses" element={<AccessReviewPage />} />
           <Route path="pengaturan/peran/:id" element={<RoleDetailPage />} />
           <Route path="pengaturan/doa" element={<DoaRulesPage />} />
           <Route path="master" element={<MasterIndexPage />} />
