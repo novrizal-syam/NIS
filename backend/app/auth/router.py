@@ -1,9 +1,10 @@
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Request, Response
+from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth import service
+from app.auth import admin, service
 from app.auth.principal import CurrentUser, Principal, get_principal_allow_pending
 from app.auth.schemas import (
     ChangePasswordIn,
@@ -115,3 +116,21 @@ async def totp_verify(
 async def ping(principal: CurrentUser) -> dict[str, str]:
     """Cheap check that the session is fully usable (no pending steps)."""
     return {"user_id": str(principal.id)}
+
+
+class InviteAcceptIn(BaseModel):
+    token: str = Field(min_length=10, max_length=200)
+    password: str = Field(min_length=1, max_length=200)
+
+
+@router.post("/invite/accept")
+async def accept_invite(
+    body: InviteAcceptIn, request: Request, response: Response, session: Session
+) -> TokenOut:
+    """Public: the invited user chooses a password and is signed in."""
+    user = await admin.accept_invite(session, body.token, body.password)
+    await session.commit()
+    _, tokens = await service.login(
+        session, email=user.email, password=body.password, totp_code=None, **_client(request)
+    )
+    return _token_out(response, tokens)

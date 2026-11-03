@@ -1,6 +1,14 @@
 """Import every model module so Base.metadata is complete (used by Alembic and tests)."""
 
-from app.auth.models import RecoveryCode, RefreshToken, Role, RolePermission, User, UserRole
+from app.auth.models import (
+    RecoveryCode,
+    RefreshToken,
+    Role,
+    RolePermission,
+    User,
+    UserInvite,
+    UserRole,
+)
 from app.core.models import Base
 from app.dms.models import Attachment
 from app.master.models import (
@@ -62,6 +70,7 @@ __all__ = [
     "RolePermission",
     "SystemSetting",
     "User",
+    "UserInvite",
     "UserRole",
     "Vendor",
     "Warehouse",

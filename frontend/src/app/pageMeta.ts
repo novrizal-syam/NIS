@@ -34,6 +34,9 @@ export function usePageMeta(): PageMeta {
       description: t('pages.approvalDetail.description'),
     };
   }
+  if (pathname === '/pengguna') {
+    return { title: t('pages.users.title'), description: t('pages.users.description') };
+  }
   if (pathname === '/pengaturan') {
     return { title: t('pages.settings.title'), description: t('pages.settings.description') };
   }

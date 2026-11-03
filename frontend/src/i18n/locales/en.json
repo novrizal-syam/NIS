@@ -126,6 +126,10 @@
     "settings": {
       "title": "Settings",
       "description": "System configuration and demo data."
+    },
+    "users": {
+      "title": "Users & Roles",
+      "description": "Accounts, roles, status and sessions."
     }
   },
   "dashboard": {
@@ -517,5 +521,72 @@
     "confirm": "I have saved my recovery codes",
     "continue": "Continue",
     "fileHeader": "Nustrad ERP 2FA recovery codes — PT Global Energi KITA. Each code works once."
+  },
+  "users": {
+    "invite": "Invite user",
+    "import": "Import",
+    "inviteTitle": "Invite user",
+    "sendInvite": "Send invitation",
+    "createWithPassword": "Create with temporary password",
+    "inviteSent": "Invitation sent to {{email}}. The link is valid for 72 hours.",
+    "how": "First access",
+    "mode": {
+      "invite": "Email an invitation link (72 hours, single use)",
+      "password": "Temporary password (shown once, must be changed)"
+    },
+    "tempOnce": "Temporary password, shown only once. Give it to the user directly; it must be changed at sign-in.",
+    "roles": "Roles",
+    "role": "Role",
+    "department": "Department",
+    "employee": "Employee record",
+    "employeeHint": "Link to the HR employee record.",
+    "user": "User",
+    "lastLogin": "Last login",
+    "caption": "Users",
+    "empty": "No users for this filter.",
+    "searchPlaceholder": "Name or email",
+    "oneSuperAdmin": "There is only one active Super Admin. Add a second one so access is not lost if this account is locked.",
+    "status": {
+      "invited": "Invited",
+      "active": "Active",
+      "locked": "Locked",
+      "inactive": "Inactive"
+    },
+    "tabProfile": "Profile",
+    "tabSessions": "Sessions",
+    "saveRoles": "Save roles",
+    "saved": "Changes saved.",
+    "noSessions": "No active sessions.",
+    "unknownDevice": "Unknown device",
+    "signedIn": "signed in",
+    "lastActive": "active",
+    "endSession": "End session",
+    "actions": {
+      "invite": "Resend invitation",
+      "reset-password": "Reset password",
+      "unlock": "Unlock",
+      "reset-2fa": "Reset 2FA",
+      "force-logout": "Force sign-out",
+      "activate": "Activate",
+      "deactivate": "Deactivate"
+    },
+    "done": {
+      "invite": "New invitation sent; the old link no longer works.",
+      "reset-password": "Password reset; all sessions ended.",
+      "unlock": "Account unlocked.",
+      "reset-2fa": "2FA reset; the user must enrol again.",
+      "force-logout": "All sessions of the user ended.",
+      "activate": "Account activated.",
+      "deactivate": "Account deactivated; all sessions ended."
+    },
+    "importTitle": "Import users",
+    "importHelp": "CSV or Excel with columns email, full_name, roles (codes separated by |), department_code, employee_code. Every new user gets an email invitation. If any row is wrong, nothing is saved.",
+    "importFile": "CSV or Excel file",
+    "importDone": "{{count}} users invited.",
+    "acceptTitle": "Welcome",
+    "acceptHelp": "Create a password for your Nustrad ERP account.",
+    "acceptSubmit": "Save and sign in",
+    "totpOn": "2FA enabled",
+    "totpOff": "2FA not enabled"
   }
 }

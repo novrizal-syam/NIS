@@ -18,6 +18,8 @@ import { DoaRulesPage } from '@/features/workflow/DoaRulesPage';
 import { InboxPage } from '@/features/workflow/InboxPage';
 import { RequestDetailPage } from '@/features/workflow/RequestDetailPage';
 import { SettingsPage } from '@/features/settings/SettingsPage';
+import { AcceptInvitePage } from '@/features/users/AcceptInvitePage';
+import { UsersPage } from '@/features/users/UsersPage';
 import { SetupGate } from '@/features/setup/SetupGate';
 import { SetupPage } from '@/features/setup/SetupPage';
 import { ThemeProvider } from '@/theme/ThemeProvider';
@@ -29,6 +31,7 @@ export function AppRoutes() {
       <Routes>
         <Route path="/setup" element={<SetupPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/undangan/:token" element={<AcceptInvitePage />} />
         <Route
           path="/akun/ganti-password"
           element={
@@ -56,6 +59,7 @@ export function AppRoutes() {
           <Route path="persetujuan" element={<InboxPage />} />
           <Route path="persetujuan/:id" element={<RequestDetailPage />} />
           <Route path="pengaturan" element={<SettingsPage />} />
+          <Route path="pengguna" element={<UsersPage />} />
           <Route path="pengaturan/doa" element={<DoaRulesPage />} />
           <Route path="master" element={<MasterIndexPage />} />
           <Route path="master/:entity" element={<MasterListPage />} />

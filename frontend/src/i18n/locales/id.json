@@ -126,6 +126,10 @@
     "settings": {
       "title": "Pengaturan",
       "description": "Konfigurasi sistem dan data demo."
+    },
+    "users": {
+      "title": "Pengguna & Peran",
+      "description": "Akun, peran, status, dan sesi pengguna."
     }
   },
   "dashboard": {
@@ -517,5 +521,72 @@
     "confirm": "Saya sudah menyimpan kode pemulihan",
     "continue": "Lanjut",
     "fileHeader": "Kode pemulihan 2FA Nustrad ERP — PT Global Energi KITA. Setiap kode hanya berlaku sekali."
+  },
+  "users": {
+    "invite": "Undang pengguna",
+    "import": "Impor",
+    "inviteTitle": "Undang pengguna",
+    "sendInvite": "Kirim undangan",
+    "createWithPassword": "Buat dengan kata sandi sementara",
+    "inviteSent": "Undangan dikirim ke {{email}}. Tautan berlaku 72 jam.",
+    "how": "Cara akses pertama",
+    "mode": {
+      "invite": "Kirim tautan undangan via email (72 jam, sekali pakai)",
+      "password": "Kata sandi sementara (ditampilkan sekali, wajib diganti)"
+    },
+    "tempOnce": "Kata sandi sementara, hanya ditampilkan sekali. Sampaikan langsung ke pengguna; wajib diganti saat masuk.",
+    "roles": "Peran",
+    "role": "Peran",
+    "department": "Departemen",
+    "employee": "Data karyawan",
+    "employeeHint": "Hubungkan ke data karyawan (SDM).",
+    "user": "Pengguna",
+    "lastLogin": "Login terakhir",
+    "caption": "Daftar pengguna",
+    "empty": "Tidak ada pengguna untuk filter ini.",
+    "searchPlaceholder": "Nama atau email",
+    "oneSuperAdmin": "Hanya ada satu Super Admin aktif. Tambahkan Super Admin kedua agar akses tidak hilang jika akun ini terkunci.",
+    "status": {
+      "invited": "Diundang",
+      "active": "Aktif",
+      "locked": "Terkunci",
+      "inactive": "Nonaktif"
+    },
+    "tabProfile": "Profil",
+    "tabSessions": "Sesi",
+    "saveRoles": "Simpan peran",
+    "saved": "Perubahan disimpan.",
+    "noSessions": "Tidak ada sesi aktif.",
+    "unknownDevice": "Perangkat tidak dikenal",
+    "signedIn": "masuk",
+    "lastActive": "aktif",
+    "endSession": "Akhiri sesi",
+    "actions": {
+      "invite": "Kirim ulang undangan",
+      "reset-password": "Reset kata sandi",
+      "unlock": "Buka kunci",
+      "reset-2fa": "Reset 2FA",
+      "force-logout": "Paksa keluar",
+      "activate": "Aktifkan",
+      "deactivate": "Nonaktifkan"
+    },
+    "done": {
+      "invite": "Undangan baru dikirim; tautan lama tidak berlaku.",
+      "reset-password": "Kata sandi direset; semua sesi diakhiri.",
+      "unlock": "Akun dibuka.",
+      "reset-2fa": "2FA direset; pengguna wajib mengaktifkan ulang.",
+      "force-logout": "Semua sesi pengguna diakhiri.",
+      "activate": "Akun diaktifkan.",
+      "deactivate": "Akun dinonaktifkan; semua sesi diakhiri."
+    },
+    "importTitle": "Impor pengguna",
+    "importHelp": "CSV atau Excel dengan kolom email, full_name, roles (kode dipisah |), department_code, employee_code. Semua pengguna baru menerima undangan email. Jika ada satu baris salah, tidak ada yang disimpan.",
+    "importFile": "File CSV atau Excel",
+    "importDone": "{{count}} pengguna diundang.",
+    "acceptTitle": "Selamat datang",
+    "acceptHelp": "Buat kata sandi untuk akun Nustrad ERP Anda.",
+    "acceptSubmit": "Simpan dan masuk",
+    "totpOn": "2FA aktif",
+    "totpOff": "2FA belum aktif"
   }
 }

@@ -47,6 +47,10 @@ class User(EntityMixin, Base):
     department_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey(Department.id, ondelete="RESTRICT")
     )
+    # Link to the HR record (employees.code); FK added in the migration.
+    employee_code: Mapped[str | None] = mapped_column(
+        String(20), ForeignKey("employees.code", ondelete="SET NULL"), unique=True
+    )
 
     roles: Mapped[list["Role"]] = relationship(secondary="user_roles", lazy="raise")
 
@@ -134,3 +138,24 @@ class RecoveryCode(Base):
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
     used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class UserInvite(Base):
+    """Email invitation: single use, expires after 72 hours."""
+
+    __tablename__ = "user_invites"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    token_hash: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_by: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
