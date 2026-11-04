@@ -32,6 +32,7 @@ from app.master.models import (
     Warehouse,
 )
 from app.notifications.models import Notification
+from app.procurement.models import PurchaseRequisition, PurchaseRequisitionLine
 from app.project.models import (
     BudgetChangeRequest,
     BudgetLedgerEntry,
@@ -96,6 +97,8 @@ __all__ = [
     "Project",
     "ProjectBudgetLine",
     "ProjectWbs",
+    "PurchaseRequisition",
+    "PurchaseRequisitionLine",
     "Quotation",
     "QuotationLine",
     "RecoveryCode",

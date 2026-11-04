@@ -189,6 +189,18 @@
     "tenderDetail": {
       "title": "Tender",
       "description": "Data tender, checklist dokumen, klarifikasi, persetujuan paket teknis ‖ komersial dan hasil."
+    },
+    "prs": {
+      "title": "Purchase Requisition",
+      "description": "Permintaan pembelian dengan cek anggaran otomatis per WBS dan elemen biaya."
+    },
+    "prNew": {
+      "title": "PR baru",
+      "description": "Proyek terkunci, WBS, elemen biaya, kebutuhan dan estimasi harga."
+    },
+    "prDetail": {
+      "title": "Purchase Requisition",
+      "description": "Status, anggaran tersedia, persetujuan dan BCR terkait."
     }
   },
   "dashboard": {
@@ -1308,6 +1320,44 @@
     "version": "Versi",
     "from": "dari",
     "attach": "Lampiran",
-    "attachmentsHelp": "Lampirkan VO klien, penawaran vendor atau bukti lain untuk BCR ini."
+    "attachmentsHelp": "Lampirkan VO klien, penawaran vendor atau bukti lain untuk BCR ini.",
+    "forDocument": "BCR untuk {{number}} (nilai = kekurangan dibulatkan ke Rp 1 jt)."
+  },
+  "pr": {
+    "status": {
+      "draft": "Draf",
+      "blocked": "Terblokir anggaran",
+      "awaiting_approval": "Menunggu persetujuan",
+      "approved": "Disetujui",
+      "cancelled": "Dibatalkan"
+    },
+    "search": "Cari nomor, keperluan, lokasi",
+    "new": "PR baru",
+    "edit": "Ubah PR",
+    "empty": "Belum ada PR.",
+    "project": "Proyek",
+    "total": "Total",
+    "needDate": "Dibutuhkan",
+    "requester": "Pemohon",
+    "short": "kurang {{amount}}",
+    "location": "Lokasi pengiriman",
+    "purpose": "Keperluan",
+    "itemCode": "Kode item",
+    "estPrice": "Estimasi harga",
+    "estimatedTotal": "Estimasi total",
+    "saveDraft": "Simpan draf",
+    "back": "Kembali ke daftar PR",
+    "heldByPr": "Dicadangkan PR ini",
+    "rejected": "Ditolak",
+    "cancelReason": "Alasan pembatalan",
+    "linkedBcr": "BCR terkait",
+    "approvalHistory": "Riwayat persetujuan",
+    "noApprovals": "Belum diajukan.",
+    "blockedTitle": "Terblokir anggaran",
+    "requestBcr": "Ajukan BCR {{amount}}",
+    "askPlanner": "Minta planner proyek mengajukan BCR sebesar {{amount}} dengan referensi {{number}}.",
+    "submit": "Ajukan",
+    "cancel": "Batalkan PR",
+    "confirmCancel": "Batalkan"
   }
 }

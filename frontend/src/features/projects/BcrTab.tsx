@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
 import { Icon } from '@/components/ui/icon';
@@ -13,7 +13,7 @@ import { FormError } from '@/features/auth/AuthLayout';
 import { moneyToApi } from '@/features/crm/api';
 import { AttachmentsPanel } from '@/features/dms/AttachmentsPanel';
 import { ApiError } from '@/lib/api';
-import { formatDate, formatIDR } from '@/lib/format';
+import { formatDate, formatIDR, formatNumber } from '@/lib/format';
 import {
   BCR_REASONS,
   BCR_SOURCES,
@@ -41,19 +41,23 @@ export function BcrTab({ p }: { p: ProjectDetail }) {
   const canCreate = p.can_bcr;
   const [files, setFiles] = useState<BcrRow | null>(null);
   const elements = p.cost_elements.filter((e) => e.code !== 'CONTINGENCY');
+  // Prefill from a blocked PR ("Ajukan BCR"): ?wbs=&element=&amount=&ref_type=&ref_id=&ref_label=
+  const [search] = useSearchParams();
+  const prefillAmount = search.get('amount');
   const [v, setV] = useState({
-    source: 'contingency_release' as BcrSource,
-    wbs: p.wbs[0]?.code ?? 'EXEC',
-    element: elements[0]?.code ?? '',
-    amount: '',
+    source: (prefillAmount ? 'budget_increase' : 'contingency_release') as BcrSource,
+    wbs: search.get('wbs') ?? p.wbs[0]?.code ?? 'EXEC',
+    element: search.get('element') ?? elements[0]?.code ?? '',
+    amount: prefillAmount ? formatNumber(Number(prefillAmount)) : '',
     fromWbs: p.wbs[0]?.code ?? 'EXEC',
     fromElement: '',
     reason: 'scope_change' as BcrReason,
     justification: '',
     revenue: '',
-    refType: '',
-    refId: '',
+    refType: search.get('ref_type') ?? '',
+    refId: search.get('ref_id') ?? '',
   });
+  const refLabel = search.get('ref_label');
   const set = (patch: Partial<typeof v>) => setV({ ...v, ...patch });
   const contingency = p.cells
     .filter((c) => c.cost_element_code === 'CONTINGENCY')
@@ -77,6 +81,11 @@ export function BcrTab({ p }: { p: ProjectDetail }) {
                   number: create.data.number,
                   role: t(`project.roles.${create.data.approver ?? 'director'}`),
                 })}
+              </p>
+            )}
+            {refLabel && (
+              <p className="rounded-control bg-info-tint px-3 py-2 text-small text-info">
+                {t('bcr.forDocument', { number: refLabel })}
               </p>
             )}
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

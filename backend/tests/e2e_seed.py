@@ -8,6 +8,7 @@ known password whose 2FA is marked enrolled without a secret (login asks no code
 
 import asyncio
 import os
+from datetime import UTC, datetime
 from decimal import Decimal
 
 from app import models as _models  # noqa: F401
@@ -15,7 +16,13 @@ from app.auth import service as auth_service
 from app.auth.principal import PRIVACY_VERSION
 from app.core.db import SessionLocal
 from app.master.models import PriceItem
-from app.project.models import Project, ProjectBudgetLine, ProjectWbs
+from app.project.models import (
+    BudgetVersion,
+    BudgetVersionLine,
+    Project,
+    ProjectBudgetLine,
+    ProjectWbs,
+)
 from app.setup import service as settings_store
 
 PASSWORD = "E2e-Rahasia-2026"
@@ -27,6 +34,8 @@ USERS = {
     "lead_controller": ("controller@e2e.gek.co.id", "Hadi Controller"),
     "head_of_operation": ("hoo@e2e.gek.co.id", "Agus Head of Operation"),
     "admin": ("admin@e2e.gek.co.id", "Admin IT"),
+    "engineer": ("engineer@e2e.gek.co.id", "Budi Engineer"),
+    "head_of_finance": ("hof@e2e.gek.co.id", "Sinta Head of Finance"),
 }
 
 
@@ -86,6 +95,56 @@ async def main() -> None:
                     cost_element_code=code,
                     amount=Decimal(amount),
                     source="quotation",
+                    locked_reserve=code == "CONTINGENCY",
+                )
+            )
+        # PR flow (04a): locked project with Rp 55 jt on EXEC/EQUIP-RENT and a baseline v0.
+        locked = Project(
+            number="PRJ-26-901",
+            name="PR E2E Blok Jambi",
+            company_name="PT KKKS E2E",
+            status="locked",
+            revenue=Decimal(1_000_000_000),
+            budget_total=Decimal(105_000_000),
+            contingency_pct=Decimal(5),
+            manager_id=planner.id,
+            locked_at=datetime.now(UTC),
+        )
+        s.add(locked)
+        await s.flush()
+        exec_wbs = ProjectWbs(project_id=locked.id, code="EXEC", name="Execution", seq=1)
+        s.add(exec_wbs)
+        await s.flush()
+        version = BudgetVersion(
+            project_id=locked.id,
+            version=0,
+            kind="baseline",
+            revenue=locked.revenue,
+            total_cost=locked.budget_total,
+            margin_pct=Decimal("89.50"),
+            approved_at=datetime.now(UTC),
+        )
+        s.add(version)
+        await s.flush()
+        for code, amount in (("EQUIP-RENT", 55_000_000), ("CONTINGENCY", 50_000_000)):
+            s.add(
+                ProjectBudgetLine(
+                    project_id=locked.id,
+                    version=0,
+                    wbs_id=exec_wbs.id,
+                    cost_element_code=code,
+                    amount=Decimal(amount),
+                    source="quotation",
+                    locked_reserve=code == "CONTINGENCY",
+                )
+            )
+            s.add(
+                BudgetVersionLine(
+                    version_id=version.id,
+                    wbs_code="EXEC",
+                    wbs_name="Execution",
+                    cost_element_code=code,
+                    amount=Decimal(amount),
                     locked_reserve=code == "CONTINGENCY",
                 )
             )

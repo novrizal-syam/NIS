@@ -28,6 +28,8 @@ TABLES = (
     "tender_clarifications",
     "tender_documents",
     "tenders",
+    "purchase_requisition_lines",
+    "purchase_requisitions",
     "budget_ledger",
     "budget_version_lines",
     "budget_versions",

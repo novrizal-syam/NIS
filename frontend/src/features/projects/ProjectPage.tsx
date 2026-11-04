@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field } from '@/components/ui/field';
@@ -63,7 +63,10 @@ export function ProjectPage() {
   const { t } = useTranslation();
   const { id = '' } = useParams();
   const project = useProject(id);
-  const [tab, setTab] = useState<'budget' | 'versions' | 'bcr' | 'files' | 'history'>('budget');
+  const [search] = useSearchParams();
+  const [tab, setTab] = useState<'budget' | 'versions' | 'bcr' | 'files' | 'history'>(
+    search.get('tab') === 'bcr' ? 'bcr' : 'budget',
+  );
   if (project.isLoading) return <p className="text-fg-secondary">{t('common.loading')}</p>;
   if (project.error || !project.data)
     return <FormError message={errText(project.error, t('auth.unexpected'))} />;

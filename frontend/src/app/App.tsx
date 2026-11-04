@@ -18,6 +18,8 @@ import { OpportunityDetailPage } from '@/features/crm/OpportunityDetailPage';
 import { ContractPage } from '@/features/contracts/ContractPage';
 import { ContractsPage } from '@/features/contracts/ContractsPage';
 import { DashboardPage } from '@/features/home/DashboardPage';
+import { PrListPage } from '@/features/procurement/PrListPage';
+import { PrNewPage, PrPage } from '@/features/procurement/PrPage';
 import { TenderPage } from '@/features/tenders/TenderPage';
 import { TendersPage } from '@/features/tenders/TendersPage';
 import { ProjectPage } from '@/features/projects/ProjectPage';
@@ -103,6 +105,9 @@ export function AppRoutes() {
           <Route path="penawaran/:id" element={<QuotationPage />} />
           <Route path="tender" element={<TendersPage />} />
           <Route path="tender/:id" element={<TenderPage />} />
+          <Route path="pengadaan/pr" element={<PrListPage />} />
+          <Route path="pengadaan/pr/baru" element={<PrNewPage />} />
+          <Route path="pengadaan/pr/:id" element={<PrPage />} />
           <Route path="kontrak" element={<ContractsPage />} />
           <Route path="kontrak/:id" element={<ContractPage />} />
           <Route path="proyek" element={<ProjectsPage />} />

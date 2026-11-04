@@ -189,6 +189,18 @@
     "tenderDetail": {
       "title": "Tender",
       "description": "Tender data, document checklist, clarifications, technical ‖ commercial package approval and result."
+    },
+    "prs": {
+      "title": "Purchase requisitions",
+      "description": "Purchase requests with an automatic budget check per WBS and cost element."
+    },
+    "prNew": {
+      "title": "New PR",
+      "description": "Locked project, WBS, cost element, need and estimated price."
+    },
+    "prDetail": {
+      "title": "Purchase requisition",
+      "description": "Status, available budget, approvals and linked BCR."
     }
   },
   "dashboard": {
@@ -1308,6 +1320,44 @@
     "version": "Version",
     "from": "from",
     "attach": "Attachments",
-    "attachmentsHelp": "Attach the client VO, vendor quotes or other evidence for this BCR."
+    "attachmentsHelp": "Attach the client VO, vendor quotes or other evidence for this BCR.",
+    "forDocument": "BCR for {{number}} (amount = shortfall rounded up to Rp 1 M)."
+  },
+  "pr": {
+    "status": {
+      "draft": "Draft",
+      "blocked": "Blocked by budget",
+      "awaiting_approval": "Awaiting approval",
+      "approved": "Approved",
+      "cancelled": "Cancelled"
+    },
+    "search": "Search number, purpose, location",
+    "new": "New PR",
+    "edit": "Edit PR",
+    "empty": "No PRs yet.",
+    "project": "Project",
+    "total": "Total",
+    "needDate": "Needed by",
+    "requester": "Requester",
+    "short": "short {{amount}}",
+    "location": "Delivery location",
+    "purpose": "Purpose",
+    "itemCode": "Item code",
+    "estPrice": "Estimated price",
+    "estimatedTotal": "Estimated total",
+    "saveDraft": "Save draft",
+    "back": "Back to PRs",
+    "heldByPr": "Reserved by this PR",
+    "rejected": "Rejected",
+    "cancelReason": "Cancellation reason",
+    "linkedBcr": "Linked BCR",
+    "approvalHistory": "Approval history",
+    "noApprovals": "Not submitted yet.",
+    "blockedTitle": "Blocked by budget",
+    "requestBcr": "Request BCR {{amount}}",
+    "askPlanner": "Ask the project planner to request a BCR of {{amount}} referencing {{number}}.",
+    "submit": "Submit",
+    "cancel": "Cancel PR",
+    "confirmCancel": "Cancel"
   }
 }

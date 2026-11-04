@@ -121,12 +121,15 @@ test('budget lock, over-budget block, BCR and new version', async ({ page }) => 
   await page.getByLabel(/^Nilai/).fill('40.000.000');
   await page.getByLabel(/^Justifikasi/).fill('Tambahan hari sewa peralatan sesuai jadwal klien');
   await page.getByRole('button', { name: 'Ajukan BCR', exact: true }).click();
-  await expect(page.getByText(/BCR-26-001 diajukan ke Head of Operation/)).toBeVisible();
+  const submitted = page.getByText(/BCR-26-\d+ diajukan ke Head of Operation/);
+  await expect(submitted).toBeVisible();
+  // Specs run in parallel and share the numbering, so read this BCR's number.
+  const bcrNumber = /BCR-26-\d+/.exec((await submitted.textContent()) ?? '')![0];
   await signOut(page);
 
   // 7. Head of Operation approves → v1.
   await signIn(page, HOO);
-  await openRequest(page, 'BCR-26-001');
+  await openRequest(page, bcrNumber);
   await page.getByRole('button', { name: /^Setujui$/ }).click();
   await expect(page.getByText(/disetujui/i).first()).toBeVisible();
   await signOut(page);

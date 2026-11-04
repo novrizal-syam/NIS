@@ -66,7 +66,13 @@ export const NAV: NavGroup[] = [
     key: 'procureToPay',
     items: [
       soon('materialRequests', 'inventory', 'inventory'),
-      soon('purchaseRequisitions', 'assignment', 'procurement'),
+      {
+        key: 'purchaseRequisitions',
+        path: '/pengadaan/pr',
+        icon: 'assignment',
+        ready: true,
+        module: 'procurement',
+      },
       soon('rfq', 'compare_arrows', 'procurement'),
       soon('purchaseOrders', 'shopping_cart', 'procurement'),
       soon('goodsReceipts', 'local_shipping', 'inventory'),

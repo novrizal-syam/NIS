@@ -42,15 +42,15 @@ async def test_workflow_events_notify_the_right_people(
         req = await engine.submit(
             s,
             await principal_of(eng, s),
-            doc_type="purchase_requisition",
+            doc_type="cash_advance",  # no document module yet (07b)
             doc_id=uuid.uuid4(),
-            doc_number="PR-26-031",
+            doc_number="CA-26-031",
             title="Seal kit",
             amount=12_500_000,
         )
         await s.commit()
         incoming = await _notes(s, hoo)
-        assert [n.title for n in incoming] == ["Persetujuan baru: PR-26-031"]
+        assert [n.title for n in incoming] == ["Persetujuan baru: CA-26-031"]
         assert "Rp 12.500.000" in incoming[0].body and incoming[0].link == f"/persetujuan/{req.id}"
         assert incoming[0].email_status == "pending"
         assert await _notes(s, eng) == []  # the requester is not notified of own submission
@@ -59,7 +59,7 @@ async def test_workflow_events_notify_the_right_people(
         await s.commit()
         returned = await _notes(s, eng)
         assert (
-            returned[0].title == "PR-26-031 dikembalikan"
+            returned[0].title == "CA-26-031 dikembalikan"
             and "Lampirkan spesifikasi" in returned[0].body
         )
 

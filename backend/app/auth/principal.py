@@ -122,7 +122,15 @@ async def load_principal(
             key, scope = (p.module, p.action), Scope(p.scope)
             if key not in grants or SCOPE_RANK[scope] > SCOPE_RANK[grants[key]]:
                 grants[key] = scope
-    return Principal(user=user, roles=roles, active_role=active_role, grants=grants)
+    # Project-scoped grants: projects the user is assigned to (planner/manager for now).
+    from app.project.models import Project  # local: project imports auth
+
+    assigned = frozenset(
+        (await session.execute(select(Project.id).where(Project.manager_id == user.id))).scalars()
+    )
+    return Principal(
+        user=user, roles=roles, active_role=active_role, grants=grants, project_ids=assigned
+    )
 
 
 def _bearer(request: Request) -> str:

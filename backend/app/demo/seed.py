@@ -41,6 +41,7 @@ from app.master.models import (
     Warehouse,
 )
 from app.notifications.models import Notification
+from app.procurement.models import PurchaseRequisition
 from app.project.models import (
     BudgetChangeRequest,
     BudgetLedgerEntry,
@@ -387,6 +388,7 @@ async def remove(session: AsyncSession, *, actor_id: uuid.UUID | None) -> Summar
         async with session.begin_nested():
             # Sales records first: bid decisions reference approval requests.
             crm_tables: tuple[Any, ...] = (
+                PurchaseRequisition,
                 Tender,
                 BudgetVersion,
                 BudgetChangeRequest,
