@@ -21,7 +21,7 @@ JAKARTA = ZoneInfo("Asia/Jakarta")
 
 # Document prefixes from CLAUDE.md rule 5. Value = zero-padding width.
 DOC_TYPES: dict[str, int] = {
-    "LD": 3, "OPP": 3, "QT": 3, "CTR": 3, "PRJ": 3, "BCR": 3, "MR": 3, "PR": 3,
+    "LD": 3, "OPP": 3, "QT": 3, "CTR": 3, "PRJ": 3, "BCR": 3, "MR": 3, "PR": 3, "RFQ": 3,
     "PO": 3, "GR": 3, "VI": 3, "DOR": 3, "TK": 3, "INV": 3, "PAY": 3, "CA": 3,
     "CPX": 3, "WO": 3, "JV": 4,
 }  # fmt: skip

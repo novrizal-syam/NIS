@@ -40,6 +40,7 @@ STATUS_LABELS = {
     "blocked": "Terblokir anggaran",
     "awaiting_approval": "Menunggu persetujuan",
     "approved": "Disetujui",
+    "ordered": "Sudah dipesan (PO)",
     "cancelled": "Dibatalkan",
 }
 MILLION = Decimal(1_000_000)
@@ -368,6 +369,10 @@ async def cancel(
         raise ForbiddenError("NOT_REQUESTER", "Hanya pemohon yang dapat membatalkan PR ini.")
     if pr.status == "cancelled":
         raise ConflictError("ALREADY_CANCELLED", f"{pr.number} sudah dibatalkan.")
+    if pr.status == "ordered":
+        raise ConflictError(
+            "PR_ORDERED", f"{pr.number} sudah dipesan lewat PO; batalkan PO-nya terlebih dahulu."
+        )
     reason = reason.strip()
     if len(reason) < 5:
         raise AppError("REASON_REQUIRED", "Alasan pembatalan wajib diisi.", status_code=422)

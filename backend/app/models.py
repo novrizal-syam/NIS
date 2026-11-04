@@ -32,7 +32,16 @@ from app.master.models import (
     Warehouse,
 )
 from app.notifications.models import Notification
-from app.procurement.models import PurchaseRequisition, PurchaseRequisitionLine
+from app.procurement.models import (
+    PriceHistory,
+    PurchaseOrder,
+    PurchaseOrderLine,
+    PurchaseRequisition,
+    PurchaseRequisitionLine,
+    Rfq,
+    RfqQuote,
+    RfqQuoteLine,
+)
 from app.project.models import (
     BudgetChangeRequest,
     BudgetLedgerEntry,
@@ -93,16 +102,22 @@ __all__ = [
     "OutgoingLetter",
     "PasswordReset",
     "PasswordResetRequest",
+    "PriceHistory",
     "PriceItem",
     "Project",
     "ProjectBudgetLine",
     "ProjectWbs",
+    "PurchaseOrder",
+    "PurchaseOrderLine",
     "PurchaseRequisition",
     "PurchaseRequisitionLine",
     "Quotation",
     "QuotationLine",
     "RecoveryCode",
     "RefreshToken",
+    "Rfq",
+    "RfqQuote",
+    "RfqQuoteLine",
     "Role",
     "RolePermission",
     "SodException",

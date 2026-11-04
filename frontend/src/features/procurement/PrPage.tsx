@@ -19,6 +19,7 @@ import { cn } from '@/lib/utils';
 import { useCancelPr, usePr, useSubmitPr, type PrDetail } from './api';
 import { PrForm } from './PrForm';
 import { PrStatusPill } from './PrStatusPill';
+import { CreateRfqDialog } from './RfqPages';
 
 const errText = (e: unknown, fallback: string) =>
   e instanceof ApiError ? e.message : e ? fallback : null;
@@ -102,6 +103,27 @@ export function PrPage() {
               {t('pr.cancelReason')}: {d.cancel_reason}
             </p>
           )}
+          {(d.rfq || d.po) && (
+            <p className="flex flex-wrap gap-3 text-small">
+              {d.rfq && (
+                <Link
+                  to={`/pengadaan/rfq/${d.rfq.id}`}
+                  className="font-semibold text-fg-accent underline"
+                >
+                  {d.rfq.number}
+                </Link>
+              )}
+              {d.po && (
+                <Link
+                  to={`/pengadaan/po/${d.po.id}`}
+                  className="font-semibold text-fg-accent underline"
+                >
+                  {d.po.number}
+                </Link>
+              )}
+            </p>
+          )}
+          {d.can_rfq && <RfqButton prId={d.id} />}
           {d.linked_bcr && (
             <p className="text-small text-fg-secondary">
               {t('pr.linkedBcr')}: {d.linked_bcr.number} ({t(`bcr.status.${d.linked_bcr.status}`)})
@@ -297,5 +319,18 @@ function Actions({ d, onEdit }: { d: PrDetail; onEdit: () => void }) {
         </div>
       )}
     </div>
+  );
+}
+
+function RfqButton({ prId }: { prId: string }) {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <Button variant="primary" className="self-start" onClick={() => setOpen(true)}>
+        <Icon name="compare_arrows" /> {t('rfq.create')}
+      </Button>
+      {open && <CreateRfqDialog prId={prId} onClose={() => setOpen(false)} />}
+    </>
   );
 }

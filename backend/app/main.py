@@ -30,10 +30,12 @@ from app.demo.router import router as demo_router
 from app.dms.router import router as dms_router
 from app.master.router import router as master_router
 from app.notifications.router import router as notifications_router
+from app.procurement.po_router import router as po_router
 from app.procurement.router import router as procurement_router
 from app.project.budget_router import router as budget_router
 from app.project.router import router as project_router
 from app.reporting.access_review import router as reports_router
+from app.services.storage import get_storage, use_storage_provider
 from app.setup import service as setup_service
 from app.setup.router import router as setup_router
 from app.sod.router import router as sod_router
@@ -69,6 +71,7 @@ def create_app() -> FastAPI:
     install_error_handlers(app)
     # Background tasks and middleware resolve sessions like endpoints (overridable in tests).
     use_session_provider(lambda: app.dependency_overrides.get(get_session, get_session))
+    use_storage_provider(lambda: app.dependency_overrides.get(get_storage, get_storage))
 
     @app.middleware("http")
     async def setup_guard(request: Request, call_next: Any) -> Any:
@@ -131,6 +134,7 @@ def create_app() -> FastAPI:
     api.include_router(tender_router)
     api.include_router(budget_router)
     api.include_router(procurement_router)
+    api.include_router(po_router)
     app.include_router(api)
     return app
 

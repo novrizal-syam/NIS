@@ -298,6 +298,20 @@ async def _detail(
     ).first()
     lines = await svc.lines_of(session, pr.id)
     mine = pr.requester_id == principal.id
+    from app.procurement.models import PurchaseOrder, Rfq  # local: keeps the PR router small
+
+    rfq = (
+        await session.execute(
+            select(Rfq.id, Rfq.number).where(Rfq.pr_id == pr.id, Rfq.status != "cancelled")
+        )
+    ).first()
+    po = (
+        await session.execute(
+            select(PurchaseOrder.id, PurchaseOrder.number).where(
+                PurchaseOrder.pr_id == pr.id, PurchaseOrder.status != "cancelled"
+            )
+        )
+    ).first()
     return {
         **row,
         "delivery_location": pr.delivery_location,
@@ -323,8 +337,13 @@ async def _detail(
         "approvals": history,
         "can_edit": mine and pr.status in svc.EDITABLE,
         "can_submit": mine and pr.status in svc.EDITABLE,
-        "can_cancel": mine and pr.status != "cancelled",
+        "can_cancel": mine and pr.status not in ("cancelled", "ordered"),
         "can_request_bcr": pr.status == "blocked",
+        "can_rfq": pr.status == "approved"
+        and rfq is None
+        and principal.can("procurement", "create"),
+        "rfq": {"id": str(rfq[0]), "number": rfq[1]} if rfq else None,
+        "po": {"id": str(po[0]), "number": po[1]} if po else None,
         "lines": [
             {
                 "item_code": x.item_code,

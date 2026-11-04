@@ -201,6 +201,22 @@
     "prDetail": {
       "title": "Purchase Requisition",
       "description": "Status, anggaran tersedia, persetujuan dan BCR terkait."
+    },
+    "rfqs": {
+      "title": "RFQ",
+      "description": "Permintaan penawaran ke minimal 3 vendor memenuhi syarat dan skor pemilihan."
+    },
+    "rfqDetail": {
+      "title": "RFQ",
+      "description": "Penawaran vendor, skor harga/kirim/rating dan penetapan pemenang."
+    },
+    "pos": {
+      "title": "Purchase Order",
+      "description": "PO ke vendor terpilih; commitment anggaran dan revisi."
+    },
+    "poDetail": {
+      "title": "Purchase Order",
+      "description": "Baris, PPN, syarat, penerbitan dan revisi PO."
     }
   },
   "dashboard": {
@@ -1359,5 +1375,92 @@
     "submit": "Ajukan",
     "cancel": "Batalkan PR",
     "confirmCancel": "Batalkan"
+  },
+  "rfq": {
+    "status": {
+      "open": "Terbuka",
+      "award_pending": "Penetapan menunggu persetujuan",
+      "awarded": "Pemenang ditetapkan",
+      "cancelled": "Dibatalkan"
+    },
+    "quoteStatus": {
+      "invited": "Diundang",
+      "quoted": "Menawar",
+      "declined": "Tidak menawar"
+    },
+    "categories": {
+      "equipment_rental": "Sewa peralatan",
+      "chemicals": "Bahan kimia",
+      "logistics": "Logistik",
+      "subcontract": "Subkontrak",
+      "spare_parts": "Suku cadang"
+    },
+    "sources": {
+      "rfq_quote": "Penawaran",
+      "po": "PO"
+    },
+    "create": "Buat RFQ",
+    "createHelp": "Pilih kategori dan minimal 3 vendor memenuhi syarat. Vendor CSMS belum disetujui atau daftar hitam tidak dapat dipilih.",
+    "send_one": "Kirim ke {{count}} vendor",
+    "send_other": "Kirim ke {{count}} vendor",
+    "category": "Kategori vendor",
+    "dueDate": "Batas penawaran",
+    "vendors": "Vendor",
+    "rating": "Rating",
+    "empty": "Belum ada RFQ.",
+    "winner": "Pemenang",
+    "title": "Penawaran untuk {{pr}}",
+    "weightsInfo": "Bobot skor: harga {{price}}%, waktu kirim {{delivery}}%, rating {{rating}}%",
+    "priceHistory": "Riwayat harga",
+    "vendor": "Vendor",
+    "source": "Sumber",
+    "date": "Tanggal",
+    "noHistory": "Belum ada riwayat harga.",
+    "quotes": "Penawaran vendor",
+    "quotesHelp": "Skor: harga = terendah/harga, kirim = tercepat/hari, rating = rating/5.",
+    "days": "Waktu kirim (hari)",
+    "scorePrice": "Harga",
+    "scoreDelivery": "Kirim",
+    "scoreRating": "Rating",
+    "scoreTotal": "Skor",
+    "enterQuote": "Isi penawaran",
+    "best": "Terbaik",
+    "quoteFor": "Penawaran {{vendor}}",
+    "declined": "Vendor tidak menawar",
+    "terms": "Termin pembayaran",
+    "validUntil": "Berlaku s.d.",
+    "award": "Penetapan pemenang",
+    "awardHelp": "Skor terbaik langsung ditetapkan. Vendor lain perlu alasan tertulis dan persetujuan Head of Finance & Support.",
+    "awardedTo": "Pemenang: {{vendor}}",
+    "pending": "Penetapan {{vendor}} menunggu persetujuan.",
+    "reason": "Alasan memilih vendor ini",
+    "reasonHint": "Min. 10 karakter.",
+    "submitAward": "Ajukan penetapan",
+    "confirmAward": "Tetapkan pemenang",
+    "createPo": "Buat PO"
+  },
+  "po": {
+    "status": {
+      "draft": "Draf",
+      "issued": "Diterbitkan",
+      "revision_pending": "Revisi menunggu persetujuan",
+      "cancelled": "Dibatalkan",
+      "closed": "Selesai"
+    },
+    "empty": "Belum ada PO.",
+    "subtotal": "Subtotal (DPP)",
+    "deliveryDate": "Tanggal kirim",
+    "back": "Kembali ke daftar PO",
+    "committed": "Commitment PO",
+    "documents": "Dokumen PO",
+    "draft": "Draf PO",
+    "issueHelp": "Penerbitan melepas pre-commitment PR dan mencatat commitment senilai DPP; sisa PR kembali ke anggaran tersedia. PDF tersimpan di dokumen.",
+    "issue": "Terbitkan PO",
+    "revise": "Revisi PO",
+    "reviseHelp": "Nilai sama/lebih rendah langsung berlaku (selisih kembali ke anggaran). Nilai lebih tinggi perlu persetujuan ulang.",
+    "revisionPending": "Revisi menunggu persetujuan: {{reason}}",
+    "revisionSubmitted": "Revisi diajukan untuk persetujuan.",
+    "revisionApplied": "Revisi {{revision}} berlaku.",
+    "submitRevision": "Simpan revisi"
   }
 }

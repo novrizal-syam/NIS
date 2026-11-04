@@ -19,7 +19,9 @@ import { ContractPage } from '@/features/contracts/ContractPage';
 import { ContractsPage } from '@/features/contracts/ContractsPage';
 import { DashboardPage } from '@/features/home/DashboardPage';
 import { PrListPage } from '@/features/procurement/PrListPage';
+import { PoListPage, PoPage } from '@/features/procurement/PoPages';
 import { PrNewPage, PrPage } from '@/features/procurement/PrPage';
+import { RfqListPage, RfqPage } from '@/features/procurement/RfqPages';
 import { TenderPage } from '@/features/tenders/TenderPage';
 import { TendersPage } from '@/features/tenders/TendersPage';
 import { ProjectPage } from '@/features/projects/ProjectPage';
@@ -108,6 +110,10 @@ export function AppRoutes() {
           <Route path="pengadaan/pr" element={<PrListPage />} />
           <Route path="pengadaan/pr/baru" element={<PrNewPage />} />
           <Route path="pengadaan/pr/:id" element={<PrPage />} />
+          <Route path="pengadaan/rfq" element={<RfqListPage />} />
+          <Route path="pengadaan/rfq/:id" element={<RfqPage />} />
+          <Route path="pengadaan/po" element={<PoListPage />} />
+          <Route path="pengadaan/po/:id" element={<PoPage />} />
           <Route path="kontrak" element={<ContractsPage />} />
           <Route path="kontrak/:id" element={<ContractPage />} />
           <Route path="proyek" element={<ProjectsPage />} />

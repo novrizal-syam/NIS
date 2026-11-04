@@ -20,8 +20,8 @@ describe('AppShell', () => {
     const nav = (await screen.findAllByRole('navigation', { name: 'Menu utama' }))[0]!;
     expect(within(nav).getByText('Procure to Pay')).toBeInTheDocument();
     expect(within(nav).getByRole('link', { name: 'Lead' })).toHaveAttribute('href', '/lead');
-    const po = within(nav).getByRole('link', { name: /Purchase Order\s*Segera/ });
-    expect(po).toHaveAttribute('href', '/segera/purchaseOrders');
+    const dor = within(nav).getByRole('link', { name: /Daily Operation Report\s*Segera/ });
+    expect(dor).toHaveAttribute('href', '/segera/dor');
     // No finance/payroll permission -> Keuangan group hidden entirely.
     expect(within(nav).queryByText('Keuangan')).not.toBeInTheDocument();
     expect(within(nav).queryByText('Penggajian')).not.toBeInTheDocument();

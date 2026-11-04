@@ -85,6 +85,18 @@ export function usePageMeta(): PageMeta {
   if (matchPath('/pengadaan/pr/:id', pathname)) {
     return { title: t('pages.prDetail.title'), description: t('pages.prDetail.description') };
   }
+  if (pathname === '/pengadaan/rfq') {
+    return { title: t('pages.rfqs.title'), description: t('pages.rfqs.description') };
+  }
+  if (matchPath('/pengadaan/rfq/:id', pathname)) {
+    return { title: t('pages.rfqDetail.title'), description: t('pages.rfqDetail.description') };
+  }
+  if (pathname === '/pengadaan/po') {
+    return { title: t('pages.pos.title'), description: t('pages.pos.description') };
+  }
+  if (matchPath('/pengadaan/po/:id', pathname)) {
+    return { title: t('pages.poDetail.title'), description: t('pages.poDetail.description') };
+  }
   if (pathname === '/persetujuan') {
     return { title: t('pages.approvals.title'), description: t('pages.approvals.description') };
   }

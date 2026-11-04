@@ -67,6 +67,9 @@ export interface PrDetail extends PrRow {
   can_submit: boolean;
   can_cancel: boolean;
   can_request_bcr: boolean;
+  can_rfq: boolean;
+  rfq: { id: string; number: string } | null;
+  po: { id: string; number: string } | null;
   lines: PrLine[];
 }
 

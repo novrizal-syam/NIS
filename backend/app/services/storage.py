@@ -3,7 +3,7 @@
 import asyncio
 from dataclasses import dataclass
 from functools import lru_cache
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import boto3
 from botocore.config import Config
@@ -82,3 +82,18 @@ def get_storage() -> Storage:
         config=Config(signature_version="s3v4", s3={"addressing_style": "path"}),
     )
     return Storage(client, s.s3_bucket)
+
+
+# Code outside a request (e.g. approval hooks) resolves storage the same way endpoints do, so
+# test overrides of get_storage apply there too. Set by the app factory.
+_storage_provider: list[Any] = []
+
+
+def use_storage_provider(provider: Any) -> None:
+    _storage_provider[:] = [provider]
+
+
+def current_storage() -> Storage:
+    factory = _storage_provider[0]() if _storage_provider else get_storage
+    store: Storage = factory()
+    return store

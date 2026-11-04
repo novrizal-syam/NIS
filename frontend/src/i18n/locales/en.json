@@ -201,6 +201,22 @@
     "prDetail": {
       "title": "Purchase requisition",
       "description": "Status, available budget, approvals and linked BCR."
+    },
+    "rfqs": {
+      "title": "RFQ",
+      "description": "Requests for quotation to at least 3 qualified vendors, with selection scores."
+    },
+    "rfqDetail": {
+      "title": "RFQ",
+      "description": "Vendor quotes, price/delivery/rating scores and award."
+    },
+    "pos": {
+      "title": "Purchase orders",
+      "description": "POs to the awarded vendor; budget commitment and revisions."
+    },
+    "poDetail": {
+      "title": "Purchase order",
+      "description": "Lines, VAT, terms, issue and revisions."
     }
   },
   "dashboard": {
@@ -1359,5 +1375,92 @@
     "submit": "Submit",
     "cancel": "Cancel PR",
     "confirmCancel": "Cancel"
+  },
+  "rfq": {
+    "status": {
+      "open": "Open",
+      "award_pending": "Award awaiting approval",
+      "awarded": "Awarded",
+      "cancelled": "Cancelled"
+    },
+    "quoteStatus": {
+      "invited": "Invited",
+      "quoted": "Quoted",
+      "declined": "Declined"
+    },
+    "categories": {
+      "equipment_rental": "Equipment rental",
+      "chemicals": "Chemicals",
+      "logistics": "Logistics",
+      "subcontract": "Subcontract",
+      "spare_parts": "Spare parts"
+    },
+    "sources": {
+      "rfq_quote": "Quote",
+      "po": "PO"
+    },
+    "create": "Create RFQ",
+    "createHelp": "Pick the category and at least 3 qualified vendors. Vendors with pending CSMS or blacklisted cannot be selected.",
+    "send_one": "Send to {{count}} vendor",
+    "send_other": "Send to {{count}} vendors",
+    "category": "Vendor category",
+    "dueDate": "Quote deadline",
+    "vendors": "Vendors",
+    "rating": "Rating",
+    "empty": "No RFQs yet.",
+    "winner": "Winner",
+    "title": "Quotes for {{pr}}",
+    "weightsInfo": "Score weights: price {{price}}%, delivery {{delivery}}%, rating {{rating}}%",
+    "priceHistory": "Price history",
+    "vendor": "Vendor",
+    "source": "Source",
+    "date": "Date",
+    "noHistory": "No price history yet.",
+    "quotes": "Vendor quotes",
+    "quotesHelp": "Score: price = lowest/price, delivery = fastest/days, rating = rating/5.",
+    "days": "Delivery (days)",
+    "scorePrice": "Price",
+    "scoreDelivery": "Delivery",
+    "scoreRating": "Rating",
+    "scoreTotal": "Score",
+    "enterQuote": "Enter quote",
+    "best": "Best",
+    "quoteFor": "Quote from {{vendor}}",
+    "declined": "Vendor declined",
+    "terms": "Payment terms",
+    "validUntil": "Valid until",
+    "award": "Award",
+    "awardHelp": "The best score is awarded directly. Another vendor needs a written reason and Head of Finance & Support approval.",
+    "awardedTo": "Awarded to {{vendor}}",
+    "pending": "Award to {{vendor}} awaiting approval.",
+    "reason": "Reason for this vendor",
+    "reasonHint": "Min. 10 characters.",
+    "submitAward": "Submit award",
+    "confirmAward": "Award",
+    "createPo": "Create PO"
+  },
+  "po": {
+    "status": {
+      "draft": "Draft",
+      "issued": "Issued",
+      "revision_pending": "Revision awaiting approval",
+      "cancelled": "Cancelled",
+      "closed": "Closed"
+    },
+    "empty": "No POs yet.",
+    "subtotal": "Subtotal (DPP)",
+    "deliveryDate": "Delivery date",
+    "back": "Back to POs",
+    "committed": "PO commitment",
+    "documents": "PO documents",
+    "draft": "PO draft",
+    "issueHelp": "Issuing releases the PR pre-commitment and commits the DPP; the PR remainder returns to available. The PDF is stored in documents.",
+    "issue": "Issue PO",
+    "revise": "Revise PO",
+    "reviseHelp": "Same or lower value applies at once (the difference returns to budget). A higher value needs re-approval.",
+    "revisionPending": "Revision awaiting approval: {{reason}}",
+    "revisionSubmitted": "Revision submitted for approval.",
+    "revisionApplied": "Revision {{revision}} applied.",
+    "submitRevision": "Save revision"
   }
 }

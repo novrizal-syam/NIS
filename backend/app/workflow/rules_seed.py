@@ -13,6 +13,7 @@ DOC_TYPES: dict[str, tuple[str, str]] = {
     "bcr": ("Perubahan anggaran (BCR)", "budget"),
     "purchase_requisition": ("Purchase Requisition", "procurement"),
     "rfq_award": ("Penetapan pemenang RFQ", "procurement"),
+    "po_revision": ("Revisi PO (nilai naik)", "procurement"),
     "dor": ("Daily Operation Report", "operations"),
     "cash_advance": ("Uang muka kerja", "treasury"),
     "manual_journal": ("Jurnal manual", "finance"),
@@ -132,6 +133,22 @@ RULES: tuple[RuleDef, ...] = (
         priority=20,
     ),
     single("purchase_requisition", "director", "> Rp 500 jt", priority=30),
+    # PO revision with a higher value: same thresholds as the PR, on the new PO value.
+    single(
+        "po_revision",
+        "head_of_operation",
+        "≤ Rp 50 jt",
+        condition=le("amount", 50 * M),
+        priority=10,
+    ),
+    single(
+        "po_revision",
+        "head_of_finance",
+        "≤ Rp 500 jt",
+        condition=le("amount", 500 * M),
+        priority=20,
+    ),
+    single("po_revision", "director", "> Rp 500 jt", priority=30),
     single(
         "rfq_award",
         "head_of_finance",
