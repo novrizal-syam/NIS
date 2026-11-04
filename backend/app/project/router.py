@@ -1,6 +1,6 @@
 import uuid
 from decimal import Decimal
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
@@ -17,13 +17,19 @@ from app.core.db import get_session
 from app.core.errors import AppError, ForbiddenError, NotFoundError
 from app.core.pagination import PageParams, page_params
 from app.master.models import CostElement
+from app.project import bcr_service, service
 from app.project import budget_service as budget
-from app.project import service
-from app.project.models import PROJECT_STATUSES, BudgetVersionLine, Project
+from app.project.models import (
+    PROJECT_STATUSES,
+    BudgetChangeRequest,
+    BudgetVersionLine,
+    Project,
+)
 from app.services import audit, budget_control
 from app.services.audit import AuditAction
 from app.services.export import Column, xlsx_response
 from app.services.numbering import today_jakarta
+from app.workflow.models import ApprovalRequest
 
 router = APIRouter(prefix="/projects", tags=["project"])
 Session = Annotated[AsyncSession, Depends(get_session)]
@@ -64,6 +70,26 @@ async def _check(
 
 
 access.register("project", _check)
+
+
+async def _bcr_check(
+    session: AsyncSession, principal: Principal, entity_id: str, mode: access.Mode
+) -> bool:
+    try:
+        b = await session.get(BudgetChangeRequest, uuid.UUID(entity_id))
+    except ValueError:
+        return False
+    if b is None:
+        return False
+    p = await session.get(Project, b.project_id)
+    if p is None:
+        return False
+    if mode == "read":
+        return may(principal, "view", p) or may_budget(principal, "view", p)
+    return may_budget(principal, "submit", p)
+
+
+access.register("bcr", _bcr_check)
 
 
 def _query(principal: Principal, action: str, q: str | None, status: str | None) -> Select[Any]:
@@ -248,6 +274,7 @@ async def _detail(session: AsyncSession, principal: Principal, p: Project) -> di
         "can_edit_budget": p.status == "draft" and may_budget(principal, "edit", p),
         "can_submit_budget": p.status == "draft" and may_budget(principal, "submit", p),
         "can_assign": may(principal, "edit", p) and p.status not in ("closed",),
+        "can_bcr": p.status == "locked" and may_budget(principal, "submit", p),
         "wbs": [{"id": str(w.id), "code": w.code, "name": w.name} for w in wbs],
         "cells": [
             {
@@ -445,6 +472,150 @@ async def budget_status(pid: uuid.UUID, principal: Viewer, session: Session) -> 
         "status": p.status,
         "lines": rows,
         "totals": {k: format(v, "f") for k, v in total.items()},
+    }
+
+
+@router.get("/{pid}/versions")
+async def budget_versions(pid: uuid.UUID, principal: Viewer, session: Session) -> dict[str, Any]:
+    """Version list and baseline v0 vs current (latest) per line."""
+    p = await _get(session, principal, pid)
+    vs = await bcr_service.versions(session, p.id)
+    names = dict((await session.execute(select(CostElement.code, CostElement.name))).tuples().all())
+    base: dict[tuple[str, str], Decimal] = {}
+    if vs:
+        for x in await bcr_service.version_lines(session, vs[0].id):
+            base[(x.wbs_code, x.cost_element_code)] = x.amount
+    wbs = {w.id: w.code for w in await service.wbs_of(session, p.id)}
+    current = {
+        (wbs[x.wbs_id], x.cost_element_code): x.amount
+        for x in await service.budget_of(session, p.id)
+    }
+    keys = sorted(set(base) | set(current))
+    return {
+        "versions": [
+            {
+                "version": v.version,
+                "kind": v.kind,
+                "revenue": format(v.revenue, "f"),
+                "total_cost": format(v.total_cost, "f"),
+                "margin_pct": str(v.margin_pct),
+                "approved_at": v.approved_at.isoformat(),
+                "note": v.note,
+            }
+            for v in vs
+        ],
+        "lines": [
+            {
+                "wbs_code": w,
+                "cost_element_code": ce,
+                "cost_element_name": names.get(ce, ce),
+                "baseline": format(base.get((w, ce), Decimal(0)), "f"),
+                "current": format(current.get((w, ce), Decimal(0)), "f"),
+                "change": format(
+                    current.get((w, ce), Decimal(0)) - base.get((w, ce), Decimal(0)), "f"
+                ),
+            }
+            for w, ce in keys
+        ],
+    }
+
+
+@router.get("/{pid}/bcrs")
+async def list_bcrs(pid: uuid.UUID, principal: Viewer, session: Session) -> list[dict[str, Any]]:
+    p = await _get(session, principal, pid)
+    rows = (
+        (
+            await session.execute(
+                select(BudgetChangeRequest)
+                .where(BudgetChangeRequest.project_id == p.id)
+                .order_by(BudgetChangeRequest.created_at.desc())
+            )
+        )
+        .scalars()
+        .all()
+    )
+    wbs = {w.id: w.code for w in await service.wbs_of(session, p.id)}
+    names = await _user_names(session, {b.created_by for b in rows if b.created_by})
+    return [
+        {
+            "id": str(b.id),
+            "number": b.number,
+            "wbs_code": wbs.get(b.wbs_id),
+            "cost_element_code": b.cost_element_code,
+            "amount": format(b.amount, "f"),
+            "source": b.source,
+            "from_wbs_code": wbs.get(b.from_wbs_id) if b.from_wbs_id else None,
+            "from_cost_element_code": b.from_cost_element_code,
+            "reason": b.reason,
+            "justification": b.justification,
+            "revenue_change": format(b.revenue_change, "f") if b.revenue_change else None,
+            "increase_pct": str(b.increase_pct) if b.increase_pct is not None else None,
+            "ref_doc_type": b.ref_doc_type,
+            "ref_doc_id": b.ref_doc_id,
+            "status": b.status,
+            "request_id": str(b.request_id) if b.request_id else None,
+            "decision_comment": b.decision_comment,
+            "version": b.version,
+            "created_at": b.created_at.isoformat(),
+            "created_by_name": names.get(b.created_by) if b.created_by else None,
+        }
+        for b in rows
+    ]
+
+
+async def _user_names(session: AsyncSession, ids: set[uuid.UUID]) -> dict[uuid.UUID, str]:
+    if not ids:
+        return {}
+    rows = await session.execute(select(User.id, User.full_name).where(User.id.in_(ids)))
+    return dict(rows.tuples().all())
+
+
+class BcrBody(BaseModel):
+    wbs_code: str = Field(min_length=1, max_length=20)
+    cost_element_code: str = Field(min_length=1, max_length=20)
+    amount: Decimal = Field(gt=0, max_digits=18, decimal_places=0)
+    source: Literal["contingency_release", "budget_increase", "transfer"]
+    reason: Literal["client_variation", "scope_change", "price_escalation", "estimate_error"]
+    justification: str = Field(min_length=1, max_length=2000)
+    from_wbs_code: str | None = Field(default=None, max_length=20)
+    from_cost_element_code: str | None = Field(default=None, max_length=20)
+    revenue_change: Decimal | None = Field(default=None, ge=0, max_digits=18, decimal_places=0)
+    ref_doc_type: str | None = Field(default=None, max_length=40)
+    ref_doc_id: str | None = Field(default=None, max_length=64)
+
+
+@router.post("/{pid}/bcrs", status_code=201)
+async def create_bcr(
+    pid: uuid.UUID, body: BcrBody, principal: CurrentUser, session: Session
+) -> dict[str, Any]:
+    p = await _get(session, principal, pid, lock=True)
+    _need_budget(principal, "submit", p)
+    bcr = await bcr_service.create(
+        session,
+        principal,
+        p,
+        wbs_code=body.wbs_code.strip().upper(),
+        cost_element_code=body.cost_element_code,
+        amount=body.amount,
+        source=body.source,
+        reason=body.reason,
+        justification=body.justification,
+        from_wbs_code=(body.from_wbs_code or "").strip().upper() or None,
+        from_cost_element_code=body.from_cost_element_code or None,
+        revenue_change=body.revenue_change,
+        ref_doc_type=body.ref_doc_type,
+        ref_doc_id=body.ref_doc_id,
+    )
+    await session.commit()
+    request = await session.get(ApprovalRequest, bcr.request_id)
+    assert request is not None
+    await session.refresh(request, ["steps"])
+    return {
+        "id": str(bcr.id),
+        "number": bcr.number,
+        "request_id": str(bcr.request_id),
+        "increase_pct": str(bcr.increase_pct),
+        "approver": request.steps[0].approver_role if request.steps else None,
     }
 
 

@@ -33,6 +33,7 @@ from app.master.models import (
 )
 from app.notifications.models import Notification
 from app.project.models import (
+    BudgetChangeRequest,
     BudgetLedgerEntry,
     BudgetVersion,
     BudgetVersionLine,
@@ -64,6 +65,7 @@ __all__ = [
     "AuditLog",
     "Base",
     "BidDecision",
+    "BudgetChangeRequest",
     "BudgetLedgerEntry",
     "BudgetVersion",
     "BudgetVersionLine",

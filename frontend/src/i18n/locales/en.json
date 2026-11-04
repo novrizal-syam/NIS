@@ -1137,7 +1137,20 @@
     "commit": "Commit",
     "actual": "Actual",
     "available": "Available",
-    "used": "Used"
+    "used": "Used",
+    "versionsTab": "Budget versions",
+    "bcrTab": "BCR",
+    "noVersions": "No versions yet; baseline v0 is created when the budget is locked.",
+    "baselineVsCurrent": "Baseline v0 vs current budget",
+    "currentVersion": "Current = version v{{version}}.",
+    "baselineCol": "Baseline v0",
+    "currentCol": "Current",
+    "changeCol": "Change",
+    "versionHistory": "Version history",
+    "versionKind": {
+      "baseline": "Baseline",
+      "bcr": "BCR"
+    }
   },
   "tender": {
     "title": "Tender",
@@ -1253,5 +1266,48 @@
     "missingDocs_one": "{{count}} document missing",
     "missingDocs_other": "{{count}} documents missing",
     "docsComplete": "Documents complete"
+  },
+  "bcr": {
+    "new": "Request a budget change (BCR)",
+    "help": "Contingency release up to the remaining contingency ({{contingency}}); transfer up to the source line's available. Increase ≤ 10% or contingency/transfer approved by the Head of Operation; increase > 10% or a revenue change by the Director.",
+    "submitted": "{{number}} submitted to {{role}}.",
+    "source": "Source",
+    "sources": {
+      "contingency_release": "Contingency release",
+      "budget_increase": "Budget increase",
+      "transfer": "Transfer between lines"
+    },
+    "targetWbs": "Target WBS",
+    "targetElement": "Target cost element",
+    "amount": "Amount",
+    "fromWbs": "Source WBS",
+    "fromElement": "Source cost element",
+    "reason": "Reason",
+    "reasons": {
+      "client_variation": "Client variation order",
+      "scope_change": "Scope change",
+      "price_escalation": "Price escalation",
+      "estimate_error": "Estimate error"
+    },
+    "revenueChange": "Revenue change",
+    "revenueHint": "Fill in when the client raises the contract value (to the Director).",
+    "refType": "Reference document",
+    "refHint": "E.g. purchase_requisition (the blocked document).",
+    "refId": "Document number/ID",
+    "justification": "Justification",
+    "submit": "Submit BCR",
+    "list": "BCR list",
+    "empty": "No BCRs yet.",
+    "line": "Line",
+    "status": {
+      "submitted": "Awaiting approval",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "cancelled": "Withdrawn"
+    },
+    "version": "Version",
+    "from": "from",
+    "attach": "Attachments",
+    "attachmentsHelp": "Attach the client VO, vendor quotes or other evidence for this BCR."
   }
 }

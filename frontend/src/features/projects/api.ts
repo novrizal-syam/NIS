@@ -49,6 +49,7 @@ export interface ProjectDetail extends ProjectRow {
   can_edit_budget: boolean;
   can_submit_budget: boolean;
   can_assign: boolean;
+  can_bcr: boolean;
   wbs: { id: string; code: string; name: string }[];
   cells: BudgetCell[];
   cost_elements: { code: string; name: string }[];
@@ -157,3 +158,80 @@ export function useBudgetStatus(id: string, enabled: boolean) {
     enabled,
   });
 }
+
+export interface BudgetVersionsView {
+  versions: {
+    version: number;
+    kind: 'baseline' | 'bcr';
+    revenue: string;
+    total_cost: string;
+    margin_pct: string;
+    approved_at: string;
+    note: string | null;
+  }[];
+  lines: {
+    wbs_code: string;
+    cost_element_code: string;
+    cost_element_name: string;
+    baseline: string;
+    current: string;
+    change: string;
+  }[];
+}
+
+export type BcrSource = 'contingency_release' | 'budget_increase' | 'transfer';
+export type BcrReason = 'client_variation' | 'scope_change' | 'price_escalation' | 'estimate_error';
+export const BCR_SOURCES: BcrSource[] = ['contingency_release', 'budget_increase', 'transfer'];
+export const BCR_REASONS: BcrReason[] = [
+  'client_variation',
+  'scope_change',
+  'price_escalation',
+  'estimate_error',
+];
+
+export interface BcrRow {
+  id: string;
+  number: string;
+  wbs_code: string;
+  cost_element_code: string;
+  amount: string;
+  source: BcrSource;
+  from_wbs_code: string | null;
+  from_cost_element_code: string | null;
+  reason: BcrReason;
+  justification: string;
+  revenue_change: string | null;
+  increase_pct: string | null;
+  ref_doc_type: string | null;
+  ref_doc_id: string | null;
+  status: 'submitted' | 'approved' | 'rejected' | 'cancelled';
+  request_id: string | null;
+  decision_comment: string | null;
+  version: number | null;
+  created_at: string;
+  created_by_name: string | null;
+}
+
+export function useBudgetVersions(id: string, enabled: boolean) {
+  return useQuery({
+    queryKey: ['projects', 'versions', id],
+    queryFn: () => api<BudgetVersionsView>(`/projects/${id}/versions`),
+    enabled,
+  });
+}
+
+export function useBcrs(id: string, enabled: boolean) {
+  return useQuery({
+    queryKey: ['projects', 'bcrs', id],
+    queryFn: () => api<BcrRow[]>(`/projects/${id}/bcrs`),
+    enabled,
+  });
+}
+
+export const useCreateBcr = (id: string) =>
+  useProjectMutation((body: Record<string, unknown>) =>
+    postJson<{ id: string; number: string; request_id: string; approver: string | null }>(
+      `/projects/${id}/bcrs`,
+      body,
+    ),
+  );

@@ -135,6 +135,56 @@ class BudgetVersion(EntityMixin, Base):
         UUID(as_uuid=True), ForeignKey("approval_requests.id", ondelete="RESTRICT")
     )
     approved_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    # BCR versions: what changed and why.
+    note: Mapped[str | None] = mapped_column(String(1000))
+    bcr_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("budget_change_requests.id", ondelete="RESTRICT")
+    )
+
+
+class BudgetChangeRequest(EntityMixin, Base):
+    """BCR on a Locked project (PROCESS.md · BCR). Source: contingency_release |
+    budget_increase | transfer. Approval (DOA bcr) creates the next budget version."""
+
+    __tablename__ = "budget_change_requests"
+
+    number: Mapped[str] = mapped_column(String(20), nullable=False, unique=True)
+    project_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("projects.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    wbs_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("project_wbs.id", ondelete="RESTRICT"), nullable=False
+    )
+    cost_element_code: Mapped[str] = mapped_column(
+        String(20), ForeignKey("cost_elements.code", ondelete="RESTRICT"), nullable=False
+    )
+    amount: Mapped[Decimal] = mapped_column(Numeric(18, 0), nullable=False)
+    source: Mapped[str] = mapped_column(String(30), nullable=False)
+    # Transfer: the line the amount comes from. Contingency release: the contingency line.
+    from_wbs_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("project_wbs.id", ondelete="RESTRICT")
+    )
+    from_cost_element_code: Mapped[str | None] = mapped_column(
+        String(20), ForeignKey("cost_elements.code", ondelete="RESTRICT")
+    )
+    reason: Mapped[str] = mapped_column(String(30), nullable=False)
+    justification: Mapped[str] = mapped_column(String(2000), nullable=False)
+    # Client variation order: revenue (contract value) increase, routes to the Director.
+    revenue_change: Mapped[Decimal | None] = mapped_column(Numeric(18, 0))
+    increase_pct: Mapped[Decimal | None] = mapped_column(Numeric(7, 2))
+    ref_doc_type: Mapped[str | None] = mapped_column(String(40))
+    ref_doc_id: Mapped[str | None] = mapped_column(String(64))
+    # submitted | approved | rejected | cancelled
+    status: Mapped[str] = mapped_column(String(20), nullable=False, server_default="submitted")
+    request_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("approval_requests.id", ondelete="RESTRICT")
+    )
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    decision_comment: Mapped[str | None] = mapped_column(String(1000))
+    version: Mapped[int | None] = mapped_column(Integer)
 
 
 class BudgetVersionLine(Base):

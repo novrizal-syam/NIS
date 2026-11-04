@@ -232,3 +232,120 @@ it('shows budget usage per line with warning and exhausted states', async () => 
   expect(screen.getByText('100,0%').className).toContain('text-danger');
   expect(screen.getByText('Rp 20.000.000')).toBeInTheDocument();
 });
+
+const LOCKED = {
+  ...BASE,
+  status: 'locked',
+  can_edit_budget: false,
+  can_submit_budget: false,
+  can_bcr: true,
+  baseline: {
+    version: 0,
+    total_cost: '525000000',
+    margin_pct: '47.50',
+    approved_at: '2026-11-03T03:00:00Z',
+  },
+};
+
+it('submits a contingency release BCR and lists it', async () => {
+  let body: Record<string, unknown> | null = null;
+  mockApi({
+    me: planner,
+    handlers: {
+      'GET /api/projects/p1': () => json(LOCKED),
+      'GET /api/projects/p1/budget-status': () =>
+        json({
+          status: 'locked',
+          lines: [],
+          totals: { budget: '0', pre_commit: '0', commit: '0', actual: '0', available: '0' },
+        }),
+      'GET /api/projects/p1/bcrs': () => json([]),
+      'POST /api/projects/p1/bcrs': (init) => {
+        body = JSON.parse(String(init!.body)) as Record<string, unknown>;
+        return json(
+          { id: 'b1', number: 'BCR-26-001', request_id: 'r1', approver: 'head_of_operation' },
+          201,
+        );
+      },
+    },
+  });
+  const user = userEvent.setup();
+  renderApp('/proyek/p1');
+  await user.click(await screen.findByRole('tab', { name: 'BCR' }));
+  expect(screen.getByText(/sisa kontinjensi \(Rp 25\.000\.000\)/)).toBeInTheDocument();
+  await user.selectOptions(screen.getByLabelText('Elemen biaya tujuan'), 'EQUIP-OWN');
+  await user.type(screen.getByLabelText(/^Nilai/), '20.000.000');
+  await user.type(screen.getByLabelText(/^Justifikasi/), 'Tambahan hari operasi sesuai VO');
+  await user.click(screen.getByRole('button', { name: 'Ajukan BCR' }));
+  expect(await screen.findByText('BCR-26-001 diajukan ke Head of Operation.')).toBeInTheDocument();
+  expect(body).toMatchObject({
+    source: 'contingency_release',
+    wbs_code: 'EXEC',
+    cost_element_code: 'EQUIP-OWN',
+    amount: '20000000',
+    reason: 'scope_change',
+  });
+});
+
+it('compares baseline v0 with the current version', async () => {
+  mockApi({
+    me: planner,
+    handlers: {
+      'GET /api/projects/p1': () => json(LOCKED),
+      'GET /api/projects/p1/budget-status': () =>
+        json({
+          status: 'locked',
+          lines: [],
+          totals: { budget: '0', pre_commit: '0', commit: '0', actual: '0', available: '0' },
+        }),
+      'GET /api/projects/p1/versions': () =>
+        json({
+          versions: [
+            {
+              version: 0,
+              kind: 'baseline',
+              revenue: '1000000000',
+              total_cost: '525000000',
+              margin_pct: '47.50',
+              approved_at: '2026-11-03T03:00:00Z',
+              note: null,
+            },
+            {
+              version: 1,
+              kind: 'bcr',
+              revenue: '1000000000',
+              total_cost: '525000000',
+              margin_pct: '47.50',
+              approved_at: '2026-11-04T03:00:00Z',
+              note: 'BCR-26-001: Pelepasan kontinjensi',
+            },
+          ],
+          lines: [
+            {
+              wbs_code: 'EXEC',
+              cost_element_code: 'EQUIP-OWN',
+              cost_element_name: 'Peralatan milik',
+              baseline: '500000000',
+              current: '520000000',
+              change: '20000000',
+            },
+            {
+              wbs_code: 'EXEC',
+              cost_element_code: 'CONTINGENCY',
+              cost_element_name: 'Kontinjensi',
+              baseline: '25000000',
+              current: '5000000',
+              change: '-20000000',
+            },
+          ],
+        }),
+    },
+  });
+  const user = userEvent.setup();
+  renderApp('/proyek/p1');
+  await user.click(await screen.findByRole('tab', { name: 'Versi anggaran' }));
+  expect(await screen.findByText('Berjalan = versi v1.')).toBeInTheDocument();
+  expect(screen.getByText('+Rp 20.000.000')).toBeInTheDocument();
+  expect(screen.getByText('-Rp 20.000.000')).toBeInTheDocument();
+  expect(screen.getByText('BCR-26-001: Pelepasan kontinjensi')).toBeInTheDocument();
+});

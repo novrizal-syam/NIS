@@ -22,7 +22,9 @@ import {
   type ProjectDetail,
   type ProjectStatus,
 } from './api';
+import { BcrTab } from './BcrTab';
 import { BudgetEditor } from './BudgetEditor';
+import { BudgetVersionsTab } from './BudgetVersionsTab';
 import { BudgetStatusTable } from './BudgetStatusTable';
 import { ProjectStatusPill } from './ProjectStatusPill';
 
@@ -61,7 +63,7 @@ export function ProjectPage() {
   const { t } = useTranslation();
   const { id = '' } = useParams();
   const project = useProject(id);
-  const [tab, setTab] = useState<'budget' | 'files' | 'history'>('budget');
+  const [tab, setTab] = useState<'budget' | 'versions' | 'bcr' | 'files' | 'history'>('budget');
   if (project.isLoading) return <p className="text-fg-secondary">{t('common.loading')}</p>;
   if (project.error || !project.data)
     return <FormError message={errText(project.error, t('auth.unexpected'))} />;
@@ -163,6 +165,12 @@ export function ProjectPage() {
         onChange={setTab}
         items={[
           { value: 'budget', label: t('project.budgetTab') },
+          ...(p.baseline
+            ? [
+                { value: 'versions' as const, label: t('project.versionsTab') },
+                { value: 'bcr' as const, label: t('project.bcrTab') },
+              ]
+            : []),
           { value: 'files', label: t('project.documents') },
           { value: 'history', label: t('master.tabHistory') },
         ]}
@@ -175,6 +183,8 @@ export function ProjectPage() {
           <BudgetEditor p={p} />
         </>
       )}
+      {tab === 'versions' && <BudgetVersionsTab projectId={p.id} />}
+      {tab === 'bcr' && <BcrTab p={p} />}
       {tab === 'files' && (
         <AttachmentsPanel entityType="project" entityId={p.id} canWrite={p.can_edit_budget} />
       )}

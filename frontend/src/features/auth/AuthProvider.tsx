@@ -49,7 +49,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     session.setToken(null);
     setMe(null);
     setStatus('anonymous');
-    queryClient.clear();
+    // Drop the previous user's data, but keep the public setup status: the always-mounted
+    // SetupGate observes it, and removing it under an active observer could leave the app
+    // on "Memuat sesi…" after sign-out.
+    void queryClient.cancelQueries();
+    queryClient.removeQueries({ predicate: (q) => q.queryKey[0] !== 'setup' });
   }, [queryClient]);
 
   const reload = useCallback(async () => {

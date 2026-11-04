@@ -1137,7 +1137,20 @@
     "commit": "Commit",
     "actual": "Aktual",
     "available": "Tersedia",
-    "used": "Terpakai"
+    "used": "Terpakai",
+    "versionsTab": "Versi anggaran",
+    "bcrTab": "BCR",
+    "noVersions": "Belum ada versi; baseline v0 dibuat saat anggaran terkunci.",
+    "baselineVsCurrent": "Baseline v0 vs anggaran berjalan",
+    "currentVersion": "Berjalan = versi v{{version}}.",
+    "baselineCol": "Baseline v0",
+    "currentCol": "Berjalan",
+    "changeCol": "Perubahan",
+    "versionHistory": "Riwayat versi",
+    "versionKind": {
+      "baseline": "Baseline",
+      "bcr": "BCR"
+    }
   },
   "tender": {
     "title": "Tender",
@@ -1253,5 +1266,48 @@
     "missingDocs_one": "{{count}} dokumen kurang",
     "missingDocs_other": "{{count}} dokumen kurang",
     "docsComplete": "Dokumen lengkap"
+  },
+  "bcr": {
+    "new": "Ajukan perubahan anggaran (BCR)",
+    "help": "Pelepasan kontinjensi maks. sisa kontinjensi ({{contingency}}); transfer maks. tersedia di baris sumber. Kenaikan ≤ 10% atau kontinjensi/transfer disetujui Head of Operation; kenaikan > 10% atau perubahan pendapatan oleh Direktur.",
+    "submitted": "{{number}} diajukan ke {{role}}.",
+    "source": "Sumber",
+    "sources": {
+      "contingency_release": "Pelepasan kontinjensi",
+      "budget_increase": "Kenaikan anggaran",
+      "transfer": "Transfer antar baris"
+    },
+    "targetWbs": "WBS tujuan",
+    "targetElement": "Elemen biaya tujuan",
+    "amount": "Nilai",
+    "fromWbs": "WBS sumber",
+    "fromElement": "Elemen biaya sumber",
+    "reason": "Alasan",
+    "reasons": {
+      "client_variation": "Variation order klien",
+      "scope_change": "Perubahan lingkup",
+      "price_escalation": "Eskalasi harga",
+      "estimate_error": "Kesalahan estimasi"
+    },
+    "revenueChange": "Perubahan pendapatan",
+    "revenueHint": "Isi bila klien menaikkan nilai kontrak (ke Direktur).",
+    "refType": "Referensi dokumen",
+    "refHint": "Mis. purchase_requisition (dokumen yang terblokir).",
+    "refId": "Nomor/ID dokumen",
+    "justification": "Justifikasi",
+    "submit": "Ajukan BCR",
+    "list": "Daftar BCR",
+    "empty": "Belum ada BCR.",
+    "line": "Baris",
+    "status": {
+      "submitted": "Menunggu persetujuan",
+      "approved": "Disetujui",
+      "rejected": "Ditolak",
+      "cancelled": "Ditarik"
+    },
+    "version": "Versi",
+    "from": "dari",
+    "attach": "Lampiran",
+    "attachmentsHelp": "Lampirkan VO klien, penawaran vendor atau bukti lain untuk BCR ini."
   }
 }

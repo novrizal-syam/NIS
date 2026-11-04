@@ -15,6 +15,7 @@ from app.auth import service as auth_service
 from app.auth.principal import PRIVACY_VERSION
 from app.core.db import SessionLocal
 from app.master.models import PriceItem
+from app.project.models import Project, ProjectBudgetLine, ProjectWbs
 from app.setup import service as settings_store
 
 PASSWORD = "E2e-Rahasia-2026"
@@ -22,6 +23,10 @@ USERS = {
     "account_executive": ("ae@e2e.gek.co.id", "Citra Sales"),
     "head_of_sales": ("hos@e2e.gek.co.id", "Bayu Head of Sales"),
     "director": ("director@e2e.gek.co.id", "Rahman Direktur"),
+    "lead_engineer": ("planner@e2e.gek.co.id", "Dewi Planner"),
+    "lead_controller": ("controller@e2e.gek.co.id", "Hadi Controller"),
+    "head_of_operation": ("hoo@e2e.gek.co.id", "Agus Head of Operation"),
+    "admin": ("admin@e2e.gek.co.id", "Admin IT"),
 }
 
 
@@ -53,6 +58,37 @@ async def main() -> None:
                 cost_element_code="EQUIP-OWN",
             )
         )
+        await s.flush()
+        # Budget flow (03a-03c): draft project at 18 % margin, planner assigned.
+        planner = await auth_service.find_user_by_email(s, USERS["lead_engineer"][0])
+        assert planner is not None
+        project = Project(
+            number="PRJ-26-900",
+            name="Budget E2E Blok Rokan",
+            company_name="PT KKKS E2E",
+            status="draft",
+            revenue=Decimal(1_000_000_000),
+            budget_total=Decimal(820_000_000),
+            contingency_pct=Decimal(5),
+            manager_id=planner.id,
+        )
+        s.add(project)
+        await s.flush()
+        wbs = ProjectWbs(project_id=project.id, code="EXEC", name="Execution", seq=1)
+        s.add(wbs)
+        await s.flush()
+        for code, amount in (("EQUIP-OWN", 780_000_000), ("CONTINGENCY", 40_000_000)):
+            s.add(
+                ProjectBudgetLine(
+                    project_id=project.id,
+                    version=0,
+                    wbs_id=wbs.id,
+                    cost_element_code=code,
+                    amount=Decimal(amount),
+                    source="quotation",
+                    locked_reserve=code == "CONTINGENCY",
+                )
+            )
         await s.commit()
     print("e2e seed ok")
 

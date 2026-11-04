@@ -31,6 +31,7 @@ TABLES = (
     "budget_ledger",
     "budget_version_lines",
     "budget_versions",
+    "budget_change_requests",
     "project_budget_lines",
     "project_wbs",
     "projects",
