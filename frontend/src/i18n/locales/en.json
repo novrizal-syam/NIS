@@ -1130,7 +1130,14 @@
       "lead_controller": "Lead Controller",
       "head_of_operation": "Head of Operation",
       "director": "Director"
-    }
+    },
+    "controlTitle": "Budget usage",
+    "controlHelp": "Available = budget − pre-commitment (PR) − commitment (PO) − actual. Warning at 80%, red when exhausted.",
+    "preCommit": "Pre-commit",
+    "commit": "Commit",
+    "actual": "Actual",
+    "available": "Available",
+    "used": "Used"
   },
   "tender": {
     "title": "Tender",

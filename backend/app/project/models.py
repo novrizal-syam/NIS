@@ -10,6 +10,7 @@ from sqlalchemy import (
     Date,
     DateTime,
     ForeignKey,
+    Index,
     Integer,
     Numeric,
     String,
@@ -153,3 +154,43 @@ class BudgetVersionLine(Base):
     cost_element_code: Mapped[str] = mapped_column(String(20), nullable=False)
     amount: Mapped[Decimal] = mapped_column(Numeric(18, 0), nullable=False)
     locked_reserve: Mapped[bool] = mapped_column(Boolean, nullable=False)
+
+
+class BudgetLedgerEntry(Base):
+    """Append-only budget consumption (CLAUDE.md rule 8; services/budget_control.py only).
+
+    `kind` is the operation (pre_commit | commit | actual | release); `bucket` is the balance the
+    row changes (pre_commit | commit | actual) and `amount` is signed. One operation may write
+    several rows, e.g. a PO commit adds to `commit` and removes the PR's `pre_commit`.
+    Balances are sums, never stored. A database trigger rejects UPDATE and DELETE."""
+
+    __tablename__ = "budget_ledger"
+    __table_args__ = (
+        Index("ix_budget_ledger_line", "project_id", "wbs_id", "cost_element_code"),
+        Index("ix_budget_ledger_doc", "doc_type", "doc_id"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")
+    )
+    project_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("projects.id", ondelete="RESTRICT"), nullable=False
+    )
+    wbs_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("project_wbs.id", ondelete="RESTRICT"), nullable=False
+    )
+    cost_element_code: Mapped[str] = mapped_column(
+        String(20), ForeignKey("cost_elements.code", ondelete="RESTRICT"), nullable=False
+    )
+    kind: Mapped[str] = mapped_column(String(20), nullable=False)
+    bucket: Mapped[str] = mapped_column(String(20), nullable=False)
+    amount: Mapped[Decimal] = mapped_column(Numeric(18, 0), nullable=False)
+    doc_type: Mapped[str] = mapped_column(String(40), nullable=False)
+    doc_id: Mapped[str] = mapped_column(String(64), nullable=False)
+    note: Mapped[str | None] = mapped_column(String(300))
+    at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=text("now()")
+    )
+    by: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="RESTRICT")
+    )

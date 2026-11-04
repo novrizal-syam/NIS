@@ -130,3 +130,30 @@ export function usePlanners(enabled: boolean) {
     staleTime: 60_000,
   });
 }
+
+export interface BudgetStatusLine {
+  wbs_code: string;
+  cost_element_code: string;
+  cost_element_name: string;
+  locked_reserve: boolean;
+  budget: string;
+  pre_commit: string;
+  commit: string;
+  actual: string;
+  available: string;
+  used_pct: string;
+  state: 'ok' | 'warning' | 'exhausted';
+}
+
+export function useBudgetStatus(id: string, enabled: boolean) {
+  return useQuery({
+    queryKey: ['projects', 'budget-status', id],
+    queryFn: () =>
+      api<{
+        status: string;
+        lines: BudgetStatusLine[];
+        totals: Record<'budget' | 'pre_commit' | 'commit' | 'actual' | 'available', string>;
+      }>(`/projects/${id}/budget-status`),
+    enabled,
+  });
+}

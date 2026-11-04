@@ -168,3 +168,67 @@ it('warns when the planned margin is below the threshold', async () => {
   expect(await screen.findByRole('alert')).toHaveTextContent('Margin rencana 15,00% di bawah 20%');
   expect(screen.getByText(/Dikembalikan dengan catatan: Tinjau harga sewa/)).toBeInTheDocument();
 });
+
+it('shows budget usage per line with warning and exhausted states', async () => {
+  const line = (
+    ce: string,
+    name: string,
+    budget: string,
+    used: string,
+    avail: string,
+    pct: string,
+    state: string,
+  ) => ({
+    wbs_code: 'EXEC',
+    cost_element_code: ce,
+    cost_element_name: name,
+    locked_reserve: ce === 'CONTINGENCY',
+    budget,
+    pre_commit: used,
+    commit: '0',
+    actual: '0',
+    available: avail,
+    used_pct: pct,
+    state,
+  });
+  mockApi({
+    me: planner,
+    handlers: {
+      'GET /api/projects/p1': () =>
+        json({ ...BASE, status: 'locked', can_edit_budget: false, can_submit_budget: false }),
+      'GET /api/projects/p1/budget-status': () =>
+        json({
+          status: 'locked',
+          lines: [
+            line(
+              'EQUIP-OWN',
+              'Peralatan milik',
+              '100000000',
+              '85000000',
+              '15000000',
+              '85.0',
+              'warning',
+            ),
+            line('MANPOWER', 'Tenaga kerja', '50000000', '50000000', '0', '100.0', 'exhausted'),
+            line('CONTINGENCY', 'Kontinjensi', '5000000', '0', '5000000', '0.0', 'ok'),
+          ],
+          totals: {
+            budget: '155000000',
+            pre_commit: '135000000',
+            commit: '0',
+            actual: '0',
+            available: '20000000',
+          },
+        }),
+    },
+  });
+  renderApp('/proyek/p1');
+  expect(await screen.findByText('Pemakaian anggaran')).toBeInTheDocument();
+  expect(screen.getByRole('progressbar', { name: /EXEC EQUIP-OWN/ })).toHaveAttribute(
+    'aria-valuenow',
+    '85',
+  );
+  expect(screen.getByText('85,0%').className).toContain('text-warning');
+  expect(screen.getByText('100,0%').className).toContain('text-danger');
+  expect(screen.getByText('Rp 20.000.000')).toBeInTheDocument();
+});

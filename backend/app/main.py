@@ -30,6 +30,7 @@ from app.demo.router import router as demo_router
 from app.dms.router import router as dms_router
 from app.master.router import router as master_router
 from app.notifications.router import router as notifications_router
+from app.project.budget_router import router as budget_router
 from app.project.router import router as project_router
 from app.reporting.access_review import router as reports_router
 from app.setup import service as setup_service
@@ -127,6 +128,7 @@ def create_app() -> FastAPI:
     api.include_router(contract_router)
     api.include_router(project_router)
     api.include_router(tender_router)
+    api.include_router(budget_router)
     app.include_router(api)
     return app
 

@@ -41,7 +41,7 @@ from app.master.models import (
     Warehouse,
 )
 from app.notifications.models import Notification
-from app.project.models import BudgetVersion, Project
+from app.project.models import BudgetLedgerEntry, BudgetVersion, Project
 from app.services import audit, numbering
 from app.services.numbering import today_jakarta
 from app.tender.models import Tender
@@ -391,6 +391,10 @@ async def remove(session: AsyncSession, *, actor_id: uuid.UUID | None) -> Summar
                 BidDecision,
                 Opportunity,
                 Lead,
+            )
+            demo_projects = select(Project.id).where(Project.is_demo.is_(True))
+            await session.execute(
+                delete(BudgetLedgerEntry).where(BudgetLedgerEntry.project_id.in_(demo_projects))
             )
             for crm_model in crm_tables:
                 res = await session.execute(delete(crm_model).where(crm_model.is_demo.is_(True)))

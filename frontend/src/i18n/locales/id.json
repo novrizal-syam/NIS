@@ -1130,7 +1130,14 @@
       "lead_controller": "Lead Controller",
       "head_of_operation": "Head of Operation",
       "director": "Direktur"
-    }
+    },
+    "controlTitle": "Pemakaian anggaran",
+    "controlHelp": "Tersedia = anggaran − pre-commitment (PR) − commitment (PO) − aktual. Peringatan pada 80%, merah bila habis.",
+    "preCommit": "Pre-commit",
+    "commit": "Commit",
+    "actual": "Aktual",
+    "available": "Tersedia",
+    "used": "Terpakai"
   },
   "tender": {
     "title": "Tender",

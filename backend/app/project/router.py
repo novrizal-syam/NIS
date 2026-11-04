@@ -20,7 +20,7 @@ from app.master.models import CostElement
 from app.project import budget_service as budget
 from app.project import service
 from app.project.models import PROJECT_STATUSES, BudgetVersionLine, Project
-from app.services import audit
+from app.services import audit, budget_control
 from app.services.audit import AuditAction
 from app.services.export import Column, xlsx_response
 from app.services.numbering import today_jakarta
@@ -410,6 +410,42 @@ async def set_manager(
     )
     await session.commit()
     return await _detail(session, principal, p)
+
+
+@router.get("/{pid}/budget-status")
+async def budget_status(pid: uuid.UUID, principal: Viewer, session: Session) -> dict[str, Any]:
+    """Budget, pre-commitment, commitment, actual and available per line."""
+    p = await _get(session, principal, pid)
+    names = dict((await session.execute(select(CostElement.code, CostElement.name))).tuples().all())
+    rows = []
+    total = dict.fromkeys(("budget", "pre_commit", "commit", "actual", "available"), Decimal(0))
+    for line, wbs_code, b in await budget_control.project_status(session, p.id):
+        for k in total:
+            total[k] += getattr(b, k)
+        rows.append(
+            {
+                "wbs_code": wbs_code,
+                "cost_element_code": line.cost_element_code,
+                "cost_element_name": names.get(line.cost_element_code, line.cost_element_code),
+                "locked_reserve": line.cost_element_code == service.CONTINGENCY,
+                "budget": format(b.budget, "f"),
+                "pre_commit": format(b.pre_commit, "f"),
+                "commit": format(b.commit, "f"),
+                "actual": format(b.actual, "f"),
+                "available": format(b.available, "f"),
+                "used_pct": str(b.used_pct),
+                "state": "exhausted"
+                if b.available <= 0 and b.budget > 0
+                else "warning"
+                if b.used_pct >= budget_control.WARN_PCT
+                else "ok",
+            }
+        )
+    return {
+        "status": p.status,
+        "lines": rows,
+        "totals": {k: format(v, "f") for k, v in total.items()},
+    }
 
 
 @router.get("/{pid}/baseline")

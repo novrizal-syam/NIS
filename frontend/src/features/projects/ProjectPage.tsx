@@ -23,6 +23,7 @@ import {
   type ProjectStatus,
 } from './api';
 import { BudgetEditor } from './BudgetEditor';
+import { BudgetStatusTable } from './BudgetStatusTable';
 import { ProjectStatusPill } from './ProjectStatusPill';
 
 const STEPS: ProjectStatus[] = ['draft', 'controller_review', 'awaiting_approval', 'locked'];
@@ -166,7 +167,14 @@ export function ProjectPage() {
           { value: 'history', label: t('master.tabHistory') },
         ]}
       />
-      {tab === 'budget' && <BudgetEditor p={p} />}
+      {tab === 'budget' && (
+        <>
+          {(p.status === 'locked' || p.status === 'closed') && (
+            <BudgetStatusTable projectId={p.id} />
+          )}
+          <BudgetEditor p={p} />
+        </>
+      )}
       {tab === 'files' && (
         <AttachmentsPanel entityType="project" entityId={p.id} canWrite={p.can_edit_budget} />
       )}
