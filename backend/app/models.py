@@ -14,7 +14,13 @@ from app.contract.models import Contract, ContractRate
 from app.core.models import Base
 from app.crm.models import BidDecision, Lead, Opportunity, Quotation, QuotationLine
 from app.dms.models import Attachment
-from app.finance.models import JournalEntry, JournalLine
+from app.finance.models import (
+    JournalEntry,
+    JournalLine,
+    VendorCreditNote,
+    VendorInvoice,
+    VendorInvoiceLine,
+)
 from app.inventory.models import (
     GoodsReceipt,
     GoodsReceiptLine,
@@ -157,5 +163,8 @@ __all__ = [
     "UserInvite",
     "UserRole",
     "Vendor",
+    "VendorCreditNote",
+    "VendorInvoice",
+    "VendorInvoiceLine",
     "Warehouse",
 ]

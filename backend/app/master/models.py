@@ -80,6 +80,7 @@ class Vendor(EntityMixin, Base):
     # qualified | csms_pending | blacklisted (CSMS pending / blacklisted are excluded from RFQ)
     status: Mapped[str] = mapped_column(String(20), nullable=False, server_default="qualified")
     rating: Mapped[Decimal | None] = mapped_column(Numeric(3, 1))
+    payment_term_days: Mapped[int] = mapped_column(Integer, nullable=False, server_default="30")
     bank_name: Mapped[str | None] = mapped_column(String(60))
     bank_account_no: Mapped[str | None] = mapped_column(String(40))
     bank_account_name: Mapped[str | None] = mapped_column(String(120))

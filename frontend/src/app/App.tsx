@@ -18,6 +18,11 @@ import { OpportunityDetailPage } from '@/features/crm/OpportunityDetailPage';
 import { ContractPage } from '@/features/contracts/ContractPage';
 import { ContractsPage } from '@/features/contracts/ContractsPage';
 import { DashboardPage } from '@/features/home/DashboardPage';
+import {
+  VendorInvoiceNewPage,
+  VendorInvoicePage,
+  VendorInvoicesPage,
+} from '@/features/finance/VendorInvoicePages';
 import { GrListPage, GrNewPage, GrPage } from '@/features/inventory/GrPages';
 import { MrListPage, MrNewPage, MrPage } from '@/features/inventory/MrPages';
 import { CountPage, StockPage } from '@/features/inventory/StockPages';
@@ -125,6 +130,9 @@ export function AppRoutes() {
           <Route path="gudang/mr/:id" element={<MrPage />} />
           <Route path="gudang/stok" element={<StockPage />} />
           <Route path="gudang/opname/:id" element={<CountPage />} />
+          <Route path="keuangan/tagihan-vendor" element={<VendorInvoicesPage />} />
+          <Route path="keuangan/tagihan-vendor/baru" element={<VendorInvoiceNewPage />} />
+          <Route path="keuangan/tagihan-vendor/:id" element={<VendorInvoicePage />} />
           <Route path="kontrak" element={<ContractsPage />} />
           <Route path="kontrak/:id" element={<ContractPage />} />
           <Route path="proyek" element={<ProjectsPage />} />

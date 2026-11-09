@@ -26,7 +26,7 @@ from app.core.errors import ConflictError
 from app.crm.models import BidDecision, Lead, Opportunity, Quotation
 from app.crm.service import QUALIFICATION
 from app.demo import data as d
-from app.finance.models import JournalEntry, JournalLine
+from app.finance.models import JournalEntry, JournalLine, VendorCreditNote, VendorInvoice
 from app.inventory.models import (
     GoodsReceipt,
     MaterialRequest,
@@ -414,7 +414,12 @@ async def remove(session: AsyncSession, *, actor_id: uuid.UUID | None) -> Summar
             demo_projects = select(Project.id).where(Project.is_demo.is_(True))
             # Inventory and ledger rows of demo documents and demo warehouses (04c).
             demo_wh = select(Warehouse.code).where(Warehouse.is_demo.is_(True))
-            inv_docs: tuple[Any, ...] = (MaterialRequest, GoodsReceipt)
+            inv_docs: tuple[Any, ...] = (
+                VendorCreditNote,
+                VendorInvoice,
+                MaterialRequest,
+                GoodsReceipt,
+            )
             for doc_model in inv_docs:
                 res = await session.execute(delete(doc_model).where(doc_model.is_demo.is_(True)))
                 s.add(doc_model.__tablename__, res.rowcount or 0)  # type: ignore[attr-defined]

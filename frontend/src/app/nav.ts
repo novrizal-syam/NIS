@@ -107,7 +107,13 @@ export const NAV: NavGroup[] = [
         ready: true,
         module: 'inventory',
       },
-      soon('vendorInvoices', 'receipt_long', 'finance'),
+      {
+        key: 'vendorInvoices',
+        path: '/keuangan/tagihan-vendor',
+        icon: 'receipt_long',
+        ready: true,
+        module: 'finance',
+      },
     ],
   },
   {
