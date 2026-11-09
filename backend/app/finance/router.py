@@ -132,9 +132,8 @@ async def _get(session: AsyncSession, vid: uuid.UUID, lock: bool = False) -> Ven
 
 
 async def _detail(session: AsyncSession, principal: Principal, vi: VendorInvoice) -> dict[str, Any]:
-    po = await session.get(PurchaseOrder, vi.po_id)
-    assert po is not None
-    project = await session.get(Project, po.project_id)
+    po = await session.get(PurchaseOrder, vi.po_id) if vi.po_id else None
+    project = await session.get(Project, po.project_id) if po else None
     vendor = (
         await session.execute(select(Vendor).where(Vendor.code == vi.vendor_code))
     ).scalar_one()
@@ -154,8 +153,8 @@ async def _detail(session: AsyncSession, principal: Principal, vi: VendorInvoice
         "vendor_code": vi.vendor_code,
         "vendor_name": vendor.name,
         "vendor_npwp": vendor.npwp,
-        "po_id": str(po.id),
-        "po_number": po.number,
+        "po_id": str(po.id) if po else None,
+        "po_number": po.number if po else None,
         "project_number": project.number if project else None,
         "invoice_no": vi.invoice_no,
         "tax_invoice_no": vi.tax_invoice_no,
@@ -203,7 +202,7 @@ async def _detail(session: AsyncSession, principal: Principal, vi: VendorInvoice
 def _query(status: str | None, vendor: str | None, q: str | None) -> Select[Any]:
     stmt = (
         select(VendorInvoice, PurchaseOrder.number, Vendor.name)
-        .join(PurchaseOrder, PurchaseOrder.id == VendorInvoice.po_id)
+        .outerjoin(PurchaseOrder, PurchaseOrder.id == VendorInvoice.po_id)
         .join(Vendor, Vendor.code == VendorInvoice.vendor_code)
     )
     if status:

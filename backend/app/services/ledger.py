@@ -16,10 +16,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.errors import AppError, ConflictError
 from app.finance.models import JournalEntry, JournalLine
 from app.master.models import Account, CostElement, FiscalPeriod
-from app.services import audit, numbering
+from app.services import audit, numbering, posting_rules
 from app.services.audit import AuditAction
 
 CONTINGENCY = "CONTINGENCY"
+OVERRIDES_KEY = "ledger.posting_rules"
 
 # Account codes used by posting rules (ACCOUNTING.md).
 INVENTORY = "1310"
@@ -86,6 +87,7 @@ async def post_journal(
     by: uuid.UUID | None,
     is_demo: bool = False,
     reversal_of: uuid.UUID | None = None,
+    event: str | None = None,
 ) -> JournalEntry:
     if len(lines) < 2:
         raise LedgerError("JOURNAL_TOO_SHORT", "Jurnal minimal terdiri dari dua baris.")
@@ -132,6 +134,7 @@ async def post_journal(
         source_number=source_number,
         total=debit,
         reversal_of=reversal_of,
+        event=event,
         posted_by=by,
         is_demo=is_demo,
     )
@@ -219,6 +222,7 @@ async def reverse(
         by=by,
         is_demo=orig.is_demo,
         reversal_of=orig.id,
+        event=orig.event,
     )
     orig.reversed_by = rev.id
     await session.flush()
@@ -244,3 +248,102 @@ async def balance(session: AsyncSession, account: str, *, until: date | None = N
     if until is not None:
         stmt = stmt.where(JournalEntry.entry_date <= until)
     return Decimal((await session.execute(stmt)).scalar_one())
+
+
+# ---------------------------------------------------------------- posting rules
+
+
+@dataclass(frozen=True)
+class Dims:
+    project_id: uuid.UUID | None = None
+    wbs_id: uuid.UUID | None = None
+    cost_element: str | None = None
+    partner_type: str | None = None
+    partner_code: str | None = None
+    asset: str | None = None
+
+
+async def rules(session: AsyncSession) -> dict[str, posting_rules.Rule]:
+    """The posting-rule table with finance overrides applied."""
+    from app.setup import service as settings_store
+
+    overrides = await settings_store.get(session, OVERRIDES_KEY, {}) or {}
+    out = {}
+    for key, rule in posting_rules.RULES.items():
+        o = overrides.get(key) or {}
+        legs = tuple(
+            posting_rules.Leg(leg.role, leg.side, str(o.get(leg.role, leg.account)), leg.dims)
+            for leg in rule.legs
+        )
+        out[key] = posting_rules.Rule(rule.event, rule.label, legs, rule.used_by, rule.example)
+    return out
+
+
+async def _resolve(session: AsyncSession, account: str, dims: Dims) -> str:
+    if account == "@expense":
+        if not dims.cost_element:
+            raise LedgerError("COST_ELEMENT_REQUIRED", "Akun beban perlu elemen biaya.")
+        return await expense_account(session, dims.cost_element)
+    if account == "@variance":
+        from app.setup import service as settings_store
+
+        return str(await settings_store.get(session, "inventory.variance_account", "6100"))
+    return account
+
+
+async def post_event(
+    session: AsyncSession,
+    event: str,
+    amounts: dict[str, Decimal],
+    *,
+    entry_date: date,
+    description: str,
+    source_type: str,
+    source_id: uuid.UUID | str,
+    source_number: str | None = None,
+    by: uuid.UUID | None,
+    dims: Dims | None = None,
+    memo: str | None = None,
+    is_demo: bool = False,
+) -> JournalEntry:
+    """Post a financial event through its rule (posting_rules.RULES)."""
+    dims = dims or Dims()
+    rule = (await rules(session)).get(event)
+    if rule is None:
+        raise LedgerError("UNKNOWN_EVENT", f"Aturan posting '{event}' tidak dikenal.")
+    unknown = set(amounts) - {leg.role for leg in rule.legs}
+    if unknown:
+        raise LedgerError("UNKNOWN_ROLE", f"Peran {sorted(unknown)} tidak ada di aturan {event}.")
+    lines: list[JLine] = []
+    for leg in rule.legs:
+        amount = Decimal(amounts.get(leg.role, 0))
+        if amount == 0:
+            continue
+        side = leg.side if amount > 0 else ("credit" if leg.side == "debit" else "debit")
+        value = abs(amount)
+        lines.append(
+            JLine(
+                await _resolve(session, leg.account, dims),
+                debit=value if side == "debit" else Decimal(0),
+                credit=value if side == "credit" else Decimal(0),
+                memo=memo,
+                project_id=dims.project_id if "project" in leg.dims else None,
+                wbs_id=dims.wbs_id if "wbs" in leg.dims else None,
+                cost_element=dims.cost_element if "cost_element" in leg.dims else None,
+                asset=dims.asset if "asset" in leg.dims else None,
+                partner_type=dims.partner_type if "partner" in leg.dims else None,
+                partner_code=dims.partner_code if "partner" in leg.dims else None,
+            )
+        )
+    return await post_journal(
+        session,
+        entry_date=entry_date,
+        description=description,
+        lines=lines,
+        source_type=source_type,
+        source_id=source_id,
+        source_number=source_number,
+        by=by,
+        is_demo=is_demo,
+        event=event,
+    )

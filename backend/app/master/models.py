@@ -168,6 +168,13 @@ class Asset(EntityMixin, Base):
         String(20), ForeignKey("equipment_types.code", ondelete="RESTRICT")
     )
     location: Mapped[str | None] = mapped_column(String(120))
+    # Book values (opening balance 07a; acquisitions and depreciation in 08).
+    acquisition_cost: Mapped[Decimal] = mapped_column(
+        Numeric(18, 0), nullable=False, server_default="0"
+    )
+    accumulated_depreciation: Mapped[Decimal] = mapped_column(
+        Numeric(18, 0), nullable=False, server_default="0"
+    )
     certificates: Mapped[list[dict[str, Any]]] = _docs()
     is_active: Mapped[bool] = _active()
 

@@ -24,7 +24,7 @@ DOC_TYPES: dict[str, int] = {
     "LD": 3, "OPP": 3, "QT": 3, "CTR": 3, "PRJ": 3, "BCR": 3, "MR": 3, "PR": 3, "RFQ": 3,
     "PO": 3, "GR": 3, "VI": 3, "DOR": 3, "TK": 3, "INV": 3, "PAY": 3, "CA": 3,
     "CPX": 3, "WO": 3, "JV": 4, "TRF": 3, "SOP": 3,
-    "HRA": 3, "PTW": 3, "INS": 3, "OBS": 3, "INC": 3, "CAPA": 3, "RCP": 3,
+    "HRA": 3, "PTW": 3, "INS": 3, "OBS": 3, "INC": 3, "CAPA": 3, "RCP": 3, "MJ": 3,
 }  # fmt: skip
 
 LETTER_PREFIX = "LTR"

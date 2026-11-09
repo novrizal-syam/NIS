@@ -253,50 +253,24 @@ async def post(session: AsyncSession, actor: Principal, gr: GoodsReceipt) -> Goo
             if x.to_stock and x.item_code and gr.warehouse_code:
                 await stock.receive(session, x.item_code, gr.warehouse_code, x.qty, x.amount, doc)
 
-    jl: list[ledger.JLine] = []
-    if direct > 0:
-        jl.append(
-            ledger.JLine(
-                await ledger.expense_account(session, po.cost_element_code),
-                debit=direct,
-                cost_element=po.cost_element_code,
-                memo=po.number,
-                project_id=po.project_id,
-                wbs_id=po.wbs_id,
-                partner_type="vendor",
-                partner_code=po.vendor_code,
-            )
-        )
-    if to_stock > 0:
-        jl.append(
-            ledger.JLine(
-                ledger.INVENTORY,
-                debit=to_stock,
-                memo=po.number,
-                partner_type="vendor",
-                partner_code=po.vendor_code,
-            )
-        )
-    jl.append(
-        ledger.JLine(
-            ledger.GR_IR,
-            credit=direct + to_stock,
-            memo=po.number,
-            project_id=po.project_id,
-            wbs_id=po.wbs_id,
-            partner_type="vendor",
-            partner_code=po.vendor_code,
-        )
-    )
-    entry = await ledger.post_journal(
+    entry = await ledger.post_event(
         session,
+        "goods_receipt",
+        {"direct": direct, "to_stock": to_stock, "grir": direct + to_stock},
         entry_date=gr.received_date,
         description=f"{gr.number} penerimaan {po.number}",
-        lines=jl,
         source_type=DOC,
         source_id=gr.id,
         source_number=gr.number,
         by=actor.id,
+        dims=ledger.Dims(
+            project_id=po.project_id,
+            wbs_id=po.wbs_id,
+            cost_element=po.cost_element_code,
+            partner_type="vendor",
+            partner_code=po.vendor_code,
+        ),
+        memo=po.number,
         is_demo=gr.is_demo,
     )
     gr.status, gr.posted_at, gr.posted_by, gr.journal_id = "posted", _now(), actor.id, entry.id

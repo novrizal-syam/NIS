@@ -448,48 +448,30 @@ async def _post(
 ) -> None:
     gr_value = sum((rp(r["qty"] * r["po_price"]) for r in rows), ZERO)
     variance = vi.dpp - gr_value
-    memo = f"{vi.invoice_no} / {po.number}"
-
-    def line(
-        account: str, debit: Decimal = ZERO, credit: Decimal = ZERO, **kw: Any
-    ) -> ledger.JLine:
-        return ledger.JLine(
-            account,
-            debit=debit,
-            credit=credit,
-            memo=kw.pop("memo", memo),
-            partner_type="vendor",
-            partner_code=vi.vendor_code,
-            **kw,
-        )
-
-    jl = [line("2120", debit=gr_value, project_id=po.project_id, wbs_id=po.wbs_id)]
-    if variance != 0:
-        jl.append(
-            line(
-                await ledger.expense_account(session, po.cost_element_code),
-                debit=max(variance, ZERO),
-                credit=max(-variance, ZERO),
-                memo=f"Selisih harga {memo}",
-                cost_element=po.cost_element_code,
-                project_id=po.project_id,
-                wbs_id=po.wbs_id,
-            )
-        )
-    if vi.ppn > 0:
-        jl.append(line(PPN_IN, debit=vi.ppn))
-    jl.append(line(AP, credit=vi.payable))
-    if vi.pph23 > 0:
-        jl.append(line(PPH23_PAYABLE, credit=vi.pph23))
-    entry = await ledger.post_journal(
+    entry = await ledger.post_event(
         session,
+        "vendor_invoice",
+        {
+            "grir": gr_value,
+            "price_variance": variance,
+            "ppn": vi.ppn,
+            "payable": vi.payable,
+            "pph23": vi.pph23,
+        },
         entry_date=vi.invoice_date,
         description=f"{vi.number} tagihan {vi.vendor_code} {vi.invoice_no}",
-        lines=jl,
         source_type=DOC,
         source_id=vi.id,
         source_number=vi.number,
         by=actor.id,
+        dims=ledger.Dims(
+            project_id=po.project_id,
+            wbs_id=po.wbs_id,
+            cost_element=po.cost_element_code,
+            partner_type="vendor",
+            partner_code=vi.vendor_code,
+        ),
+        memo=f"{vi.invoice_no} / {po.number}",
         is_demo=vi.is_demo,
     )
     vi.status, vi.exception_reason = "approved", None

@@ -27,6 +27,7 @@ from app.dms.models import Attachment
 from app.finance.models import (
     JournalEntry,
     JournalLine,
+    ManualJournal,
     VendorCreditNote,
     VendorInvoice,
     VendorInvoiceLine,
@@ -165,6 +166,7 @@ __all__ = [
     "JournalEntry",
     "JournalLine",
     "Lead",
+    "ManualJournal",
     "MaterialRequest",
     "MaterialRequestLine",
     "Notification",

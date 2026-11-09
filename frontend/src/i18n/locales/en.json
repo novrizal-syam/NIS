@@ -1611,6 +1611,78 @@
       "5600": "Logistics & transport",
       "5700": "QHSE",
       "6100": "General & administrative"
+    },
+    "tabs": {
+      "reports": "Reports",
+      "journals": "Journals",
+      "manual": "Manual journals",
+      "opening": "Opening balance",
+      "rules": "Posting rules"
+    },
+    "report": "Report",
+    "asOf": "As of",
+    "dimension": "Dimension",
+    "reports": {
+      "trial-balance": "Trial balance",
+      "general-ledger": "General ledger",
+      "profit-loss": "Profit & loss (month & YTD)",
+      "profit-loss-projects": "Profit & loss by project",
+      "balance-sheet": "Balance sheet",
+      "cash-flow": "Cash flow (direct)",
+      "dimensions": "Dimension report",
+      "project-pnl": "Management project P&L"
+    },
+    "dims": {
+      "project": "Project",
+      "cost_element": "Cost element",
+      "cost_center": "Cost center",
+      "asset": "Asset",
+      "partner": "Partner"
+    },
+    "noRows": "No data.",
+    "source": "Source",
+    "reversed": "Reversed",
+    "reversal": "Reversal",
+    "reverseReason": "Reason for reversal",
+    "reverse": "Reverse journal",
+    "summary": {
+      "debit": "Total debit",
+      "credit": "Total credit",
+      "balance_debit": "Debit balance",
+      "balance_credit": "Credit balance",
+      "difference": "Difference",
+      "opening": "Opening",
+      "closing": "Closing",
+      "net": "Net",
+      "normal_balance": "Normal balance",
+      "revenue_month": "Revenue month",
+      "revenue_ytd": "Revenue YTD",
+      "expense_month": "Expense month",
+      "expense_ytd": "Expense YTD",
+      "net_month": "Profit month",
+      "net_ytd": "Profit YTD",
+      "assets": "Assets",
+      "liabilities": "Liabilities",
+      "equity": "Equity"
+    },
+    "newManual": "New manual journal",
+    "manualHelp": "Approved by the Lead Controller (the creator cannot approve). Closed periods are refused.",
+    "mjStatus": {
+      "draft": "Draft",
+      "awaiting_approval": "Awaiting approval",
+      "posted": "Posted"
+    },
+    "openingTitle": "Import opening balance",
+    "openingHelp": "Once, as of the go-live date. Workbook with sheets GL (account, debit, credit), AR (client, invoice no, date, due date, amount), AP (vendor, ...), Stock (warehouse, item, qty, value), Assets (asset, cost, accumulated depreciation). Must balance; if any row is wrong nothing is saved.",
+    "goLive": "Go-live date",
+    "openingFile": "Opening balance file",
+    "openingDone": "Opening balance imported as of {{date}}. Correct with manual journals.",
+    "openingPosted": "Journal {{journal}} posted: AR {{ar_items}}, AP {{ap_items}}, stock {{stock_rows}}, assets {{assets}}.",
+    "rulesHelp": "Every financial event uses these posting rules (ACCOUNTING.md). The Lead Controller can change accounts; @expense = expense account of the cost element, @variance = inventory variance account.",
+    "overridden": "overridden (default {{account}})",
+    "placeholder": {
+      "expense": "cost element expense account",
+      "variance": "inventory variance account"
     }
   },
   "vi": {

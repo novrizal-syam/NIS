@@ -25,7 +25,7 @@ from app.billing.invoice_service import OPEN, outstanding
 from app.billing.models import BankLine, CustomerInvoice, Receipt, ReceiptAllocation
 from app.core.errors import AppError, ConflictError
 from app.master.models import Client
-from app.services import audit, ledger, numbering
+from app.services import audit, fx, ledger, numbering
 from app.services.audit import AuditAction
 
 DOC = "customer_receipt"
@@ -35,9 +35,10 @@ ZERO = Decimal(0)
 @dataclass(frozen=True)
 class AllocationIn:
     invoice_id: uuid.UUID
-    cash: Decimal
+    cash: Decimal  # IDR received; for a USD invoice give cash_foreign instead
     pph23: Decimal = ZERO
     bukti_potong_no: str | None = None
+    cash_foreign: Decimal | None = None
 
 
 async def record(
@@ -74,18 +75,52 @@ async def record(
         raise AppError("INVOICE_INVALID", "Invoice tidak ditemukan.", status_code=422)
     if len(clients) != 1:
         raise AppError("MIXED_CLIENTS", "Satu penerimaan untuk satu klien.", status_code=422)
+    # What each allocation clears from AR (at the invoice rate) and brings into the bank (at the
+    # receipt rate). For USD the difference is the realised FX result (7100).
+    plan: list[tuple[AllocationIn, Decimal, Decimal, Decimal | None, Decimal | None]] = []
     for a in allocations:
         inv = invoices[a.invoice_id]
         if inv.status not in OPEN:
             raise ConflictError("NOT_OPEN", f"{inv.number} tidak terbuka untuk pembayaran.")
-        if a.cash < 0 or a.pph23 < 0 or a.cash + a.pph23 <= 0:
+        if a.cash < 0 or a.pph23 < 0:
             raise AppError(
-                "AMOUNT_INVALID", "Nilai penerimaan harus lebih dari 0.", status_code=422
+                "AMOUNT_INVALID", "Nilai penerimaan tidak boleh negatif.", status_code=422
             )
-        if a.cash + a.pph23 > outstanding(inv):
+        if inv.currency != fx.BASE:
+            if not a.cash_foreign or a.cash_foreign <= 0:
+                raise AppError(
+                    "FOREIGN_AMOUNT_REQUIRED",
+                    f"{inv.number} dalam {inv.currency}: isi jumlah diterima dalam {inv.currency}.",
+                    status_code=422,
+                )
+            r_rate = await fx.rate(session, inv.currency, receipt_date)
+            cash_idr = fx.to_idr(a.cash_foreign, r_rate)
+            settled_f = a.cash_foreign + fx.cents(a.pph23 / inv.fx_rate)
+            assert inv.total_foreign is not None
+            remaining_f = inv.total_foreign - inv.paid_foreign
+            if settled_f > remaining_f + Decimal("0.01"):
+                raise AppError(
+                    "OVERPAYMENT",
+                    f"{inv.number}: diterima {settled_f} {inv.currency} "
+                    f"melebihi sisa {remaining_f}.",
+                    status_code=422,
+                )
+            cleared = (
+                outstanding(inv) - a.pph23
+                if settled_f >= remaining_f - Decimal("0.01")
+                else fx.to_idr(a.cash_foreign, inv.fx_rate)
+            )
+            plan.append((a, cash_idr, cleared, a.cash_foreign, r_rate))
+        else:
+            if a.cash + a.pph23 <= 0:
+                raise AppError(
+                    "AMOUNT_INVALID", "Nilai penerimaan harus lebih dari 0.", status_code=422
+                )
+            plan.append((a, a.cash, a.cash, None, None))
+        if plan[-1][2] + a.pph23 > outstanding(inv):
             raise AppError(
                 "OVERPAYMENT",
-                f"{inv.number}: diterima {a.cash + a.pph23} melebihi sisa {outstanding(inv)}.",
+                f"{inv.number}: diterima {plan[-1][2] + a.pph23} melebihi sisa {outstanding(inv)}.",
                 status_code=422,
             )
         if inv.pph23_withheld + a.pph23 > inv.pph23_expected:
@@ -94,7 +129,8 @@ async def record(
                 f"{inv.number}: PPh 23 dipotong melebihi perkiraan {inv.pph23_expected}.",
                 status_code=422,
             )
-    cash = sum((a.cash for a in allocations), ZERO)
+    cash = sum((p[1] for p in plan), ZERO)
+    cleared = sum((p[2] for p in plan), ZERO)
     pph = sum((a.pph23 for a in allocations), ZERO)
     client = clients.pop()
     r = Receipt(
@@ -109,34 +145,37 @@ async def record(
     )
     session.add(r)
     await session.flush()
-    partner: dict[str, Any] = {"partner_type": "client", "partner_code": client}
-    lines = [ledger.JLine("1110", debit=cash, memo=r.number, **partner)] if cash > 0 else []
-    if pph > 0:
-        lines.append(ledger.JLine("1410", debit=pph, memo=r.number, **partner))
-    lines.append(ledger.JLine("1210", credit=cash + pph, memo=r.number, **partner))
-    entry = await ledger.post_journal(
+    entry = await ledger.post_event(
         session,
+        "customer_receipt",
+        {"cash": cash, "pph23": pph, "fx_loss": cleared - cash, "receivable": cleared + pph},
         entry_date=receipt_date,
         description=f"{r.number} penerimaan {client or ''}",
-        lines=lines,
         source_type=DOC,
         source_id=r.id,
         source_number=r.number,
         by=actor.id,
+        dims=ledger.Dims(partner_type="client", partner_code=client),
+        memo=r.number,
     )
     r.journal_id = entry.id
-    for a in allocations:
+    for a, cash_idr, clears, cash_f, rate_used in plan:
         inv = invoices[a.invoice_id]
         session.add(
             ReceiptAllocation(
                 receipt_id=r.id,
                 invoice_id=inv.id,
-                cash=a.cash,
+                cash=cash_idr,
                 pph23=a.pph23,
                 bukti_potong_no=(a.bukti_potong_no or "").strip() or None,
+                cash_foreign=cash_f,
+                fx_rate=rate_used,
+                fx_difference=clears - cash_idr,
             )
         )
-        inv.paid_amount += a.cash
+        inv.paid_amount += clears
+        if cash_f is not None:
+            inv.paid_foreign += cash_f + fx.cents(a.pph23 / inv.fx_rate)
         inv.pph23_withheld += a.pph23
         if outstanding(inv) == 0:
             inv.status, inv.paid_at = "paid", receipt_date

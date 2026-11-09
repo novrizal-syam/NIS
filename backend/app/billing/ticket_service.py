@@ -14,7 +14,6 @@ import uuid
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
-from typing import Any
 
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -286,23 +285,20 @@ async def sign(
     assert project is not None and contract is not None
     if disputed > 0:
         # Revenue accrued at DOR approval is reversed for the disputed lines.
-        dims: dict[str, Any] = {
-            "project_id": project.id,
-            "partner_type": "client",
-            "partner_code": contract.client_code,
-        }
-        entry = await ledger.post_journal(
+        entry = await ledger.post_event(
             session,
+            "ticket_dispute",
+            {"disputed": disputed},
             entry_date=numbering.today_jakarta(),
             description=f"{t.number} dispute klien (pembalikan pendapatan)",
-            lines=[
-                ledger.JLine("4100", debit=disputed, memo=t.number, **dims),
-                ledger.JLine("1220", credit=disputed, memo=t.number, **dims),
-            ],
             source_type=DOC,
             source_id=t.id,
             source_number=t.number,
             by=actor.id,
+            dims=ledger.Dims(
+                project_id=project.id, partner_type="client", partner_code=contract.client_code
+            ),
+            memo=t.number,
             is_demo=t.is_demo,
         )
         t.reversal_journal_id = entry.id

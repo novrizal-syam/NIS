@@ -42,6 +42,7 @@ class JournalEntry(Base):
     source_type: Mapped[str] = mapped_column(String(40), nullable=False)
     source_id: Mapped[str] = mapped_column(String(64), nullable=False)
     source_number: Mapped[str | None] = mapped_column(String(40))
+    event: Mapped[str | None] = mapped_column(String(40), index=True)  # posting rule
     total: Mapped[Decimal] = mapped_column(Numeric(18, 0), nullable=False)
     reversal_of: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("journal_entries.id")
@@ -124,12 +125,14 @@ class VendorInvoice(EntityMixin, Base):
     vendor_code: Mapped[str] = mapped_column(
         String(20), ForeignKey("vendors.code", ondelete="RESTRICT"), nullable=False, index=True
     )
-    po_id: Mapped[uuid.UUID] = mapped_column(
+    # Nullable for opening-balance AP items (07a).
+    po_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("purchase_orders.id", ondelete="RESTRICT"),
-        nullable=False,
+        nullable=True,
         index=True,
     )
+    is_opening: Mapped[bool] = mapped_column(nullable=False, server_default=text("false"))
     invoice_no: Mapped[str] = mapped_column(String(60), nullable=False)
     tax_invoice_no: Mapped[str | None] = mapped_column(String(30))
     invoice_date: Mapped[date] = mapped_column(Date, nullable=False)
@@ -189,3 +192,26 @@ class VendorCreditNote(EntityMixin, Base):
     dpp: Mapped[Decimal] = mapped_column(Numeric(18, 0), nullable=False)
     ppn: Mapped[Decimal] = mapped_column(Numeric(18, 0), nullable=False)
     reason: Mapped[str] = mapped_column(String(500), nullable=False)
+
+
+class ManualJournal(EntityMixin, Base):
+    """Manual journal: draft -> awaiting_approval (DOA manual_journal, Lead Controller; the
+    creator never approves) -> posted | rejected (back to draft)."""
+
+    __tablename__ = "manual_journals"
+
+    number: Mapped[str] = mapped_column(String(20), nullable=False, unique=True)
+    entry_date: Mapped[date] = mapped_column(Date, nullable=False)
+    description: Mapped[str] = mapped_column(String(300), nullable=False)
+    # [{"account", "debit", "credit", "memo", "project_id", "cost_element", "cost_center",
+    #   "asset", "partner_type", "partner_code"}]
+    lines: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, nullable=False)
+    total: Mapped[Decimal] = mapped_column(Numeric(18, 0), nullable=False)
+    status: Mapped[str] = mapped_column(String(20), nullable=False, server_default="draft")
+    request_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("approval_requests.id", ondelete="RESTRICT")
+    )
+    journal_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("journal_entries.id", ondelete="RESTRICT")
+    )
+    reject_reason: Mapped[str | None] = mapped_column(String(1000))

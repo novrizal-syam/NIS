@@ -29,7 +29,6 @@ from app.inventory.models import (
 from app.master.models import Item, Warehouse
 from app.services import audit, ledger, numbering
 from app.services.audit import AuditAction
-from app.setup import service as settings_store
 from app.workflow import engine
 from app.workflow.models import ApprovalRequest
 
@@ -369,29 +368,19 @@ async def _apply_count(session: AsyncSession, sc: StockCount, by: uuid.UUID | No
                 session, x.item_code, sc.warehouse_code, delta, value, doc, kind="adjustment"
             )
             gain += value
-    account = str(await settings_store.get(session, VARIANCE_KEY, DEFAULT_VARIANCE_ACCOUNT))
-    lines: list[ledger.JLine] = []
-    memo = f"Stock opname {sc.number}"
-    if loss > 0:
-        lines += [
-            ledger.JLine(account, debit=loss, memo=memo),
-            ledger.JLine(ledger.INVENTORY, credit=loss, memo=memo),
-        ]
-    if gain > 0:
-        lines += [
-            ledger.JLine(ledger.INVENTORY, debit=gain, memo=memo),
-            ledger.JLine(account, credit=gain, memo=memo),
-        ]
-    if lines:
-        entry = await ledger.post_journal(
+    if loss > 0 or gain > 0:
+        # Variance account: setting inventory.variance_account (posting rule "@variance").
+        entry = await ledger.post_event(
             session,
+            "stock_opname",
+            {"loss": loss, "gain": gain},
             entry_date=numbering.today_jakarta(),
             description=f"Selisih stock opname {sc.number} ({sc.warehouse_code})",
-            lines=lines,
             source_type=COUNT_DOC,
             source_id=sc.id,
             source_number=sc.number,
             by=by,
+            memo=f"Stock opname {sc.number}",
             is_demo=sc.is_demo,
         )
         sc.journal_id = entry.id

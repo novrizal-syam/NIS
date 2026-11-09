@@ -30,7 +30,7 @@ from app.dms.models import Attachment
 from app.master.models import Client
 from app.notifications import service as notifications
 from app.operations.models import Dor
-from app.services import audit, email, ledger, letterhead, numbering
+from app.services import audit, email, fx, ledger, letterhead, numbering
 from app.services.audit import AuditAction
 from app.services.money import format_idr
 from app.services.storage import Storage
@@ -142,8 +142,19 @@ async def create(
         )
     ppn_rate = Decimal(str(await settings_store.get(session, "tax.ppn_rate_pct", 12)))
     pph_rate = Decimal(str(await settings_store.get(session, "tax.pph23_pct", 2)))
+    currency = contract.currency or "IDR"
+    rate = await fx.rate(session, currency, invoice_date)
+    total_foreign = None
+    if currency != fx.BASE:
+        # Ticket values are in the contract currency; the IDR columns use the invoice-date rate.
+        dpp_f = fx.cents(subtotal * 11 / 12)
+        total_foreign = fx.cents(subtotal + fx.cents(dpp_f * ppn_rate / 100))
+        subtotal = fx.to_idr(subtotal, rate)
     a = amounts(subtotal, ppn_rate, pph_rate)
     inv = CustomerInvoice(
+        currency=currency,
+        fx_rate=rate,
+        total_foreign=total_foreign,
         number=await numbering.next(session, "INV", on=invoice_date),
         contract_id=contract.id,
         client_code=contract.client_code,
@@ -221,24 +232,20 @@ async def issue_faktur(
         raise ConflictError("FAKTUR_USED", f"Nomor faktur sudah dipakai {n}.")
     tickets = await tickets_of(session, inv.id)
     project_id = tickets[0].project_id if tickets else None
-    partner: dict[str, Any] = {"partner_type": "client", "partner_code": inv.client_code}
-    entry = await ledger.post_journal(
+    entry = await ledger.post_event(
         session,
+        "customer_invoice",
+        {"total": inv.total, "subtotal": inv.subtotal, "ppn": inv.ppn},
         entry_date=inv.invoice_date,
-        description=f"{inv.number} tagihan {inv.client_code or ''}",
-        lines=[
-            ledger.JLine(
-                "1210", debit=inv.total, project_id=project_id, memo=inv.number, **partner
-            ),
-            ledger.JLine(
-                "1220", credit=inv.subtotal, project_id=project_id, memo=inv.number, **partner
-            ),
-            ledger.JLine("2210", credit=inv.ppn, memo=fn, **partner),
-        ],
+        description=f"{inv.number} tagihan {inv.client_code or ''} faktur {fn}",
         source_type=DOC,
         source_id=inv.id,
         source_number=inv.number,
         by=actor.id,
+        dims=ledger.Dims(
+            project_id=project_id, partner_type="client", partner_code=inv.client_code
+        ),
+        memo=inv.number,
         is_demo=inv.is_demo,
     )
     inv.faktur_number, inv.faktur_date, inv.journal_id = fn, faktur_date, entry.id

@@ -1611,6 +1611,78 @@
       "5600": "Logistik & transport",
       "5700": "QHSE",
       "6100": "Umum & administrasi"
+    },
+    "tabs": {
+      "reports": "Laporan",
+      "journals": "Jurnal",
+      "manual": "Jurnal manual",
+      "opening": "Saldo awal",
+      "rules": "Aturan posting"
+    },
+    "report": "Laporan",
+    "asOf": "Per tanggal",
+    "dimension": "Dimensi",
+    "reports": {
+      "trial-balance": "Neraca saldo",
+      "general-ledger": "Buku besar",
+      "profit-loss": "Laba rugi (bulan & YTD)",
+      "profit-loss-projects": "Laba rugi per proyek",
+      "balance-sheet": "Neraca",
+      "cash-flow": "Arus kas (langsung)",
+      "dimensions": "Laporan dimensi",
+      "project-pnl": "Laba rugi manajemen proyek"
+    },
+    "dims": {
+      "project": "Proyek",
+      "cost_element": "Elemen biaya",
+      "cost_center": "Pusat biaya",
+      "asset": "Aset",
+      "partner": "Mitra"
+    },
+    "noRows": "Tidak ada data.",
+    "source": "Sumber",
+    "reversed": "Dibalik",
+    "reversal": "Pembalik",
+    "reverseReason": "Alasan pembalikan",
+    "reverse": "Balik jurnal",
+    "summary": {
+      "debit": "Total debit",
+      "credit": "Total kredit",
+      "balance_debit": "Saldo debit",
+      "balance_credit": "Saldo kredit",
+      "difference": "Selisih",
+      "opening": "Saldo awal",
+      "closing": "Saldo akhir",
+      "net": "Bersih",
+      "normal_balance": "Saldo normal",
+      "revenue_month": "Pendapatan bulan ini",
+      "revenue_ytd": "Pendapatan YTD",
+      "expense_month": "Beban bulan ini",
+      "expense_ytd": "Beban YTD",
+      "net_month": "Laba bulan ini",
+      "net_ytd": "Laba YTD",
+      "assets": "Aset",
+      "liabilities": "Liabilitas",
+      "equity": "Ekuitas"
+    },
+    "newManual": "Jurnal manual baru",
+    "manualHelp": "Disetujui Lead Controller (pembuat tidak boleh menyetujui). Periode tertutup ditolak.",
+    "mjStatus": {
+      "draft": "Draf",
+      "awaiting_approval": "Menunggu persetujuan",
+      "posted": "Diposting"
+    },
+    "openingTitle": "Impor saldo awal",
+    "openingHelp": "Satu kali per tanggal go-live. Workbook dengan sheet GL (akun, debit, kredit), AR (klien, no invoice, tanggal, jatuh tempo, jumlah), AP (vendor, ...), Stock (gudang, item, qty, nilai), Assets (aset, harga perolehan, akumulasi penyusutan). Harus seimbang; bila ada baris salah tidak ada yang disimpan.",
+    "goLive": "Tanggal go-live",
+    "openingFile": "Berkas saldo awal",
+    "openingDone": "Saldo awal sudah diimpor per {{date}}. Koreksi dengan jurnal manual.",
+    "openingPosted": "Jurnal {{journal}} diposting: AR {{ar_items}}, AP {{ap_items}}, stok {{stock_rows}}, aset {{assets}}.",
+    "rulesHelp": "Setiap kejadian keuangan memakai aturan posting ini (ACCOUNTING.md). Lead Controller dapat mengganti akun; @expense = akun beban elemen biaya, @variance = akun selisih persediaan.",
+    "overridden": "diganti (bawaan {{account}})",
+    "placeholder": {
+      "expense": "akun beban elemen biaya",
+      "variance": "akun selisih persediaan"
     }
   },
   "vi": {

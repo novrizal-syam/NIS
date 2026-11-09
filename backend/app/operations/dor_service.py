@@ -649,7 +649,6 @@ async def apply_approval(session: AsyncSession, dor: Dor, by: uuid.UUID | None) 
     project = await session.get(Project, dor.project_id)
     assert project is not None
     doc = stock.Doc(DOC, str(dor.id), dor.number, by, project.id)
-    dims: dict[str, Any] = {"project_id": project.id, "wbs_id": dor.wbs_id}
 
     # 1. Site stock issue at moving-average cost (replaces the estimate).
     cons = list(
@@ -689,41 +688,41 @@ async def apply_approval(session: AsyncSession, dor: Dor, by: uuid.UUID | None) 
     # 3. Journals: revenue accrual and consumables.
     client = project.client_code
     today = numbering.today_jakarta()
+    on = dor.report_date if dor.report_date <= today else today
+    d = ledger.Dims(
+        project_id=project.id,
+        wbs_id=dor.wbs_id,
+        cost_element=CE_CONSUMABLE,
+        partner_type="client",
+        partner_code=client,
+    )
     if dor.revenue > 0:
-        entry = await ledger.post_journal(
+        entry = await ledger.post_event(
             session,
-            entry_date=dor.report_date if dor.report_date <= today else today,
+            "dor_revenue",
+            {"revenue": dor.revenue},
+            entry_date=on,
             description=f"{dor.number} pendapatan {project.number}",
-            lines=[
-                ledger.JLine(
-                    "1220", debit=dor.revenue, partner_type="client", partner_code=client, **dims
-                ),
-                ledger.JLine(
-                    "4100", credit=dor.revenue, partner_type="client", partner_code=client, **dims
-                ),
-            ],
             source_type=DOC,
             source_id=dor.id,
             source_number=dor.number,
             by=by,
+            dims=d,
             is_demo=dor.is_demo,
         )
         dor.revenue_journal_id = entry.id
     if stock_value > 0:
-        entry = await ledger.post_journal(
+        entry = await ledger.post_event(
             session,
-            entry_date=dor.report_date if dor.report_date <= today else today,
+            "dor_consumables",
+            {"consumables": stock_value},
+            entry_date=on,
             description=f"{dor.number} pemakaian material {project.number}",
-            lines=[
-                ledger.JLine(
-                    ledger.CONSUMABLES, debit=stock_value, cost_element=CE_CONSUMABLE, **dims
-                ),
-                ledger.JLine(ledger.INVENTORY, credit=stock_value),
-            ],
             source_type=DOC,
             source_id=dor.id,
             source_number=dor.number,
             by=by,
+            dims=d,
             is_demo=dor.is_demo,
         )
         dor.stock_journal_id = entry.id

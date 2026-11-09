@@ -131,10 +131,11 @@ class CustomerInvoice(EntityMixin, Base):
     __tablename__ = "customer_invoices"
 
     number: Mapped[str] = mapped_column(String(20), nullable=False, unique=True)
-    contract_id: Mapped[uuid.UUID] = mapped_column(
+    # Nullable for opening-balance AR items (07a).
+    contract_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("contracts.id", ondelete="RESTRICT"),
-        nullable=False,
+        nullable=True,
         index=True,
     )
     client_code: Mapped[str | None] = mapped_column(
@@ -152,6 +153,15 @@ class CustomerInvoice(EntityMixin, Base):
     pph23_expected: Mapped[Decimal] = _money()
     net_cash: Mapped[Decimal] = _money()
     stamp_duty: Mapped[Decimal] = _money()
+    # Contract currency. IDR columns hold the IDR value at `fx_rate` (rate on the invoice date);
+    # for USD the foreign total and what was settled in USD are kept too (07a).
+    currency: Mapped[str] = mapped_column(String(3), nullable=False, server_default="IDR")
+    fx_rate: Mapped[Decimal] = mapped_column(Numeric(18, 4), nullable=False, server_default="1")
+    total_foreign: Mapped[Decimal | None] = mapped_column(Numeric(18, 2))
+    paid_foreign: Mapped[Decimal] = mapped_column(
+        Numeric(18, 2), nullable=False, server_default="0"
+    )
+    is_opening: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("false"))
     faktur_number: Mapped[str | None] = mapped_column(String(30), unique=True)
     faktur_date: Mapped[date | None] = mapped_column(Date)
     sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
@@ -217,6 +227,9 @@ class ReceiptAllocation(Base):
     )
     cash: Mapped[Decimal] = _money()
     pph23: Mapped[Decimal] = _money()
+    cash_foreign: Mapped[Decimal | None] = mapped_column(Numeric(18, 2))
+    fx_rate: Mapped[Decimal | None] = mapped_column(Numeric(18, 4))
+    fx_difference: Mapped[Decimal] = _money()  # loss > 0, gain < 0 (7100)
     bukti_potong_no: Mapped[str | None] = mapped_column(String(60))
 
 

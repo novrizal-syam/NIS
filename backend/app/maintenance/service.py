@@ -463,18 +463,18 @@ async def issue_part(
     session.add(part)
     wo.parts_value += value
     if value > 0:
-        await ledger.post_journal(
+        await ledger.post_event(
             session,
+            "maintenance_parts",
+            {"parts": value},
             entry_date=numbering.today_jakarta(),
             description=f"{wo.number} suku cadang {item_code} untuk {wo.asset_code}",
-            lines=[
-                ledger.JLine(MAINTENANCE_ACCOUNT, debit=value, asset=wo.asset_code, memo=wo.number),
-                ledger.JLine(ledger.INVENTORY, credit=value, memo=wo.number),
-            ],
             source_type=DOC,
             source_id=wo.id,
             source_number=wo.number,
             by=actor.id,
+            dims=ledger.Dims(asset=wo.asset_code),
+            memo=wo.number,
         )
     if wo.status == "open":
         wo.status, wo.started_at = "in_progress", _now()

@@ -155,25 +155,18 @@ async def create(
         await bc.actualize(
             session, line, issued, doc_type=DOC, doc_id=str(mr.id), by=actor.id, note=mr.number
         )
-        entry = await ledger.post_journal(
+        entry = await ledger.post_event(
             session,
+            "material_issue",
+            {"issued": issued},
             entry_date=numbering.today_jakarta(),
             description=f"{mr.number} pengeluaran material {project.number}",
-            lines=[
-                ledger.JLine(
-                    ledger.CONSUMABLES,
-                    debit=issued,
-                    project_id=project.id,
-                    wbs_id=wbs.id,
-                    cost_element=cost_element_code,
-                    memo=mr.number,
-                ),
-                ledger.JLine(ledger.INVENTORY, credit=issued, memo=mr.number),
-            ],
             source_type=DOC,
             source_id=mr.id,
             source_number=mr.number,
             by=actor.id,
+            dims=ledger.Dims(project_id=project.id, wbs_id=wbs.id, cost_element=cost_element_code),
+            memo=mr.number,
             is_demo=mr.is_demo,
         )
         mr.journal_id = entry.id

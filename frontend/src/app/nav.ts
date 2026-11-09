@@ -159,7 +159,13 @@ export const NAV: NavGroup[] = [
   {
     key: 'finance',
     items: [
-      soon('ledger', 'menu_book', 'finance'),
+      {
+        key: 'ledger',
+        path: '/keuangan/buku-besar',
+        icon: 'menu_book',
+        ready: true,
+        module: 'finance',
+      },
       soon('treasury', 'account_balance', 'treasury'),
       soon('payroll', 'badge', 'payroll'),
       soon('tax', 'percent', 'tax'),
