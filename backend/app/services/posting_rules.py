@@ -201,9 +201,9 @@ RULES: dict[str, Rule] = {
         Rule(
             "cash_advance_disbursed",
             "Uang muka kerja dicairkan",
-            (Leg("advance", "debit", "1120", ("partner",)), Leg("advance", "credit", "1110")),
+            (Leg("advance", "debit", "1120", ("partner",)), Leg("bank", "credit", "1110")),
             "treasury (07b)",
-            {"advance": D(1000)},
+            {"advance": D(1000), "bank": D(1000)},
         ),
         Rule(
             "cash_advance_settled",

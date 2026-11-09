@@ -21,10 +21,15 @@ from app.core.db import get_session, make_engine, make_sessionmaker
 from app.main import app
 from app.master.config_seed import ACCOUNTS, COST_ELEMENTS, CURRENCIES, EQUIPMENT_TYPES
 from app.services.storage import Storage, get_storage
+from app.treasury.seed import BANK_ACCOUNTS
 
 TEST_DB_URL = os.environ.get("TEST_DATABASE_URL", get_settings().test_database_url)
 # Seeded configuration (system roles and their permissions) survives between tests.
 TABLES = (
+    "cash_advance_lines",
+    "cash_advances",
+    "payment_run_items",
+    "payment_runs",
     "manual_journals",
     "bank_lines",
     "receipt_allocations",
@@ -206,6 +211,17 @@ async def sessionmaker(engine: AsyncEngine) -> AsyncIterator[async_sessionmaker[
         await conn.execute(
             text("DELETE FROM equipment_types WHERE NOT code = ANY(:c)"),
             {"c": [c for c, *_ in EQUIPMENT_TYPES]},
+        )
+        await conn.execute(
+            text("DELETE FROM bank_accounts WHERE NOT code = ANY(:c)"),
+            {"c": [c for c, *_ in BANK_ACCOUNTS]},
+        )
+        await conn.execute(
+            text(
+                "UPDATE bank_accounts SET is_active = true, is_default = (code = :d),"
+                " adapter = 'csv'"
+            ),
+            {"d": BANK_ACCOUNTS[0][0]},
         )
         await conn.execute(
             text("DELETE FROM currencies WHERE NOT code = ANY(:c)"),

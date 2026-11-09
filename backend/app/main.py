@@ -47,6 +47,7 @@ from app.setup import service as setup_service
 from app.setup.router import router as setup_router
 from app.sod.router import router as sod_router
 from app.tender.router import router as tender_router
+from app.treasury.router import router as treasury_router
 from app.workflow.jobs import scheduler_loop
 from app.workflow.router import router as workflow_router
 
@@ -149,6 +150,7 @@ def create_app() -> FastAPI:
     api.include_router(qhse_router)
     api.include_router(billing_router)
     api.include_router(ledger_router)
+    api.include_router(treasury_router)
     app.include_router(api)
     return app
 

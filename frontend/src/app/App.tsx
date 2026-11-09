@@ -26,6 +26,7 @@ import {
 } from '@/features/billing/BillingPages';
 import { DorFormPage, DorNewPage } from '@/features/dor/DorForm';
 import { LedgerPage } from '@/features/finance/LedgerPage';
+import { TreasuryPage } from '@/features/treasury/TreasuryPage';
 import { AssetPage, MaintenancePage, WorkOrderPage } from '@/features/maintenance/MaintenancePages';
 import { QhsePage } from '@/features/qhse/QhsePage';
 import { DorListPage, DorPage } from '@/features/dor/DorPages';
@@ -154,6 +155,7 @@ export function AppRoutes() {
           <Route path="operasi/dor/isi/:clientId" element={<DorFormPage />} />
           <Route path="operasi/dor/:id" element={<DorPage />} />
           <Route path="keuangan/buku-besar" element={<LedgerPage />} />
+          <Route path="keuangan/treasury" element={<TreasuryPage />} />
           <Route path="keuangan/tagihan-vendor" element={<VendorInvoicesPage />} />
           <Route path="keuangan/tagihan-vendor/baru" element={<VendorInvoiceNewPage />} />
           <Route path="keuangan/tagihan-vendor/:id" element={<VendorInvoicePage />} />

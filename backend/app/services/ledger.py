@@ -291,6 +291,17 @@ async def _resolve(session: AsyncSession, account: str, dims: Dims) -> str:
     return account
 
 
+@dataclass(frozen=True)
+class Part:
+    """One amount for one leg of a rule, with its own dimensions (e.g. one payable line per
+    vendor in a payment run, one expense line per cost element in a settlement)."""
+
+    role: str
+    amount: Decimal
+    dims: Dims | None = None
+    memo: str | None = None
+
+
 async def post_event(
     session: AsyncSession,
     event: str,
@@ -305,36 +316,72 @@ async def post_event(
     dims: Dims | None = None,
     memo: str | None = None,
     is_demo: bool = False,
+    accounts: dict[str, str] | None = None,
 ) -> JournalEntry:
     """Post a financial event through its rule (posting_rules.RULES)."""
-    dims = dims or Dims()
+    return await post_parts(
+        session,
+        event,
+        [Part(role, Decimal(v), dims, memo) for role, v in amounts.items()],
+        entry_date=entry_date,
+        description=description,
+        source_type=source_type,
+        source_id=source_id,
+        source_number=source_number,
+        by=by,
+        is_demo=is_demo,
+        accounts=accounts,
+    )
+
+
+async def post_parts(
+    session: AsyncSession,
+    event: str,
+    parts: list[Part],
+    *,
+    entry_date: date,
+    description: str,
+    source_type: str,
+    source_id: uuid.UUID | str,
+    source_number: str | None = None,
+    by: uuid.UUID | None,
+    is_demo: bool = False,
+    accounts: dict[str, str] | None = None,
+) -> JournalEntry:
+    """Like post_event, but a role may appear several times with its own dimensions.
+    `accounts` replaces a role's account for this posting (e.g. the bank account's GL
+    account instead of 1110)."""
     rule = (await rules(session)).get(event)
     if rule is None:
         raise LedgerError("UNKNOWN_EVENT", f"Aturan posting '{event}' tidak dikenal.")
-    unknown = set(amounts) - {leg.role for leg in rule.legs}
+    roles = {leg.role for leg in rule.legs}
+    unknown = {p.role for p in parts} - roles
     if unknown:
         raise LedgerError("UNKNOWN_ROLE", f"Peran {sorted(unknown)} tidak ada di aturan {event}.")
+    accounts = accounts or {}
     lines: list[JLine] = []
     for leg in rule.legs:
-        amount = Decimal(amounts.get(leg.role, 0))
-        if amount == 0:
-            continue
-        side = leg.side if amount > 0 else ("credit" if leg.side == "debit" else "debit")
-        value = abs(amount)
-        lines.append(
-            JLine(
-                await _resolve(session, leg.account, dims),
-                debit=value if side == "debit" else Decimal(0),
-                credit=value if side == "credit" else Decimal(0),
-                memo=memo,
-                project_id=dims.project_id if "project" in leg.dims else None,
-                wbs_id=dims.wbs_id if "wbs" in leg.dims else None,
-                cost_element=dims.cost_element if "cost_element" in leg.dims else None,
-                asset=dims.asset if "asset" in leg.dims else None,
-                partner_type=dims.partner_type if "partner" in leg.dims else None,
-                partner_code=dims.partner_code if "partner" in leg.dims else None,
+        for part in (p for p in parts if p.role == leg.role):
+            amount = Decimal(part.amount)
+            if amount == 0:
+                continue
+            dims = part.dims or Dims()
+            side = leg.side if amount > 0 else ("credit" if leg.side == "debit" else "debit")
+            value = abs(amount)
+            lines.append(
+                JLine(
+                    await _resolve(session, accounts.get(leg.role, leg.account), dims),
+                    debit=value if side == "debit" else Decimal(0),
+                    credit=value if side == "credit" else Decimal(0),
+                    memo=part.memo,
+                    project_id=dims.project_id if "project" in leg.dims else None,
+                    wbs_id=dims.wbs_id if "wbs" in leg.dims else None,
+                    cost_element=dims.cost_element if "cost_element" in leg.dims else None,
+                    asset=dims.asset if "asset" in leg.dims else None,
+                    partner_type=dims.partner_type if "partner" in leg.dims else None,
+                    partner_code=dims.partner_code if "partner" in leg.dims else None,
+                )
             )
-        )
     return await post_journal(
         session,
         entry_date=entry_date,

@@ -249,3 +249,14 @@ class BankLine(EntityMixin, Base):
     suggested_invoice_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
     match_rule: Mapped[str | None] = mapped_column(String(40))
     receipt_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
+    # Treasury (07b): every statement line (debits negative) of a bank account; reconciled
+    # to one GL line of the account (journal lines are append-only, so the link lives here).
+    bank_account_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("bank_accounts.id", ondelete="RESTRICT"), index=True
+    )
+    journal_line_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("journal_lines.id", ondelete="RESTRICT"), unique=True
+    )
+    recon_rule: Mapped[str | None] = mapped_column(String(40))
+    reconciled_by: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
+    reconciled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

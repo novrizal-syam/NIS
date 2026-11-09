@@ -327,22 +327,32 @@ async def _suggest(
 
 
 async def import_statement(
-    session: AsyncSession, actor: Principal, filename: str, data: bytes
+    session: AsyncSession,
+    actor: Principal,
+    filename: str,
+    data: bytes,
+    bank_account_id: uuid.UUID | None = None,
 ) -> dict[str, Any]:
+    """Store every statement line of a bank account (default account when not given).
+    Credits get an invoice suggestion for AR; debits (negative) are kept for bank
+    reconciliation (07b) with status `debit`. A line already imported is skipped."""
+    from app.treasury import bank_service
+
+    account = await bank_service.account_or_default(session, bank_account_id)
     text = data.decode("utf-8-sig", errors="replace")
     lines = parse_mt940(text) if ":61:" in text else parse_csv(text)
     ref = f"{filename[:40]}-{datetime.now(UTC):%Y%m%d%H%M%S}"
-    created = skipped = matched = 0
+    created = skipped = matched = debits = 0
     for x in lines:
-        if x.amount <= 0:
-            continue  # debits are not customer receipts
+        if x.amount == 0:
+            continue
         fp = hashlib.sha256(
-            f"{x.value_date}|{x.amount}|{x.description}|{x.reference}".encode()
+            f"{account.code}|{x.value_date}|{x.amount}|{x.description}|{x.reference}".encode()
         ).hexdigest()
         if (await session.execute(select(BankLine.id).where(BankLine.fingerprint == fp))).first():
-            skipped += 1
+            skipped += 1 if x.amount > 0 else 0
             continue
-        inv_id, rule = await _suggest(session, x)
+        inv_id, rule = await _suggest(session, x) if x.amount > 0 else (None, None)
         session.add(
             BankLine(
                 import_ref=ref,
@@ -353,10 +363,13 @@ async def import_statement(
                 reference=x.reference,
                 suggested_invoice_id=inv_id,
                 match_rule=rule,
+                status="unmatched" if x.amount > 0 else "debit",
+                bank_account_id=account.id,
                 created_by=actor.id,
             )
         )
-        created += 1
+        created += 1 if x.amount > 0 else 0
+        debits += 1 if x.amount < 0 else 0
         matched += 1 if inv_id else 0
     await session.flush()
     await audit.record(
@@ -365,9 +378,17 @@ async def import_statement(
         entity_type="bank_statement",
         entity_id=ref,
         actor_id=actor.id,
-        after={"lines": created, "duplicates": skipped, "suggested": matched},
+        after={"lines": created, "debits": debits, "duplicates": skipped, "suggested": matched},
     )
-    return {"import_ref": ref, "lines": created, "duplicates": skipped, "suggested": matched}
+    # `lines`/`duplicates` count credits (customer receipts); `debits` are kept for 07b
+    # bank reconciliation.
+    return {
+        "import_ref": ref,
+        "lines": created,
+        "debits": debits,
+        "duplicates": skipped,
+        "suggested": matched,
+    }
 
 
 async def confirm_line(

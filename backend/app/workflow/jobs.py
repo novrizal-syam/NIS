@@ -62,8 +62,15 @@ async def run_invoice_reminders() -> int:
     return await _in_session(run_reminders)
 
 
+async def run_advance_alerts() -> int:
+    from app.treasury.advance_service import overdue_alerts
+
+    return await _in_session(overdue_alerts)
+
+
 JOBS: dict[str, Callable[[], Awaitable[int]]] = {
     "invoices": run_invoice_reminders,
+    "advances": run_advance_alerts,
     "pm": run_pm_scheduler,
     "capa": run_capa_alerts,
     "escalate": run_escalation,
@@ -80,7 +87,7 @@ async def scheduler_loop(interval_seconds: int = 900) -> None:
     while True:
         jobs = ["email"]
         if time.monotonic() - last_slow >= interval_seconds:
-            jobs += ["escalate", "expiry", "roles", "pm", "capa", "invoices"]
+            jobs += ["escalate", "expiry", "roles", "pm", "capa", "invoices", "advances"]
             last_slow = time.monotonic()
         for name in jobs:
             try:

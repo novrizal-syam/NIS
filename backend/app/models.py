@@ -107,6 +107,13 @@ from app.services.numbering import DocCounter
 from app.setup.models import SystemSetting
 from app.sod.models import SodException, SodRule
 from app.tender.models import Tender, TenderClarification, TenderDocument
+from app.treasury.models import (
+    BankAccount,
+    CashAdvance,
+    CashAdvanceLine,
+    PaymentRun,
+    PaymentRunItem,
+)
 from app.workflow.models import (
     ApprovalRequest,
     ApprovalStep,
@@ -125,6 +132,7 @@ __all__ = [
     "AssetUsage",
     "Attachment",
     "AuditLog",
+    "BankAccount",
     "BankLine",
     "Base",
     "BidDecision",
@@ -133,6 +141,8 @@ __all__ = [
     "BudgetVersion",
     "BudgetVersionLine",
     "Capa",
+    "CashAdvance",
+    "CashAdvanceLine",
     "Client",
     "Contract",
     "ContractRate",
@@ -175,6 +185,8 @@ __all__ = [
     "OutgoingLetter",
     "PasswordReset",
     "PasswordResetRequest",
+    "PaymentRun",
+    "PaymentRunItem",
     "PayrollDay",
     "Permit",
     "PmSchedule",
