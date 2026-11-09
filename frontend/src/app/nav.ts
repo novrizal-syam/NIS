@@ -203,7 +203,7 @@ export const NAV: NavGroup[] = [
       { key: 'myPayslips', path: '/slip-gaji', icon: 'receipt_long', ready: true },
       { key: 'letters', path: '/surat', icon: 'mail', ready: true, module: 'letters' },
       { key: 'dms', path: '/dokumen', icon: 'folder_open', ready: true, module: 'dms' },
-      soon('lms', 'school', 'lms'),
+      { key: 'lms', path: '/pelatihan', icon: 'school', ready: true, module: 'lms' },
     ],
   },
   {

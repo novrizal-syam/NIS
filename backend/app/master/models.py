@@ -97,6 +97,8 @@ class Employee(EntityMixin, Base):
     code: Mapped[str] = mapped_column(String(20), nullable=False, unique=True)
     full_name: Mapped[str] = mapped_column(String(120), nullable=False)
     position: Mapped[str] = mapped_column(String(120), nullable=False)
+    # Job description for the competency matrix (09 LMS).
+    position_code: Mapped[str | None] = mapped_column(String(20))
     department_code: Mapped[str | None] = mapped_column(
         String(10), ForeignKey("departments.code", ondelete="RESTRICT")
     )

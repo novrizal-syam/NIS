@@ -33,6 +33,7 @@ import {
   IncomingDetailPage,
   LettersPage,
 } from '@/features/dms/DmsPages';
+import { LmsPage } from '@/features/lms/LmsPage';
 import { CapexDetailPage, CapexFormPage, CapexListPage } from '@/features/capex/CapexPages';
 import { ClosePage, TaxPage } from '@/features/tax/TaxPages';
 import { TreasuryPage } from '@/features/treasury/TreasuryPage';
@@ -173,6 +174,7 @@ export function AppRoutes() {
           <Route path="surat/masuk/:id" element={<IncomingDetailPage />} />
           <Route path="dokumen" element={<DocumentsPage />} />
           <Route path="dokumen/terkendali/:id" element={<ControlledDetailPage />} />
+          <Route path="pelatihan" element={<LmsPage />} />
           <Route path="capex" element={<CapexListPage />} />
           <Route path="capex/baru" element={<CapexFormPage />} />
           <Route path="capex/:id" element={<CapexDetailPage />} />

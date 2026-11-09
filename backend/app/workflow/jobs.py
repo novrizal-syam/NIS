@@ -95,12 +95,19 @@ async def run_dms_alerts() -> int:
     return await _in_session(all_)
 
 
+async def run_lms_assignments() -> int:
+    from app.lms.service import run_auto
+
+    return await _in_session(run_auto)
+
+
 JOBS: dict[str, Callable[[], Awaitable[int]]] = {
     "invoices": run_invoice_reminders,
     "advances": run_advance_alerts,
     "tax": run_tax_alerts,
     "capex": run_capex_reviews,
     "dms": run_dms_alerts,
+    "lms": run_lms_assignments,
     "pm": run_pm_scheduler,
     "capa": run_capa_alerts,
     "escalate": run_escalation,

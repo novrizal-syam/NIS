@@ -154,6 +154,7 @@ SPECS: tuple[EntitySpec, ...] = (
             F("code", "NIP", key=True, max_length=20),
             F("full_name", "Nama lengkap", required=True, max_length=120),
             F("position", "Jabatan", required=True, max_length=120),
+            F("position_code", "Kode jabatan (matriks kompetensi)", max_length=20, in_list=False),
             F("department_code", "Departemen", "ref", ref="departments", max_length=10),
             F("is_field", "Personel lapangan", "bool", default=False),
             F("join_date", "Tanggal masuk", "date", in_list=False),

@@ -53,6 +53,14 @@ from app.inventory.models import (
     StockTransferLine,
 )
 from app.letters.models import IncomingLetter, LetterDisposition, LetterTemplate, OutgoingLetter
+from app.lms.models import (
+    Assignment,
+    Course,
+    CourseSession,
+    Position,
+    Requirement,
+    TrainingBudget,
+)
 from app.maintenance.models import (
     AssetAllocation,
     Downtime,
@@ -141,6 +149,7 @@ __all__ = [
     "Asset",
     "AssetAllocation",
     "AssetUsage",
+    "Assignment",
     "Attachment",
     "AuditLog",
     "BankAccount",
@@ -163,6 +172,8 @@ __all__ = [
     "ControlledDocument",
     "CostCenter",
     "CostElement",
+    "Course",
+    "CourseSession",
     "Currency",
     "CustomerInvoice",
     "Delegation",
@@ -217,6 +228,7 @@ __all__ = [
     "Permit",
     "PmSchedule",
     "PmTask",
+    "Position",
     "Pph21TerRate",
     "PriceHistory",
     "PriceItem",
@@ -234,6 +246,7 @@ __all__ = [
     "ReceiptAllocation",
     "RecoveryCode",
     "RefreshToken",
+    "Requirement",
     "Rfq",
     "RfqQuote",
     "RfqQuoteLine",
@@ -257,6 +270,7 @@ __all__ = [
     "TenderDocument",
     "TicketDor",
     "TicketLine",
+    "TrainingBudget",
     "User",
     "UserInvite",
     "UserRole",
