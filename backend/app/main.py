@@ -47,6 +47,8 @@ from app.services.storage import get_storage, use_storage_provider
 from app.setup import service as setup_service
 from app.setup.router import router as setup_router
 from app.sod.router import router as sod_router
+from app.tax.router import close_router
+from app.tax.router import router as tax_router
 from app.tender.router import router as tender_router
 from app.treasury.router import router as treasury_router
 from app.workflow.jobs import scheduler_loop
@@ -153,6 +155,8 @@ def create_app() -> FastAPI:
     api.include_router(ledger_router)
     api.include_router(treasury_router)
     api.include_router(payroll_router)
+    api.include_router(tax_router)
+    api.include_router(close_router)
     app.include_router(api)
     return app
 

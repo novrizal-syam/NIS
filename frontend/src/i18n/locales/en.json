@@ -67,7 +67,8 @@
       "roles": "Roles & Permissions",
       "sod": "Segregation of Duties",
       "accessReview": "Access Review",
-      "myPayslips": "My payslips"
+      "myPayslips": "My payslips",
+      "periodClose": "Period close"
     }
   },
   "topbar": {
@@ -2401,5 +2402,84 @@
     "saveItems": "Save",
     "mineHint": "Your approved payslips and the yearly 1721-A1 withholding slip.",
     "mineEmpty": "No payslips yet."
+  },
+  "tax": {
+    "title": "Monthly tax",
+    "hint": "Computed from the general ledger per period. Per type: billing code → payment (payment run or direct, NTPN) → SPT Masa filing (BPE). Reminder 3 days before each deadline.",
+    "year": "Year",
+    "month": "Month",
+    "documents": "Supporting documents",
+    "none": "None.",
+    "lists": {
+      "output_fakturs": "Output tax invoices",
+      "input_fakturs": "Input tax invoices",
+      "pph23_withheld": "PPh 23 withheld by GEK (slips to vendors)",
+      "pph23_by_clients": "PPh 23 withheld by clients (slips received)"
+    },
+    "cols": {
+      "number": "Number",
+      "faktur_no": "Tax invoice no.",
+      "date": "Date",
+      "client": "Client",
+      "vendor": "Vendor",
+      "dpp": "Tax base",
+      "ppn": "VAT",
+      "pph23": "PPh 23",
+      "invoice": "Invoice",
+      "bukti_potong_no": "Withholding slip no."
+    },
+    "status": {
+      "draft": "Draft",
+      "billed": "Billing code",
+      "paid": "Paid",
+      "filed": "Filed"
+    },
+    "output": "Output VAT",
+    "input": "Input VAT",
+    "carriedIn": "Carried in",
+    "carryForward": "Overpaid (carried forward)",
+    "due": "Pay by {{pay}} · file by {{file}}",
+    "overdue": "Overdue",
+    "dueSoon": "Due within 3 days",
+    "billingCode": "Billing code",
+    "saveBilling": "Save billing code",
+    "paidOn": "Paid on",
+    "method": "Payment",
+    "methods": {
+      "direct": "Direct (journal)",
+      "payment_run": "Through a payment run"
+    },
+    "paymentRunId": "Payment run ID",
+    "recordPayment": "Record payment",
+    "bpe": "BPE no.",
+    "file": "File return"
+  },
+  "close": {
+    "title": "Period close",
+    "hint": "Live checklist from the data. Red items block the close; amber items are allowed with a note. Closed by the Lead Controller; reopened only by the Head of Finance & Support with a reason.",
+    "checklist": "Close checklist",
+    "blocking": "Blocking",
+    "warning": "Warning",
+    "status": {
+      "open": "Open",
+      "closed": "Closed",
+      "future": "Not open yet"
+    },
+    "runDepreciation": "Run depreciation",
+    "note": "Close note (required when there are warnings)",
+    "close": "Close period",
+    "reason": "Reason to reopen",
+    "reopen": "Reopen",
+    "depreciation": "Depreciation of the period",
+    "depreciationTotals": "Commercial {{commercial}} · fiscal {{fiscal}}",
+    "asset": "Asset",
+    "account": "Account",
+    "commercial": "Commercial",
+    "fiscal": "Fiscal",
+    "history": "History",
+    "actions": {
+      "close": "Closed",
+      "reopen": "Reopened"
+    }
   }
 }

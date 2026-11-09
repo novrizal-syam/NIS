@@ -54,6 +54,14 @@ ACCOUNT_TYPES = (
     ("revenue", "Pendapatan"), ("expense", "Beban"),
 )  # fmt: skip
 BALANCE = (("debit", "Debit"), ("credit", "Kredit"))
+TAX_GROUPS = (
+    ("kelompok_1", "Kelompok 1 (4 th, 25%)"),
+    ("kelompok_2", "Kelompok 2 (8 th, 12,5%)"),
+    ("kelompok_3", "Kelompok 3 (16 th, 6,25%)"),
+    ("kelompok_4", "Kelompok 4 (20 th, 5%)"),
+    ("bangunan_permanen", "Bangunan permanen (20 th, 5%)"),
+    ("bangunan_tidak_permanen", "Bangunan tidak permanen (10 th, 10%)"),
+)
 PERIOD_STATUS = (("future", "Belum dibuka"), ("open", "Terbuka"), ("closed", "Ditutup"))
 
 SPECS: tuple[EntitySpec, ...] = (
@@ -258,6 +266,23 @@ SPECS: tuple[EntitySpec, ...] = (
                 max_length=20,
             ),
             F("location", "Lokasi", max_length=120, in_list=False),
+            F(
+                "useful_life_months",
+                "Umur manfaat (bulan)",
+                "int",
+                min_value=1,
+                max_value=600,
+                in_list=False,
+            ),
+            F("salvage_value", "Nilai sisa", "idr", min_value=0, default=0, in_list=False),
+            F("depreciation_start", "Mulai penyusutan", "date", in_list=False),
+            F(
+                "tax_group",
+                "Kelompok fiskal (PMK 72/2023)",
+                "choice",
+                choices=TAX_GROUPS,
+                in_list=False,
+            ),
             F("certificates", "Sertifikat & kalibrasi", "docs", in_list=False, importable=False),
         ),
         filters=("criticality", "asset_class", "equipment_type_code"),

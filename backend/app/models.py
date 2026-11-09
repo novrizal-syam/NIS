@@ -107,6 +107,7 @@ from app.services.email_log import EmailLog
 from app.services.numbering import DocCounter
 from app.setup.models import SystemSetting
 from app.sod.models import SodException, SodRule
+from app.tax.models import DepreciationRun, PeriodCloseLog, TaxReturn
 from app.tender.models import Tender, TenderClarification, TenderDocument
 from app.treasury.models import (
     BankAccount,
@@ -153,6 +154,7 @@ __all__ = [
     "CustomerInvoice",
     "Delegation",
     "Department",
+    "DepreciationRun",
     "DoaRule",
     "DoaRuleChange",
     "DoaRuleStep",
@@ -193,6 +195,7 @@ __all__ = [
     "Payslip",
     "PayslipDay",
     "PayslipItem",
+    "PeriodCloseLog",
     "Permit",
     "PmSchedule",
     "PmTask",
@@ -229,6 +232,7 @@ __all__ = [
     "StockTransfer",
     "StockTransferLine",
     "SystemSetting",
+    "TaxReturn",
     "Tender",
     "TenderClarification",
     "TenderDocument",

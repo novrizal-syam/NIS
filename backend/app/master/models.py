@@ -177,6 +177,16 @@ class Asset(EntityMixin, Base):
     accumulated_depreciation: Mapped[Decimal] = mapped_column(
         Numeric(18, 0), nullable=False, server_default="0"
     )
+    # Depreciation (07d): straight line over useful life (PSAK 216); fiscal group PMK 72/2023.
+    useful_life_months: Mapped[int | None] = mapped_column(Integer)
+    salvage_value: Mapped[Decimal] = mapped_column(
+        Numeric(18, 0), nullable=False, server_default="0"
+    )
+    depreciation_start: Mapped[date | None] = mapped_column(Date)
+    tax_group: Mapped[str | None] = mapped_column(String(30))
+    accumulated_tax_depreciation: Mapped[Decimal] = mapped_column(
+        Numeric(18, 0), nullable=False, server_default="0"
+    )
     certificates: Mapped[list[dict[str, Any]]] = _docs()
     is_active: Mapped[bool] = _active()
 

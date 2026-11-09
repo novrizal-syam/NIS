@@ -27,6 +27,7 @@ import {
 import { DorFormPage, DorNewPage } from '@/features/dor/DorForm';
 import { LedgerPage } from '@/features/finance/LedgerPage';
 import { MyPayslipsPage, PayrollPage } from '@/features/payroll/PayrollPage';
+import { ClosePage, TaxPage } from '@/features/tax/TaxPages';
 import { TreasuryPage } from '@/features/treasury/TreasuryPage';
 import { AssetPage, MaintenancePage, WorkOrderPage } from '@/features/maintenance/MaintenancePages';
 import { QhsePage } from '@/features/qhse/QhsePage';
@@ -159,6 +160,8 @@ export function AppRoutes() {
           <Route path="keuangan/treasury" element={<TreasuryPage />} />
           <Route path="keuangan/penggajian" element={<PayrollPage />} />
           <Route path="slip-gaji" element={<MyPayslipsPage />} />
+          <Route path="keuangan/pajak" element={<TaxPage />} />
+          <Route path="keuangan/tutup-buku" element={<ClosePage />} />
           <Route path="keuangan/tagihan-vendor" element={<VendorInvoicesPage />} />
           <Route path="keuangan/tagihan-vendor/baru" element={<VendorInvoiceNewPage />} />
           <Route path="keuangan/tagihan-vendor/:id" element={<VendorInvoicePage />} />

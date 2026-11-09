@@ -310,6 +310,20 @@ def _key_text(spec: EntitySpec, data: dict[str, Any]) -> str:
     return " / ".join(str(data[f.name]) for f in spec.key_fields)
 
 
+def _period_guard(spec: EntitySpec, data: dict[str, Any], row: Any = None) -> None:
+    """Closing and reopening a period go through the close checklist (07d), never Data Master."""
+    if spec.key != "periods":
+        return
+    if row is not None and row.status == "closed":
+        raise ConflictError(
+            "PERIOD_CLOSED", "Periode yang sudah ditutup hanya dibuka lewat Tutup Buku (alasan)."
+        )
+    if data.get("status") == "closed":
+        raise ConflictError(
+            "CLOSE_VIA_CHECKLIST", "Periode ditutup lewat Keuangan > Tutup Buku (checklist)."
+        )
+
+
 async def create(
     session: AsyncSession,
     spec: EntitySpec,
@@ -318,6 +332,7 @@ async def create(
     registry: dict[str, EntitySpec],
 ) -> Any:
     _check_sensitive_write(spec, principal, {k: v for k, v in data.items() if v is not None})
+    _period_guard(spec, data)
     await _check_refs(session, spec, data, registry)
     if await _find_by_key(session, spec, data):
         raise ConflictError(
@@ -358,6 +373,7 @@ async def update(
     registry: dict[str, EntitySpec],
 ) -> Any:
     _check_sensitive_write(spec, principal, data)
+    _period_guard(spec, data, row)
     await _check_refs(session, spec, data, registry)
     before = _audit_snapshot(spec, row)
     for k, v in data.items():
@@ -382,6 +398,7 @@ async def update(
 
 
 async def delete(session: AsyncSession, spec: EntitySpec, principal: Principal, row: Any) -> None:
+    _period_guard(spec, {}, row)
     before = _audit_snapshot(spec, row)
     try:
         async with session.begin_nested():

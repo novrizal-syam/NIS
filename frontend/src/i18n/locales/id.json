@@ -67,7 +67,8 @@
       "roles": "Peran & Izin",
       "sod": "Pemisahan Tugas",
       "accessReview": "Tinjauan Akses",
-      "myPayslips": "Slip gaji saya"
+      "myPayslips": "Slip gaji saya",
+      "periodClose": "Tutup buku"
     }
   },
   "topbar": {
@@ -2401,5 +2402,84 @@
     "saveItems": "Simpan",
     "mineHint": "Slip gaji Anda yang sudah disetujui, dan bukti potong 1721-A1 per tahun.",
     "mineEmpty": "Belum ada slip gaji."
+  },
+  "tax": {
+    "title": "Pajak bulanan",
+    "hint": "Dihitung dari buku besar per periode. Per jenis: kode billing → bayar (payment run atau langsung, NTPN) → lapor SPT Masa (BPE). Peringatan H-3 sebelum tenggat.",
+    "year": "Tahun",
+    "month": "Bulan",
+    "documents": "Dokumen pendukung",
+    "none": "Tidak ada.",
+    "lists": {
+      "output_fakturs": "Faktur keluaran",
+      "input_fakturs": "Faktur masukan",
+      "pph23_withheld": "PPh 23 dipotong GEK (bukti potong ke vendor)",
+      "pph23_by_clients": "PPh 23 dipotong klien (bukti potong diterima)"
+    },
+    "cols": {
+      "number": "Nomor",
+      "faktur_no": "No. faktur",
+      "date": "Tanggal",
+      "client": "Klien",
+      "vendor": "Vendor",
+      "dpp": "DPP",
+      "ppn": "PPN",
+      "pph23": "PPh 23",
+      "invoice": "Invoice",
+      "bukti_potong_no": "No. bukti potong"
+    },
+    "status": {
+      "draft": "Draf",
+      "billed": "Kode billing",
+      "paid": "Dibayar",
+      "filed": "Dilaporkan"
+    },
+    "output": "PPN keluaran",
+    "input": "PPN masukan",
+    "carriedIn": "Kompensasi bulan lalu",
+    "carryForward": "Lebih bayar (dikompensasi)",
+    "due": "Bayar s.d. {{pay}} · lapor s.d. {{file}}",
+    "overdue": "Lewat tenggat",
+    "dueSoon": "Tenggat ≤ 3 hari",
+    "billingCode": "Kode billing",
+    "saveBilling": "Simpan kode billing",
+    "paidOn": "Tanggal bayar",
+    "method": "Cara bayar",
+    "methods": {
+      "direct": "Langsung (jurnal)",
+      "payment_run": "Lewat payment run"
+    },
+    "paymentRunId": "ID payment run",
+    "recordPayment": "Catat pembayaran",
+    "bpe": "No. BPE",
+    "file": "Lapor SPT"
+  },
+  "close": {
+    "title": "Tutup buku",
+    "hint": "Checklist langsung dari data. Item merah menghalangi penutupan; item kuning boleh dengan catatan. Ditutup Lead Controller; dibuka kembali hanya oleh Head of Finance & Support dengan alasan.",
+    "checklist": "Checklist penutupan",
+    "blocking": "Menghalangi",
+    "warning": "Peringatan",
+    "status": {
+      "open": "Terbuka",
+      "closed": "Ditutup",
+      "future": "Belum dibuka"
+    },
+    "runDepreciation": "Jalankan penyusutan",
+    "note": "Catatan penutupan (wajib bila ada peringatan)",
+    "close": "Tutup periode",
+    "reason": "Alasan membuka kembali",
+    "reopen": "Buka kembali",
+    "depreciation": "Penyusutan periode",
+    "depreciationTotals": "Komersial {{commercial}} · fiskal {{fiscal}}",
+    "asset": "Aset",
+    "account": "Akun",
+    "commercial": "Komersial",
+    "fiscal": "Fiskal",
+    "history": "Riwayat",
+    "actions": {
+      "close": "Ditutup",
+      "reopen": "Dibuka kembali"
+    }
   }
 }
