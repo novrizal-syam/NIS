@@ -376,6 +376,21 @@ async def _apply_revision(
     )
 
 
+async def _check_received(session: AsyncSession, po: PurchaseOrder, lines: list[LineIn]) -> None:
+    """A revision cannot drop a line or cut its quantity below what was already received."""
+    from app.inventory import gr_service  # local: inventory imports procurement
+
+    received = await gr_service.received_by_seq(session, po.id)
+    new = {x.seq: x.qty for x in lines}
+    for seq, qty in received.items():
+        if qty > 0 and new.get(seq, Decimal(0)) < qty:
+            raise AppError(
+                "BELOW_RECEIVED",
+                f"Baris {seq} sudah diterima {qty.normalize():f}; revisi tidak boleh di bawahnya.",
+                status_code=422,
+            )
+
+
 async def revise(
     session: AsyncSession,
     storage: Storage,
@@ -395,6 +410,7 @@ async def revise(
             raise AppError(
                 "LINE_INVALID", "Kuantitas harus > 0 dan harga tidak negatif.", status_code=422
             )
+    await _check_received(session, po, lines)
     new, _, _ = totals(lines, po.ppn_pct)
     if new <= po.subtotal:
         await _apply_revision(session, storage, actor, po, lines, reason)

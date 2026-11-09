@@ -269,6 +269,7 @@ function ReadOnly({ d }: { d: PoDetail }) {
               <TH>{t('quotation.unit')}</TH>
               <TH className="text-right">{t('quotation.unitPrice')}</TH>
               <TH className="text-right">{t('quotation.amount')}</TH>
+              {d.status !== 'draft' && <TH className="text-right">{t('gr.received')}</TH>}
             </TR>
           </THead>
           <TBody>
@@ -283,10 +284,35 @@ function ReadOnly({ d }: { d: PoDetail }) {
                 <TD className="whitespace-nowrap text-right tabular-nums">
                   {l.amount ? formatIDR(l.amount) : '–'}
                 </TD>
+                {d.status !== 'draft' && (
+                  <TD className="text-right tabular-nums">
+                    {(l.received ?? '0').replace('.', ',')}
+                  </TD>
+                )}
               </TR>
             ))}
           </TBody>
         </Table>
+        {d.can_receive && (
+          <Button asChild variant="primary" className="self-start">
+            <Link to={`/gudang/gr/baru?po=${d.id}`}>
+              <Icon name="local_shipping" /> {t('gr.receive')}
+            </Link>
+          </Button>
+        )}
+        {d.grs && d.grs.length > 0 && (
+          <p className="flex flex-wrap gap-3 text-small">
+            {d.grs.map((g) => (
+              <Link
+                key={g.id}
+                to={`/gudang/gr/${g.id}`}
+                className="font-semibold text-fg-accent underline"
+              >
+                {g.number} ({t(`gr.status.${g.status}`)})
+              </Link>
+            ))}
+          </p>
+        )}
         <p className="text-small text-fg-secondary">
           {t('po.deliveryDate')}: {d.delivery_date ? formatDate(d.delivery_date) : '–'} ·{' '}
           {d.delivery_location} · {d.payment_terms}

@@ -65,7 +65,13 @@ export const NAV: NavGroup[] = [
   {
     key: 'procureToPay',
     items: [
-      soon('materialRequests', 'inventory', 'inventory'),
+      {
+        key: 'materialRequests',
+        path: '/gudang/mr',
+        icon: 'inventory',
+        ready: true,
+        module: 'inventory',
+      },
       {
         key: 'purchaseRequisitions',
         path: '/pengadaan/pr',
@@ -87,8 +93,20 @@ export const NAV: NavGroup[] = [
         ready: true,
         module: 'procurement',
       },
-      soon('goodsReceipts', 'local_shipping', 'inventory'),
-      soon('inventoryStock', 'warehouse', 'inventory'),
+      {
+        key: 'goodsReceipts',
+        path: '/gudang/gr',
+        icon: 'local_shipping',
+        ready: true,
+        module: 'inventory',
+      },
+      {
+        key: 'inventoryStock',
+        path: '/gudang/stok',
+        icon: 'warehouse',
+        ready: true,
+        module: 'inventory',
+      },
       soon('vendorInvoices', 'receipt_long', 'finance'),
     ],
   },

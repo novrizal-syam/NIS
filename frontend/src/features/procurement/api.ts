@@ -1,12 +1,14 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api, postJson } from '@/lib/api';
 
-export type PrStatus = 'draft' | 'blocked' | 'awaiting_approval' | 'approved' | 'cancelled';
+export type PrStatus =
+  'draft' | 'blocked' | 'awaiting_approval' | 'approved' | 'ordered' | 'cancelled';
 export const PR_STATUSES: PrStatus[] = [
   'draft',
   'blocked',
   'awaiting_approval',
   'approved',
+  'ordered',
   'cancelled',
 ];
 

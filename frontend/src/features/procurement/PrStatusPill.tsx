@@ -7,6 +7,7 @@ const TONE: Record<PrStatus, StatusTone> = {
   blocked: 'danger',
   awaiting_approval: 'warning',
   approved: 'success',
+  ordered: 'success',
   cancelled: 'neutral',
 };
 

@@ -14,6 +14,7 @@ DOC_TYPES: dict[str, tuple[str, str]] = {
     "purchase_requisition": ("Purchase Requisition", "procurement"),
     "rfq_award": ("Penetapan pemenang RFQ", "procurement"),
     "po_revision": ("Revisi PO (nilai naik)", "procurement"),
+    "stock_opname": ("Selisih stock opname", "inventory"),
     "dor": ("Daily Operation Report", "operations"),
     "cash_advance": ("Uang muka kerja", "treasury"),
     "manual_journal": ("Jurnal manual", "finance"),
@@ -155,6 +156,7 @@ RULES: tuple[RuleDef, ...] = (
         "Vendor bukan skor terbaik (alasan tertulis)",
         condition={"field": "non_best_score", "op": "==", "value": True},
     ),
+    single("stock_opname", "lead_controller", "Selisih stock opname"),
     RuleDef(
         "dor",
         "Proyek EPCOM",

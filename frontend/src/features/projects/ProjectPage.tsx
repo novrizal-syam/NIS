@@ -27,6 +27,7 @@ import { BudgetEditor } from './BudgetEditor';
 import { BudgetVersionsTab } from './BudgetVersionsTab';
 import { BudgetStatusTable } from './BudgetStatusTable';
 import { ProjectStatusPill } from './ProjectStatusPill';
+import { TeamTab } from './TeamTab';
 
 const STEPS: ProjectStatus[] = ['draft', 'controller_review', 'awaiting_approval', 'locked'];
 const errText = (e: unknown, fallback: string) =>
@@ -64,7 +65,7 @@ export function ProjectPage() {
   const { id = '' } = useParams();
   const project = useProject(id);
   const [search] = useSearchParams();
-  const [tab, setTab] = useState<'budget' | 'versions' | 'bcr' | 'files' | 'history'>(
+  const [tab, setTab] = useState<'budget' | 'versions' | 'bcr' | 'team' | 'files' | 'history'>(
     search.get('tab') === 'bcr' ? 'bcr' : 'budget',
   );
   if (project.isLoading) return <p className="text-fg-secondary">{t('common.loading')}</p>;
@@ -174,6 +175,7 @@ export function ProjectPage() {
                 { value: 'bcr' as const, label: t('project.bcrTab') },
               ]
             : []),
+          { value: 'team', label: t('project.team') },
           { value: 'files', label: t('project.documents') },
           { value: 'history', label: t('master.tabHistory') },
         ]}
@@ -188,6 +190,7 @@ export function ProjectPage() {
       )}
       {tab === 'versions' && <BudgetVersionsTab projectId={p.id} />}
       {tab === 'bcr' && <BcrTab p={p} />}
+      {tab === 'team' && <TeamTab projectId={p.id} />}
       {tab === 'files' && (
         <AttachmentsPanel entityType="project" entityId={p.id} canWrite={p.can_edit_budget} />
       )}

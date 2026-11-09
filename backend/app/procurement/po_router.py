@@ -14,6 +14,7 @@ from app.core import access
 from app.core.db import get_session
 from app.core.errors import NotFoundError
 from app.core.pagination import PageParams, page_params
+from app.inventory.models import GoodsReceipt
 from app.master.models import Vendor
 from app.procurement import po_service, pr_service, rfq_service
 from app.procurement.models import (
@@ -412,6 +413,16 @@ async def _po_detail(
     bal = await bc.available(session, po_service.line_of(po))
     held = await bc.held(session, po_service.line_of(po), po_service.DOC, str(po.id))
     editable = _may(principal, "edit", po.project_id, po.created_by)
+    from app.inventory import gr_service  # local: inventory imports procurement
+
+    received = await gr_service.received_by_seq(session, po.id)
+    grs = (
+        await session.execute(
+            select(GoodsReceipt)
+            .where(GoodsReceipt.po_id == po.id, GoodsReceipt.status != "cancelled")
+            .order_by(GoodsReceipt.created_at)
+        )
+    ).scalars()
     return {
         "id": str(po.id),
         "number": po.number,
@@ -448,6 +459,18 @@ async def _po_detail(
         "can_edit": editable and po.status == "draft",
         "can_issue": editable and po.status == "draft",
         "can_revise": editable and po.status == "issued",
+        "can_receive": po.status == "issued"
+        and await gr_service.may_receive(session, principal, po),
+        "grs": [
+            {
+                "id": str(g.id),
+                "number": g.number,
+                "status": g.status,
+                "received_date": g.received_date.isoformat(),
+                "amount": _m(g.amount),
+            }
+            for g in grs
+        ],
         "lines": [
             {
                 "seq": x.seq,
@@ -457,6 +480,7 @@ async def _po_detail(
                 "uom": x.uom,
                 "unit_price": _m(x.unit_price),
                 "amount": _m(x.amount),
+                "received": format(received.get(x.seq, Decimal(0)).normalize(), "f"),
             }
             for x in await po_service.lines_of(session, po.id)
         ],

@@ -24,6 +24,7 @@ from app.project.models import (
     BudgetChangeRequest,
     BudgetVersionLine,
     Project,
+    ProjectMember,
 )
 from app.services import audit, budget_control
 from app.services.audit import AuditAction
@@ -302,6 +303,15 @@ async def _detail(session: AsyncSession, principal: Principal, p: Project) -> di
     }
 
 
+@router.get("/team-candidates")
+async def team_candidates(_: Viewer, session: Session) -> list[dict[str, str]]:
+    """Active users who can be added to a project team."""
+    rows = await session.execute(
+        select(User.id, User.full_name).where(User.is_active.is_(True)).order_by(User.full_name)
+    )
+    return [{"id": str(i), "full_name": n} for i, n in rows.tuples()]
+
+
 @router.get("/planners")
 async def planners(_: Viewer, session: Session) -> list[dict[str, str]]:
     """Active users whose roles may edit budgets (candidates for project planner)."""
@@ -437,6 +447,96 @@ async def set_manager(
     )
     await session.commit()
     return await _detail(session, principal, p)
+
+
+class MemberBody(BaseModel):
+    user_id: uuid.UUID
+
+
+async def _members(session: AsyncSession, pid: uuid.UUID) -> list[dict[str, Any]]:
+    rows = await session.execute(
+        select(ProjectMember, User.full_name, User.email)
+        .join(User, User.id == ProjectMember.user_id)
+        .where(ProjectMember.project_id == pid)
+        .order_by(User.full_name)
+    )
+    return [
+        {"user_id": str(m.user_id), "full_name": n, "email": e, "added_at": m.added_at.isoformat()}
+        for m, n, e in rows.all()
+    ]
+
+
+def _may_staff(principal: Principal, p: Project) -> bool:
+    return may(principal, "edit", p) or principal.id == p.manager_id
+
+
+@router.get("/{pid}/members")
+async def list_members(pid: uuid.UUID, principal: Viewer, session: Session) -> dict[str, Any]:
+    p = await _get(session, principal, pid)
+    return {"items": await _members(session, p.id), "can_edit": _may_staff(principal, p)}
+
+
+@router.post("/{pid}/members", status_code=201)
+async def add_member(
+    pid: uuid.UUID, body: MemberBody, principal: CurrentUser, session: Session
+) -> dict[str, Any]:
+    """Project team (e.g. field engineers): members work on the project with their
+    project-scoped rights (material requests, DOR)."""
+    p = await _get(session, principal, pid, lock=True)
+    if not _may_staff(principal, p):
+        raise ForbiddenError("PERMISSION_DENIED", "Anda tidak berizin mengatur tim proyek ini.")
+    user = await session.get(User, body.user_id)
+    if user is None or not user.is_active:
+        raise AppError(
+            "USER_INVALID", "Pengguna tidak ditemukan atau tidak aktif.", status_code=422
+        )
+    exists = await session.execute(
+        select(ProjectMember.id).where(
+            ProjectMember.project_id == p.id, ProjectMember.user_id == user.id
+        )
+    )
+    if exists.first() is None:
+        session.add(ProjectMember(project_id=p.id, user_id=user.id, added_by=principal.id))
+        await session.flush()
+        await audit.record(
+            session,
+            action=AuditAction.UPDATE,
+            entity_type="project",
+            entity_id=p.id,
+            actor_id=principal.id,
+            after={"member_added": user.full_name},
+        )
+    await session.commit()
+    return {"items": await _members(session, p.id), "can_edit": True}
+
+
+@router.delete("/{pid}/members/{uid}")
+async def remove_member(
+    pid: uuid.UUID, uid: uuid.UUID, principal: CurrentUser, session: Session
+) -> dict[str, Any]:
+    p = await _get(session, principal, pid, lock=True)
+    if not _may_staff(principal, p):
+        raise ForbiddenError("PERMISSION_DENIED", "Anda tidak berizin mengatur tim proyek ini.")
+    m = (
+        await session.execute(
+            select(ProjectMember).where(
+                ProjectMember.project_id == p.id, ProjectMember.user_id == uid
+            )
+        )
+    ).scalar_one_or_none()
+    if m is not None:
+        await session.delete(m)
+        await session.flush()
+        await audit.record(
+            session,
+            action=AuditAction.UPDATE,
+            entity_type="project",
+            entity_id=p.id,
+            actor_id=principal.id,
+            after={"member_removed": str(uid)},
+        )
+    await session.commit()
+    return {"items": await _members(session, p.id), "can_edit": True}
 
 
 @router.get("/{pid}/budget-status")

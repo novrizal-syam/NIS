@@ -63,6 +63,33 @@ class Project(EntityMixin, Base):
     locked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
+class ProjectMember(Base):
+    """Project team (field engineers, site staff). Members get the project in their
+    project-scoped grants, like the project manager."""
+
+    __tablename__ = "project_members"
+    __table_args__ = (UniqueConstraint("project_id", "user_id", name="uq_project_member"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")
+    )
+    project_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("projects.id", ondelete="CASCADE"), nullable=False
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    added_by: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="RESTRICT")
+    )
+    added_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=text("now()")
+    )
+
+
 class ProjectWbs(Base):
     """Work breakdown: default EXEC (Execution); MOB, DEMOB and per well (WELL-01 ...)."""
 

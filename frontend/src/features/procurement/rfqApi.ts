@@ -82,6 +82,7 @@ export interface PoLine {
   uom: string;
   unit_price: string;
   amount?: string;
+  received?: string;
 }
 
 export interface PoDetail {
@@ -115,6 +116,8 @@ export interface PoDetail {
   can_edit: boolean;
   can_issue: boolean;
   can_revise: boolean;
+  can_receive?: boolean;
+  grs?: { id: string; number: string; status: string; received_date: string; amount: string }[];
   lines: PoLine[];
 }
 

@@ -235,3 +235,34 @@ export const useCreateBcr = (id: string) =>
       body,
     ),
   );
+
+export interface TeamMember {
+  user_id: string;
+  full_name: string;
+  email: string;
+  added_at: string;
+}
+
+export const useTeam = (id: string) =>
+  useQuery({
+    queryKey: ['projects', 'team', id],
+    queryFn: () => api<{ items: TeamMember[]; can_edit: boolean }>(`/projects/${id}/members`),
+  });
+
+export const useTeamCandidates = (enabled: boolean) =>
+  useQuery({
+    queryKey: ['projects', 'team-candidates'],
+    queryFn: () => api<{ id: string; full_name: string }[]>('/projects/team-candidates'),
+    enabled,
+    staleTime: 60_000,
+  });
+
+export const useAddMember = (id: string) =>
+  useProjectMutation((user_id: string) =>
+    postJson<{ items: TeamMember[] }>(`/projects/${id}/members`, { user_id }),
+  );
+
+export const useRemoveMember = (id: string) =>
+  useProjectMutation((uid: string) =>
+    api<{ items: TeamMember[] }>(`/projects/${id}/members/${uid}`, { method: 'DELETE' }),
+  );

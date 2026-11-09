@@ -8,21 +8,30 @@ known password whose 2FA is marked enrolled without a secret (login asks no code
 
 import asyncio
 import os
+import uuid
 from datetime import UTC, datetime
 from decimal import Decimal
 
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app import models as _models  # noqa: F401
 from app.auth import service as auth_service
+from app.auth.models import User
 from app.auth.principal import PRIVACY_VERSION
 from app.core.db import SessionLocal
-from app.master.models import PriceItem
+from app.inventory import stock_service as stock
+from app.master.models import Item, PriceItem, Warehouse
 from app.project.models import (
     BudgetVersion,
     BudgetVersionLine,
     Project,
     ProjectBudgetLine,
+    ProjectMember,
     ProjectWbs,
 )
+from app.services import ledger
+from app.services.numbering import today_jakarta
 from app.setup import service as settings_store
 
 PASSWORD = "E2e-Rahasia-2026"
@@ -36,6 +45,8 @@ USERS = {
     "admin": ("admin@e2e.gek.co.id", "Admin IT"),
     "engineer": ("engineer@e2e.gek.co.id", "Budi Engineer"),
     "head_of_finance": ("hof@e2e.gek.co.id", "Sinta Head of Finance"),
+    "field_engineer": ("fe@e2e.gek.co.id", "Eko Field Engineer"),
+    "warehouse_head": ("wh@e2e.gek.co.id", "Hadi Kepala Gudang"),
 }
 
 
@@ -148,8 +159,75 @@ async def main() -> None:
                     locked_reserve=code == "CONTINGENCY",
                 )
             )
+        await s.flush()
+        await _inventory(s, planner.id)
         await s.commit()
     print("e2e seed ok")
+
+
+async def _inventory(s: AsyncSession, manager_id: uuid.UUID) -> None:
+    """MR flow (04c): PRJ-26-902 with Rp 100 jt consumables; 2 drums at the site and 3 at
+    Base (opening stock posted to 1310); the field engineer is on the project team."""
+    fe = (
+        await s.execute(select(User).where(User.email == USERS["field_engineer"][0]))
+    ).scalar_one()
+    p = Project(
+        number="PRJ-26-902",
+        name="MR E2E Blok Rokan",
+        company_name="PT KKKS E2E",
+        status="locked",
+        revenue=Decimal(1_000_000_000),
+        budget_total=Decimal(100_000_000),
+        contingency_pct=Decimal(5),
+        manager_id=manager_id,
+        locked_at=datetime.now(UTC),
+    )
+    s.add(p)
+    await s.flush()
+    w = ProjectWbs(project_id=p.id, code="EXEC", name="Execution", seq=1)
+    s.add(w)
+    await s.flush()
+    s.add(
+        ProjectBudgetLine(
+            project_id=p.id,
+            version=0,
+            wbs_id=w.id,
+            cost_element_code="CONSUMABLE",
+            amount=Decimal(100_000_000),
+            source="quotation",
+        )
+    )
+    s.add(ProjectMember(project_id=p.id, user_id=fe.id))
+    s.add_all(
+        [
+            Item(
+                code="ITM-E2E",
+                name="Demulsifier E2E",
+                uom="drum",
+                category="chemicals",
+                reorder_point=Decimal(6),
+                last_price=Decimal(6_400_000),
+            ),
+            Warehouse(code="WH-CLG", name="Base Cilegon", kind="base"),
+            Warehouse(code="WH-902", name="Site Rokan E2E", kind="site", project_code="PRJ-26-902"),
+        ]
+    )
+    await s.flush()
+    doc = stock.Doc("opening", "e2e", "Saldo awal", None)
+    await stock.receive(s, "ITM-E2E", "WH-CLG", Decimal(3), Decimal(18_000_000), doc)
+    await stock.receive(s, "ITM-E2E", "WH-902", Decimal(2), Decimal(12_000_000), doc)
+    await ledger.post_journal(
+        s,
+        entry_date=today_jakarta(),
+        description="Saldo awal persediaan (e2e)",
+        lines=[
+            ledger.JLine("1310", debit=Decimal(30_000_000)),
+            ledger.JLine("3200", credit=Decimal(30_000_000)),
+        ],
+        source_type="opening",
+        source_id="e2e",
+        by=None,
+    )
 
 
 if __name__ == "__main__":

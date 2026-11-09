@@ -28,6 +28,7 @@ from app.crm.quotation_router import router as quotation_router
 from app.crm.router import router as crm_router
 from app.demo.router import router as demo_router
 from app.dms.router import router as dms_router
+from app.inventory.router import router as inventory_router
 from app.master.router import router as master_router
 from app.notifications.router import router as notifications_router
 from app.procurement.po_router import router as po_router
@@ -135,6 +136,7 @@ def create_app() -> FastAPI:
     api.include_router(budget_router)
     api.include_router(procurement_router)
     api.include_router(po_router)
+    api.include_router(inventory_router)
     app.include_router(api)
     return app
 

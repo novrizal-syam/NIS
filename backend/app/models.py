@@ -14,6 +14,19 @@ from app.contract.models import Contract, ContractRate
 from app.core.models import Base
 from app.crm.models import BidDecision, Lead, Opportunity, Quotation, QuotationLine
 from app.dms.models import Attachment
+from app.finance.models import JournalEntry, JournalLine
+from app.inventory.models import (
+    GoodsReceipt,
+    GoodsReceiptLine,
+    MaterialRequest,
+    MaterialRequestLine,
+    StockBalance,
+    StockCount,
+    StockCountLine,
+    StockMove,
+    StockTransfer,
+    StockTransferLine,
+)
 from app.letters.models import OutgoingLetter
 from app.master.models import (
     Account,
@@ -49,6 +62,7 @@ from app.project.models import (
     BudgetVersionLine,
     Project,
     ProjectBudgetLine,
+    ProjectMember,
     ProjectWbs,
 )
 from app.services.audit import AuditLog
@@ -95,8 +109,14 @@ __all__ = [
     "Employee",
     "FiscalPeriod",
     "FxRate",
+    "GoodsReceipt",
+    "GoodsReceiptLine",
     "Item",
+    "JournalEntry",
+    "JournalLine",
     "Lead",
+    "MaterialRequest",
+    "MaterialRequestLine",
     "Notification",
     "Opportunity",
     "OutgoingLetter",
@@ -106,6 +126,7 @@ __all__ = [
     "PriceItem",
     "Project",
     "ProjectBudgetLine",
+    "ProjectMember",
     "ProjectWbs",
     "PurchaseOrder",
     "PurchaseOrderLine",
@@ -122,6 +143,12 @@ __all__ = [
     "RolePermission",
     "SodException",
     "SodRule",
+    "StockBalance",
+    "StockCount",
+    "StockCountLine",
+    "StockMove",
+    "StockTransfer",
+    "StockTransferLine",
     "SystemSetting",
     "Tender",
     "TenderClarification",

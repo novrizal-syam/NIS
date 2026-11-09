@@ -192,6 +192,9 @@ SYSTEM_ROLES: tuple[RoleDef, ...] = (
         "field_engineer",
         "Field Engineer",
         g("operations", WORK, PRJ),
+        # Material requests (04c): site/base stock issue; shortfall becomes the engineer's PR.
+        g("inventory", (A.VIEW, A.CREATE, A.SUBMIT), PRJ),
+        g("procurement", A.VIEW, OWN),
         g("qhse", (A.VIEW, A.CREATE), PRJ),
         g("treasury", (A.VIEW, A.CREATE, A.SUBMIT), OWN),
     ),
@@ -219,6 +222,8 @@ SYSTEM_ROLES: tuple[RoleDef, ...] = (
         g(("project", "budget"), (A.VIEW, A.EXPORT, A.APPROVE), ALL),
         g("finance", (*WORK, A.APPROVE, A.POST), ALL),
         g(("reporting", "audit"), READ, ALL),
+        # Approves stock opname variances; reconciles inventory valuation to 1310 (04c).
+        g("inventory", (A.VIEW, A.EXPORT, A.APPROVE), ALL),
         requires_2fa=True,
     ),
     _role(

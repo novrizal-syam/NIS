@@ -52,7 +52,10 @@ test('blocked PR, BCR from the PR, approval reduces available', async ({ page })
   await page.getByLabel('Uraian 1').fill('Sewa genset 500 kVA 30 hari');
   await page.getByLabel('Estimasi harga 1').fill('150.000.000');
   await page.getByRole('button', { name: 'Simpan draf', exact: true }).click();
-  await expect(page.getByText(/PR-26-001/).first()).toBeVisible();
+  // Specs run in parallel and share the numbering (the MR spec also raises a PR).
+  const prText = page.locator('.eyebrow', { hasText: /PR-26-\d+/ }).first();
+  await expect(prText).toBeVisible();
+  const prNumber = /PR-26-\d+/.exec((await prText.textContent()) ?? '')![0];
   await page.getByRole('button', { name: /^Ajukan$/ }).click();
   const blocked = page.getByRole('alert');
   await expect(blocked).toContainText('kurang Rp 95.000.000');
@@ -64,13 +67,13 @@ test('blocked PR, BCR from the PR, approval reduces available', async ({ page })
   await signIn(page, PLANNER);
   await page.goto(prUrl);
   await page.getByRole('button', { name: /Ajukan BCR Rp 95\.000\.000/ }).click();
-  await expect(page.getByText(/BCR untuk PR-26-001/)).toBeVisible();
+  await expect(page.getByText(`BCR untuk ${prNumber}`)).toBeVisible();
   await expect(page.getByLabel(/^Nilai/)).toHaveValue('95.000.000');
   await page.getByLabel(/^Justifikasi/).fill('Sewa genset tambahan untuk sumur JM-04');
   await page.getByRole('button', { name: 'Ajukan BCR', exact: true }).click();
   const submitted = page.getByText(/BCR-26-\d+ diajukan ke Direktur/);
   await expect(submitted).toBeVisible();
-  // Specs run in parallel and share the numbering, so read this BCR's number.
+  // Read this BCR's number for the same reason.
   const bcrNumber = /BCR-26-\d+/.exec((await submitted.textContent()) ?? '')![0];
   await signOut(page);
 
@@ -81,7 +84,7 @@ test('blocked PR, BCR from the PR, approval reduces available', async ({ page })
 
   // 4. Head of Finance (Rp 50 jt – 500 jt) approves the PR → pre-commitment reserved.
   await signIn(page, HOF);
-  await approve(page, 'PR-26-001');
+  await approve(page, prNumber);
   await signOut(page);
 
   // 5. Engineer sees the PR approved and the line's available reduced to Rp 0.

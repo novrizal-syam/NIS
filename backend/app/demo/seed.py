@@ -26,6 +26,15 @@ from app.core.errors import ConflictError
 from app.crm.models import BidDecision, Lead, Opportunity, Quotation
 from app.crm.service import QUALIFICATION
 from app.demo import data as d
+from app.finance.models import JournalEntry, JournalLine
+from app.inventory.models import (
+    GoodsReceipt,
+    MaterialRequest,
+    StockBalance,
+    StockCount,
+    StockMove,
+    StockTransfer,
+)
 from app.letters.models import OutgoingLetter
 from app.master.models import (
     Asset,
@@ -403,6 +412,28 @@ async def remove(session: AsyncSession, *, actor_id: uuid.UUID | None) -> Summar
                 Lead,
             )
             demo_projects = select(Project.id).where(Project.is_demo.is_(True))
+            # Inventory and ledger rows of demo documents and demo warehouses (04c).
+            demo_wh = select(Warehouse.code).where(Warehouse.is_demo.is_(True))
+            inv_docs: tuple[Any, ...] = (MaterialRequest, GoodsReceipt)
+            for doc_model in inv_docs:
+                res = await session.execute(delete(doc_model).where(doc_model.is_demo.is_(True)))
+                s.add(doc_model.__tablename__, res.rowcount or 0)  # type: ignore[attr-defined]
+            await session.execute(delete(StockCount).where(StockCount.warehouse_code.in_(demo_wh)))
+            await session.execute(
+                delete(StockTransfer).where(
+                    StockTransfer.from_warehouse.in_(demo_wh)
+                    | StockTransfer.to_warehouse.in_(demo_wh)
+                )
+            )
+            stock_tables: tuple[Any, ...] = (StockMove, StockBalance)
+            for stock_model in stock_tables:
+                await session.execute(
+                    delete(stock_model).where(stock_model.warehouse_code.in_(demo_wh))
+                )
+            demo_entries = select(JournalEntry.id).where(JournalEntry.is_demo.is_(True))
+            await session.execute(delete(JournalLine).where(JournalLine.entry_id.in_(demo_entries)))
+            res = await session.execute(delete(JournalEntry).where(JournalEntry.is_demo.is_(True)))
+            s.add("journal_entries", res.rowcount or 0)  # type: ignore[attr-defined]
             await session.execute(
                 delete(BudgetLedgerEntry).where(BudgetLedgerEntry.project_id.in_(demo_projects))
             )

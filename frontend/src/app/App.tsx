@@ -18,6 +18,9 @@ import { OpportunityDetailPage } from '@/features/crm/OpportunityDetailPage';
 import { ContractPage } from '@/features/contracts/ContractPage';
 import { ContractsPage } from '@/features/contracts/ContractsPage';
 import { DashboardPage } from '@/features/home/DashboardPage';
+import { GrListPage, GrNewPage, GrPage } from '@/features/inventory/GrPages';
+import { MrListPage, MrNewPage, MrPage } from '@/features/inventory/MrPages';
+import { CountPage, StockPage } from '@/features/inventory/StockPages';
 import { PrListPage } from '@/features/procurement/PrListPage';
 import { PoListPage, PoPage } from '@/features/procurement/PoPages';
 import { PrNewPage, PrPage } from '@/features/procurement/PrPage';
@@ -114,6 +117,14 @@ export function AppRoutes() {
           <Route path="pengadaan/rfq/:id" element={<RfqPage />} />
           <Route path="pengadaan/po" element={<PoListPage />} />
           <Route path="pengadaan/po/:id" element={<PoPage />} />
+          <Route path="gudang/gr" element={<GrListPage />} />
+          <Route path="gudang/gr/baru" element={<GrNewPage />} />
+          <Route path="gudang/gr/:id" element={<GrPage />} />
+          <Route path="gudang/mr" element={<MrListPage />} />
+          <Route path="gudang/mr/baru" element={<MrNewPage />} />
+          <Route path="gudang/mr/:id" element={<MrPage />} />
+          <Route path="gudang/stok" element={<StockPage />} />
+          <Route path="gudang/opname/:id" element={<CountPage />} />
           <Route path="kontrak" element={<ContractsPage />} />
           <Route path="kontrak/:id" element={<ContractPage />} />
           <Route path="proyek" element={<ProjectsPage />} />
