@@ -10,6 +10,7 @@ from app.master.models import (
     Currency,
     Department,
     Employee,
+    EquipmentType,
     FiscalPeriod,
     FxRate,
     Item,
@@ -33,6 +34,12 @@ VENDOR_STATUS = (
     ("qualified", "Qualified"),
     ("csms_pending", "CSMS pending"),
     ("blacklisted", "Blacklisted"),
+)
+EQUIPMENT_CATEGORY = (
+    ("well_testing", "Well testing"),
+    ("instrumentation", "Instrumentasi"),
+    ("utilities", "Utilitas"),
+    ("pumping", "Pumping"),
 )
 VENDOR_CATEGORY = (
     ("equipment_rental", "Sewa peralatan"),
@@ -201,6 +208,24 @@ SPECS: tuple[EntitySpec, ...] = (
         group="operasi",
     ),
     EntitySpec(
+        "equipment-types",
+        "Jenis peralatan",
+        EquipmentType,
+        (
+            F("code", "Kode", key=True, max_length=20),
+            F("name", "Nama", required=True, max_length=120),
+            F(
+                "category",
+                "Kategori",
+                "choice",
+                required=True,
+                choices=EQUIPMENT_CATEGORY,
+            ),
+        ),
+        filters=("category",),
+        group="operasi",
+    ),
+    EntitySpec(
         "assets",
         "Aset",
         Asset,
@@ -217,9 +242,17 @@ SPECS: tuple[EntitySpec, ...] = (
             ),
             F("internal_day_rate", "Tarif internal / hari", "idr", min_value=0, default=0),
             F("serial_no", "No. seri", max_length=60, in_list=False),
+            F(
+                "equipment_type_code",
+                "Jenis peralatan",
+                "ref",
+                ref="equipment-types",
+                max_length=20,
+            ),
+            F("location", "Lokasi", max_length=120, in_list=False),
             F("certificates", "Sertifikat & kalibrasi", "docs", in_list=False, importable=False),
         ),
-        filters=("criticality", "asset_class"),
+        filters=("criticality", "asset_class", "equipment_type_code"),
         group="operasi",
     ),
     EntitySpec(

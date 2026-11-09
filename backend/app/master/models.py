@@ -142,6 +142,17 @@ class Warehouse(EntityMixin, Base):
     is_active: Mapped[bool] = _active()
 
 
+class EquipmentType(EntityMixin, Base):
+    """GEK-MNT-001 equipment types (well testing, instrumentation, utilities, pumping)."""
+
+    __tablename__ = "equipment_types"
+
+    code: Mapped[str] = mapped_column(String(20), nullable=False, unique=True)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    category: Mapped[str] = mapped_column(String(20), nullable=False)
+    is_active: Mapped[bool] = _active()
+
+
 class Asset(EntityMixin, Base):
     __tablename__ = "assets"
 
@@ -153,6 +164,10 @@ class Asset(EntityMixin, Base):
         Numeric(18, 0), nullable=False, server_default="0"
     )
     serial_no: Mapped[str | None] = mapped_column(String(60))
+    equipment_type_code: Mapped[str | None] = mapped_column(
+        String(20), ForeignKey("equipment_types.code", ondelete="RESTRICT")
+    )
+    location: Mapped[str | None] = mapped_column(String(120))
     certificates: Mapped[list[dict[str, Any]]] = _docs()
     is_active: Mapped[bool] = _active()
 

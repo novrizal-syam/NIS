@@ -34,6 +34,14 @@ from app.inventory.models import (
     StockTransferLine,
 )
 from app.letters.models import OutgoingLetter
+from app.maintenance.models import (
+    AssetAllocation,
+    Downtime,
+    PmSchedule,
+    PmTask,
+    WorkOrder,
+    WorkOrderPart,
+)
 from app.master.models import (
     Account,
     Asset,
@@ -43,6 +51,7 @@ from app.master.models import (
     Currency,
     Department,
     Employee,
+    EquipmentType,
     FiscalPeriod,
     FxRate,
     Item,
@@ -80,6 +89,7 @@ from app.project.models import (
     ProjectMember,
     ProjectWbs,
 )
+from app.qhse.models import Capa, Incident, Inspection, Observation, Permit, RiskAssessment
 from app.services.audit import AuditLog
 from app.services.email_log import EmailLog
 from app.services.numbering import DocCounter
@@ -100,6 +110,7 @@ __all__ = [
     "ApprovalRequest",
     "ApprovalStep",
     "Asset",
+    "AssetAllocation",
     "AssetUsage",
     "Attachment",
     "AuditLog",
@@ -109,6 +120,7 @@ __all__ = [
     "BudgetLedgerEntry",
     "BudgetVersion",
     "BudgetVersionLine",
+    "Capa",
     "Client",
     "Contract",
     "ContractRate",
@@ -125,13 +137,17 @@ __all__ = [
     "DorConsumable",
     "DorCrew",
     "DorEquipment",
+    "Downtime",
     "EmailLog",
     "Employee",
+    "EquipmentType",
     "FiscalPeriod",
     "FxRate",
     "GoodsReceipt",
     "GoodsReceiptLine",
     "HseDaily",
+    "Incident",
+    "Inspection",
     "Item",
     "JournalEntry",
     "JournalLine",
@@ -139,11 +155,15 @@ __all__ = [
     "MaterialRequest",
     "MaterialRequestLine",
     "Notification",
+    "Observation",
     "Opportunity",
     "OutgoingLetter",
     "PasswordReset",
     "PasswordResetRequest",
     "PayrollDay",
+    "Permit",
+    "PmSchedule",
+    "PmTask",
     "PriceHistory",
     "PriceItem",
     "Project",
@@ -161,6 +181,7 @@ __all__ = [
     "Rfq",
     "RfqQuote",
     "RfqQuoteLine",
+    "RiskAssessment",
     "Role",
     "RolePermission",
     "SodException",
@@ -183,4 +204,6 @@ __all__ = [
     "VendorInvoice",
     "VendorInvoiceLine",
     "Warehouse",
+    "WorkOrder",
+    "WorkOrderPart",
 ]

@@ -36,6 +36,13 @@ from app.inventory.models import (
     StockTransfer,
 )
 from app.letters.models import OutgoingLetter
+from app.maintenance.models import (
+    AssetAllocation,
+    Downtime,
+    PmSchedule,
+    WorkOrder,
+    WorkOrderPart,
+)
 from app.master.models import (
     Asset,
     Client,
@@ -58,6 +65,7 @@ from app.project.models import (
     BudgetVersion,
     Project,
 )
+from app.qhse.models import Capa, Incident, Inspection, Observation, Permit, RiskAssessment
 from app.services import audit, numbering
 from app.services.numbering import today_jakarta
 from app.tender.models import Tender
@@ -415,6 +423,35 @@ async def remove(session: AsyncSession, *, actor_id: uuid.UUID | None) -> Summar
             demo_projects = select(Project.id).where(Project.is_demo.is_(True))
             # Inventory and ledger rows of demo documents and demo warehouses (04c).
             demo_wh = select(Warehouse.code).where(Warehouse.is_demo.is_(True))
+            # Maintenance and QHSE rows of demo assets / projects (05b).
+            demo_assets = select(Asset.code).where(Asset.is_demo.is_(True))
+            demo_wos = select(WorkOrder.id).where(
+                WorkOrder.asset_code.in_(demo_assets) | WorkOrder.project_id.in_(demo_projects)
+            )
+            await session.execute(delete(WorkOrderPart).where(WorkOrderPart.wo_id.in_(demo_wos)))
+            await session.execute(
+                delete(Downtime).where(
+                    Downtime.asset_code.in_(demo_assets) | Downtime.wo_id.in_(demo_wos)
+                )
+            )
+            await session.execute(delete(WorkOrder).where(WorkOrder.id.in_(demo_wos)))
+            for mnt_model in (PmSchedule, AssetAllocation):
+                await session.execute(
+                    delete(mnt_model).where(mnt_model.asset_code.in_(demo_assets))
+                )
+            await session.execute(
+                delete(AssetAllocation).where(AssetAllocation.project_id.in_(demo_projects))
+            )
+            qhse_tables: tuple[Any, ...] = (
+                Capa,
+                Incident,
+                Inspection,
+                Observation,
+                Permit,
+                RiskAssessment,
+            )
+            for q_model in qhse_tables:
+                await session.execute(delete(q_model).where(q_model.project_id.in_(demo_projects)))
             demo_dors = select(Dor.id).where(Dor.is_demo.is_(True))
             ops_rows: tuple[Any, ...] = (AssetUsage, HseDaily, PayrollDay)
             for ops_model in ops_rows:

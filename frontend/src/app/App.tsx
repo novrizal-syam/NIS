@@ -19,6 +19,8 @@ import { ContractPage } from '@/features/contracts/ContractPage';
 import { ContractsPage } from '@/features/contracts/ContractsPage';
 import { DashboardPage } from '@/features/home/DashboardPage';
 import { DorFormPage, DorNewPage } from '@/features/dor/DorForm';
+import { AssetPage, MaintenancePage, WorkOrderPage } from '@/features/maintenance/MaintenancePages';
+import { QhsePage } from '@/features/qhse/QhsePage';
 import { DorListPage, DorPage } from '@/features/dor/DorPages';
 import {
   VendorInvoiceNewPage,
@@ -132,6 +134,10 @@ export function AppRoutes() {
           <Route path="gudang/mr/:id" element={<MrPage />} />
           <Route path="gudang/stok" element={<StockPage />} />
           <Route path="gudang/opname/:id" element={<CountPage />} />
+          <Route path="pemeliharaan" element={<MaintenancePage />} />
+          <Route path="pemeliharaan/aset/:code" element={<AssetPage />} />
+          <Route path="pemeliharaan/wo/:id" element={<WorkOrderPage />} />
+          <Route path="qhse" element={<QhsePage />} />
           <Route path="operasi/dor" element={<DorListPage />} />
           <Route path="operasi/dor/baru" element={<DorNewPage />} />
           <Route path="operasi/dor/isi/:clientId" element={<DorFormPage />} />

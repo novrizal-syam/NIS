@@ -16,6 +16,7 @@ manpower/equipment costs reach the ledger through payroll and depreciation, not 
 """
 
 import uuid
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime, time, timedelta
 from decimal import ROUND_HALF_UP, Decimal
@@ -102,6 +103,27 @@ DEFAULT_TEMPLATES: dict[str, dict[str, Any]] = {
         ],
     },
 }
+
+
+# Other modules react to an approved DOR (maintenance: corrective WOs, hour-based PM) inside the
+# same approval transaction.
+ApprovalListener = Callable[[AsyncSession, Dor, uuid.UUID | None], Awaitable[None]]
+_listeners: list[ApprovalListener] = []
+
+
+def after_approval(fn: ApprovalListener) -> None:
+    if fn not in _listeners:
+        _listeners.append(fn)
+
+
+# QHSE (05b) answers "may this project start reporting?" (HIRADC/JSA approved).
+StartCheck = Callable[[AsyncSession, Project], Awaitable[str | None]]
+_start_checks: list[StartCheck] = []
+
+
+def before_submit(fn: StartCheck) -> None:
+    if fn not in _start_checks:
+        _start_checks.append(fn)
 
 
 def rp(v: Decimal) -> Decimal:
@@ -582,6 +604,9 @@ async def submit(session: AsyncSession, actor: Principal, dor: Dor) -> ApprovalR
     project = await session.get(Project, dor.project_id)
     assert project is not None
     errors, _ = await validate(session, project, await load(session, dor), exclude_dor=dor.id)
+    for check in _start_checks:
+        if (msg := await check(session, project)) is not None:
+            errors.append(msg)
     if errors:
         raise AppError("DOR_INVALID", " ".join(errors), status_code=422)
     request = await engine.submit(
@@ -768,6 +793,9 @@ async def apply_approval(session: AsyncSession, dor: Dor, by: uuid.UUID | None) 
                 link=f"/kontrak/{contract.id}",
                 dedupe_key=f"contract-usage-80-{contract.id}",
             )
+
+    for listener in _listeners:
+        await listener(session, dor, by)
 
     dor.status, dor.approved_at = "approved", _now()
     dor.late = dor.late or dor.approved_at > deadline(dor.report_date)

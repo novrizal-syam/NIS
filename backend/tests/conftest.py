@@ -19,12 +19,24 @@ from app.auth.principal import PRIVACY_VERSION, Principal, load_principal
 from app.core.config import get_settings
 from app.core.db import get_session, make_engine, make_sessionmaker
 from app.main import app
-from app.master.config_seed import ACCOUNTS, COST_ELEMENTS, CURRENCIES
+from app.master.config_seed import ACCOUNTS, COST_ELEMENTS, CURRENCIES, EQUIPMENT_TYPES
 from app.services.storage import Storage, get_storage
 
 TEST_DB_URL = os.environ.get("TEST_DATABASE_URL", get_settings().test_database_url)
 # Seeded configuration (system roles and their permissions) survives between tests.
 TABLES = (
+    "qhse_capas",
+    "qhse_incidents",
+    "qhse_observations",
+    "qhse_inspections",
+    "qhse_permits",
+    "qhse_risk_assessments",
+    "work_order_parts",
+    "downtime_log",
+    "work_orders",
+    "asset_allocations",
+    "pm_schedules",
+    "pm_tasks",
     "payroll_days",
     "hse_daily",
     "asset_usage",
@@ -181,6 +193,10 @@ async def sessionmaker(engine: AsyncEngine) -> AsyncIterator[async_sessionmaker[
         )
         await conn.execute(
             text("DELETE FROM accounts WHERE NOT code = ANY(:c)"), {"c": [c for c, *_ in ACCOUNTS]}
+        )
+        await conn.execute(
+            text("DELETE FROM equipment_types WHERE NOT code = ANY(:c)"),
+            {"c": [c for c, *_ in EQUIPMENT_TYPES]},
         )
         await conn.execute(
             text("DELETE FROM currencies WHERE NOT code = ANY(:c)"),

@@ -32,6 +32,7 @@ from app.project.models import (
     ProjectMember,
     ProjectWbs,
 )
+from app.qhse.models import RiskAssessment
 from app.services import ledger
 from app.services.numbering import today_jakarta
 from app.setup import service as settings_store
@@ -256,6 +257,16 @@ async def _inventory(s: AsyncSession, manager_id: uuid.UUID) -> None:
         ]
     )
     p.contract_id, p.service_type = contract.id, "well_test"
+    s.add(
+        RiskAssessment(
+            number="HRA-26-901",
+            project_id=p.id,
+            kind="hiradc",
+            title="HIRADC well testing Rokan",
+            status="approved",
+            hazards=[],
+        )
+    )
     s.add_all(
         [
             Item(

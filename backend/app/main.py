@@ -30,6 +30,7 @@ from app.demo.router import router as demo_router
 from app.dms.router import router as dms_router
 from app.finance.router import router as finance_router
 from app.inventory.router import router as inventory_router
+from app.maintenance.router import router as maintenance_router
 from app.master.router import router as master_router
 from app.notifications.router import router as notifications_router
 from app.operations.router import router as operations_router
@@ -37,6 +38,7 @@ from app.procurement.po_router import router as po_router
 from app.procurement.router import router as procurement_router
 from app.project.budget_router import router as budget_router
 from app.project.router import router as project_router
+from app.qhse.router import router as qhse_router
 from app.reporting.access_review import router as reports_router
 from app.services.storage import get_storage, use_storage_provider
 from app.setup import service as setup_service
@@ -141,6 +143,8 @@ def create_app() -> FastAPI:
     api.include_router(inventory_router)
     api.include_router(finance_router)
     api.include_router(operations_router)
+    api.include_router(maintenance_router)
+    api.include_router(qhse_router)
     app.include_router(api)
     return app
 

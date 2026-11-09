@@ -120,8 +120,14 @@ export const NAV: NavGroup[] = [
     key: 'execution',
     items: [
       { key: 'dor', path: '/operasi/dor', icon: 'engineering', ready: true, module: 'operations' },
-      soon('maintenance', 'build', 'maintenance'),
-      soon('qhse', 'health_and_safety', 'qhse'),
+      {
+        key: 'maintenance',
+        path: '/pemeliharaan',
+        icon: 'build',
+        ready: true,
+        module: 'maintenance',
+      },
+      { key: 'qhse', path: '/qhse', icon: 'health_and_safety', ready: true, module: 'qhse' },
     ],
   },
   {

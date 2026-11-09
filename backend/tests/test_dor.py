@@ -19,6 +19,7 @@ from app.master.models import Asset, Client, Employee, PriceItem
 from app.notifications.models import Notification
 from app.operations.models import AssetUsage, HseDaily, PayrollDay
 from app.project.models import Project, ProjectBudgetLine, ProjectMember, ProjectWbs
+from app.qhse.models import RiskAssessment
 from app.services import budget_control as bc
 from app.services.numbering import today_jakarta
 from tests.test_inventory import _opening, masters  # noqa: F401
@@ -133,6 +134,17 @@ async def _setup(
             )
         for u in members:
             s.add(ProjectMember(project_id=p.id, user_id=u.id))
+        # 05b: an approved HIRADC is required before the first DOR.
+        s.add(
+            RiskAssessment(
+                number="HRA-T-001",
+                project_id=p.id,
+                kind="hiradc",
+                title="HIRADC well testing",
+                status="approved",
+                hazards=[],
+            )
+        )
         s.add_all(
             [
                 Asset(
