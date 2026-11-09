@@ -18,6 +18,12 @@ import { OpportunityDetailPage } from '@/features/crm/OpportunityDetailPage';
 import { ContractPage } from '@/features/contracts/ContractPage';
 import { ContractsPage } from '@/features/contracts/ContractsPage';
 import { DashboardPage } from '@/features/home/DashboardPage';
+import {
+  BillingPage,
+  ClientSignPage,
+  InvoicePage,
+  TicketPage,
+} from '@/features/billing/BillingPages';
 import { DorFormPage, DorNewPage } from '@/features/dor/DorForm';
 import { AssetPage, MaintenancePage, WorkOrderPage } from '@/features/maintenance/MaintenancePages';
 import { QhsePage } from '@/features/qhse/QhsePage';
@@ -134,6 +140,10 @@ export function AppRoutes() {
           <Route path="gudang/mr/:id" element={<MrPage />} />
           <Route path="gudang/stok" element={<StockPage />} />
           <Route path="gudang/opname/:id" element={<CountPage />} />
+          <Route path="tagihan" element={<BillingPage />} />
+          <Route path="tagihan/tiket/:id" element={<TicketPage />} />
+          <Route path="tagihan/invoice/:id" element={<InvoicePage />} />
+          <Route path="tanda-tangan/:token" element={<ClientSignPage />} />
           <Route path="pemeliharaan" element={<MaintenancePage />} />
           <Route path="pemeliharaan/aset/:code" element={<AssetPage />} />
           <Route path="pemeliharaan/wo/:id" element={<WorkOrderPage />} />

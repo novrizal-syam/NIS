@@ -10,6 +10,16 @@ from app.auth.models import (
     UserRole,
 )
 from app.auth.password_reset import PasswordReset, PasswordResetRequest
+from app.billing.models import (
+    BankLine,
+    CustomerInvoice,
+    InvoiceTicket,
+    Receipt,
+    ReceiptAllocation,
+    ServiceTicket,
+    TicketDor,
+    TicketLine,
+)
 from app.contract.models import Contract, ContractRate
 from app.core.models import Base
 from app.crm.models import BidDecision, Lead, Opportunity, Quotation, QuotationLine
@@ -114,6 +124,7 @@ __all__ = [
     "AssetUsage",
     "Attachment",
     "AuditLog",
+    "BankLine",
     "Base",
     "BidDecision",
     "BudgetChangeRequest",
@@ -127,6 +138,7 @@ __all__ = [
     "CostCenter",
     "CostElement",
     "Currency",
+    "CustomerInvoice",
     "Delegation",
     "Department",
     "DoaRule",
@@ -148,6 +160,7 @@ __all__ = [
     "HseDaily",
     "Incident",
     "Inspection",
+    "InvoiceTicket",
     "Item",
     "JournalEntry",
     "JournalLine",
@@ -176,6 +189,8 @@ __all__ = [
     "PurchaseRequisitionLine",
     "Quotation",
     "QuotationLine",
+    "Receipt",
+    "ReceiptAllocation",
     "RecoveryCode",
     "RefreshToken",
     "Rfq",
@@ -184,6 +199,7 @@ __all__ = [
     "RiskAssessment",
     "Role",
     "RolePermission",
+    "ServiceTicket",
     "SodException",
     "SodRule",
     "StockBalance",
@@ -196,6 +212,8 @@ __all__ = [
     "Tender",
     "TenderClarification",
     "TenderDocument",
+    "TicketDor",
+    "TicketLine",
     "User",
     "UserInvite",
     "UserRole",

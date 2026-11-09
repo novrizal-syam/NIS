@@ -20,6 +20,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app import models as _models  # noqa: F401  (register every model)
 from app.auth import service as auth_service
 from app.auth.models import RefreshToken, User, UserRole
+from app.billing.models import (
+    BankLine,
+    CustomerInvoice,
+    InvoiceTicket,
+    Receipt,
+    ReceiptAllocation,
+    ServiceTicket,
+)
 from app.contract.models import Contract
 from app.core.db import SessionLocal
 from app.core.errors import ConflictError
@@ -423,6 +431,28 @@ async def remove(session: AsyncSession, *, actor_id: uuid.UUID | None) -> Summar
             demo_projects = select(Project.id).where(Project.is_demo.is_(True))
             # Inventory and ledger rows of demo documents and demo warehouses (04c).
             demo_wh = select(Warehouse.code).where(Warehouse.is_demo.is_(True))
+            # Order to cash of demo contracts (06).
+            demo_contracts = select(Contract.id).where(Contract.is_demo.is_(True))
+            demo_invoices = select(CustomerInvoice.id).where(
+                CustomerInvoice.contract_id.in_(demo_contracts)
+            )
+            demo_receipts = select(ReceiptAllocation.receipt_id).where(
+                ReceiptAllocation.invoice_id.in_(demo_invoices)
+            )
+            await session.execute(delete(BankLine).where(BankLine.receipt_id.in_(demo_receipts)))
+            await session.execute(
+                delete(ReceiptAllocation).where(ReceiptAllocation.invoice_id.in_(demo_invoices))
+            )
+            await session.execute(delete(Receipt).where(Receipt.is_demo.is_(True)))
+            await session.execute(
+                delete(InvoiceTicket).where(InvoiceTicket.invoice_id.in_(demo_invoices))
+            )
+            await session.execute(
+                delete(CustomerInvoice).where(CustomerInvoice.contract_id.in_(demo_contracts))
+            )
+            await session.execute(
+                delete(ServiceTicket).where(ServiceTicket.contract_id.in_(demo_contracts))
+            )
             # Maintenance and QHSE rows of demo assets / projects (05b).
             demo_assets = select(Asset.code).where(Asset.is_demo.is_(True))
             demo_wos = select(WorkOrder.id).where(

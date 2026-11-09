@@ -133,9 +133,27 @@ export const NAV: NavGroup[] = [
   {
     key: 'orderToCash',
     items: [
-      soon('serviceTickets', 'fact_check', 'billing'),
-      soon('invoices', 'description', 'billing'),
-      soon('receipts', 'payments', 'treasury'),
+      {
+        key: 'serviceTickets',
+        path: '/tagihan',
+        icon: 'fact_check',
+        ready: true,
+        module: 'billing',
+      },
+      {
+        key: 'invoices',
+        path: '/tagihan?tab=invoices',
+        icon: 'description',
+        ready: true,
+        module: 'billing',
+      },
+      {
+        key: 'receipts',
+        path: '/tagihan?tab=receipts',
+        icon: 'payments',
+        ready: true,
+        module: 'billing',
+      },
     ],
   },
   {

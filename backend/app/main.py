@@ -19,6 +19,7 @@ from app.auth.onboarding import router as onboarding_router
 from app.auth.roles_router import router as roles_router
 from app.auth.router import router as auth_router
 from app.auth.users_router import router as users_router
+from app.billing.router import router as billing_router
 from app.contract.router import router as contract_router
 from app.core.config import get_settings
 from app.core.db import get_session, session_scope, use_session_provider
@@ -145,6 +146,7 @@ def create_app() -> FastAPI:
     api.include_router(operations_router)
     api.include_router(maintenance_router)
     api.include_router(qhse_router)
+    api.include_router(billing_router)
     app.include_router(api)
     return app
 
