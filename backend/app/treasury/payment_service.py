@@ -20,7 +20,9 @@ from app.auth.principal import Principal
 from app.core.errors import AppError, ConflictError, ForbiddenError, NotFoundError
 from app.finance import ap_service as ap
 from app.finance.models import VendorInvoice
-from app.master.models import Vendor
+from app.master.models import Employee, Vendor
+from app.payroll import service as payroll
+from app.payroll.models import PayrollRun
 from app.services import audit, ledger, numbering
 from app.services.audit import AuditAction, AuditLog
 from app.setup import service as settings_store
@@ -42,6 +44,7 @@ LIABILITIES: dict[str, tuple[str, str]] = {
 }
 KIND_LABELS = {
     "vendor_invoice": "Invoice vendor",
+    "payroll": "Penggajian",
     "salaries": "Gaji bersih",
     "bpjs": "BPJS",
     "pph21": "PPh 21",
@@ -63,6 +66,7 @@ class ItemIn:
     amount: Decimal
     vendor_invoice_id: uuid.UUID | None = None
     reference: str | None = None
+    payroll_run_id: uuid.UUID | None = None
 
 
 def _rp(v: Decimal) -> str:
@@ -70,7 +74,12 @@ def _rp(v: Decimal) -> str:
 
 
 async def _in_other_runs(
-    session: AsyncSession, run_id: uuid.UUID | None, *, vi_id: uuid.UUID | None, kind: str
+    session: AsyncSession,
+    run_id: uuid.UUID | None,
+    *,
+    vi_id: uuid.UUID | None,
+    kind: str,
+    payroll_id: uuid.UUID | None = None,
 ) -> Decimal:
     stmt = (
         select(func.coalesce(func.sum(PaymentRunItem.amount), 0))
@@ -81,6 +90,11 @@ async def _in_other_runs(
         stmt = stmt.where(PaymentRun.id != run_id)
     if vi_id is not None:
         stmt = stmt.where(PaymentRunItem.vendor_invoice_id == vi_id)
+    elif payroll_id is not None:
+        stmt = stmt.where(PaymentRunItem.payroll_run_id == payroll_id)
+    elif kind == "salaries":
+        # Net salaries leave 2310 both as a lump sum and through payroll items.
+        stmt = stmt.where(PaymentRunItem.kind.in_(("salaries", "payroll")))
     else:
         stmt = stmt.where(PaymentRunItem.kind == kind)
     return Decimal((await session.execute(stmt)).scalar_one())
@@ -121,7 +135,26 @@ async def due_items(session: AsyncSession, due_by: date) -> dict[str, Any]:
             liabilities.append(
                 {"kind": kind, "label": KIND_LABELS[kind], "outstanding": format(left, "f")}
             )
-    return {"invoices": invoices, "liabilities": liabilities}
+    payrolls = []
+    for pr in (
+        await session.execute(
+            select(PayrollRun)
+            .where(PayrollRun.status == "approved")
+            .order_by(PayrollRun.year, PayrollRun.month)
+        )
+    ).scalars():
+        if await _in_other_runs(session, None, vi_id=None, kind="", payroll_id=pr.id) > 0:
+            continue
+        payrolls.append(
+            {
+                "payroll_run_id": str(pr.id),
+                "label": payroll.label(pr),
+                "employees": pr.employees,
+                "pay_date": pr.pay_date.isoformat(),
+                "outstanding": format(pr.net, "f"),
+            }
+        )
+    return {"invoices": invoices, "payrolls": payrolls, "liabilities": liabilities}
 
 
 async def _validate_items(
@@ -138,7 +171,7 @@ async def _validate_items(
             raise AppError(
                 "AMOUNT_INVALID", f"Item {i}: nilai harus rupiah bulat > 0.", status_code=422
             )
-        key = it.vendor_invoice_id or it.kind
+        key = it.vendor_invoice_id or it.payroll_run_id or it.kind
         if key in seen:
             raise AppError("ITEM_DUPLICATE", f"Item {i} dipilih dua kali.", status_code=422)
         seen.add(key)
@@ -166,6 +199,30 @@ async def _validate_items(
                     vendor_code=vi.vendor_code,
                     payee=vendor.name if vendor else vi.vendor_code,
                     reference=f"{vi.number} / {vi.invoice_no}"[:120],
+                    amount=amount,
+                )
+            )
+        elif it.kind == "payroll":
+            if it.payroll_run_id is None:
+                raise NotFoundError("PAYROLL_NOT_FOUND", f"Item {i}: penggajian tidak ada.")
+            pr = await payroll.payable(session, it.payroll_run_id)
+            held = await _in_other_runs(session, run_id, vi_id=None, kind="", payroll_id=pr.id)
+            if held > 0:
+                raise ConflictError(
+                    "PAYROLL_IN_OTHER_RUN", f"{payroll.label(pr)} sudah ada di payment run lain."
+                )
+            if amount != pr.net:
+                raise ConflictError(
+                    "PAYROLL_AMOUNT",
+                    f"{payroll.label(pr)} dibayar penuh: {_rp(pr.net)} (gaji bersih).",
+                )
+            out.append(
+                PaymentRunItem(
+                    seq=i,
+                    kind="payroll",
+                    payroll_run_id=pr.id,
+                    payee=f"{pr.employees} karyawan",
+                    reference=payroll.label(pr),
                     amount=amount,
                 )
             )
@@ -310,7 +367,7 @@ async def submit(session: AsyncSession, actor: Principal, run: PaymentRun) -> Ap
 
 
 def _as_in(x: PaymentRunItem) -> ItemIn:
-    return ItemIn(x.kind, x.amount, x.vendor_invoice_id, x.reference)
+    return ItemIn(x.kind, x.amount, x.vendor_invoice_id, x.reference, x.payroll_run_id)
 
 
 async def cancel(session: AsyncSession, actor: Principal, run: PaymentRun, reason: str) -> None:
@@ -455,6 +512,7 @@ async def release(session: AsyncSession, actor: Principal, run: PaymentRun) -> P
         )
     await _validate_items(session, run.id, [_as_in(x) for x in items])
     parts: list[ledger.Part] = []
+    paid_payrolls: list[uuid.UUID] = []
     for x in items:
         if x.kind == "vendor_invoice":
             vi = await session.get(VendorInvoice, x.vendor_invoice_id, with_for_update=True)
@@ -470,6 +528,19 @@ async def release(session: AsyncSession, actor: Principal, run: PaymentRun) -> P
             vi.paid_amount = Decimal(vi.paid_amount) + x.amount
             if ap.outstanding(vi) <= 0:
                 vi.status = "paid"
+        elif x.kind == "payroll":
+            assert x.payroll_run_id is not None
+            for ps in await payroll.payslips_of(session, x.payroll_run_id):
+                if ps.net > 0:
+                    parts.append(
+                        ledger.Part(
+                            "salaries",
+                            ps.net,
+                            ledger.Dims(partner_type="employee", partner_code=ps.employee_code),
+                            x.reference,
+                        )
+                    )
+            paid_payrolls.append(x.payroll_run_id)
         else:
             parts.append(ledger.Part(LIABILITIES[x.kind][0], x.amount, None, x.reference))
     parts.append(ledger.Part("bank", run.total, None, run.number))
@@ -486,6 +557,8 @@ async def release(session: AsyncSession, actor: Principal, run: PaymentRun) -> P
         by=actor.id,
         accounts={"bank": acc.gl_account},
     )
+    for pid in paid_payrolls:
+        await payroll.mark_paid(session, pid, run.id)
     adapter = adapters.get(acc.adapter)
     file = await bank_file(session, run, acc)
     sent_ref = await adapter.send(file)
@@ -509,11 +582,33 @@ async def bank_file(
 ) -> adapters.BankFile:
     acc = acc or await bank_service.account_or_default(session, run.bank_account_id)
     transfers = []
+    seq = 0
     for x in await items_of(session, run.id):
+        if x.kind == "payroll" and x.payroll_run_id:
+            # One transfer per employee (employee bank details; the bank file is restricted to
+            # users allowed to release payments).
+            for ps in await payroll.payslips_of(session, x.payroll_run_id):
+                if ps.net <= 0:
+                    continue
+                e = await by_code(session, Employee, ps.employee_code)
+                seq += 1
+                transfers.append(
+                    adapters.Transfer(
+                        seq=seq,
+                        payee=ps.employee_name,
+                        bank_name=e.bank_name if e else None,
+                        account_no=e.bank_account_no if e else None,
+                        account_name=ps.employee_name,
+                        amount=ps.net,
+                        reference=x.reference or "",
+                    )
+                )
+            continue
+        seq += 1
         v = await by_code(session, Vendor, x.vendor_code) if x.vendor_code else None
         transfers.append(
             adapters.Transfer(
-                seq=x.seq,
+                seq=seq,
                 payee=x.payee,
                 bank_name=v.bank_name if v else None,
                 account_no=v.bank_account_no if v else None,
@@ -577,6 +672,7 @@ def to_dict(
                 "kind": x.kind,
                 "kind_label": KIND_LABELS.get(x.kind, x.kind),
                 "vendor_invoice_id": str(x.vendor_invoice_id) if x.vendor_invoice_id else None,
+                "payroll_run_id": str(x.payroll_run_id) if x.payroll_run_id else None,
                 "vendor_code": x.vendor_code,
                 "payee": x.payee,
                 "reference": x.reference,

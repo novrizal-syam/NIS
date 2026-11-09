@@ -192,9 +192,10 @@ async def unmatch_line(
 
 
 class ItemModel(BaseModel):
-    kind: str = Field(pattern="^(vendor_invoice|salaries|bpjs|pph21|pph23)$")
+    kind: str = Field(pattern="^(vendor_invoice|payroll|salaries|bpjs|pph21|pph23)$")
     amount: Decimal = Field(gt=0, max_digits=18, decimal_places=0)
     vendor_invoice_id: uuid.UUID | None = None
+    payroll_run_id: uuid.UUID | None = None
     reference: str | None = Field(default=None, max_length=120)
 
 
@@ -210,7 +211,10 @@ class ReasonIn(BaseModel):
 
 
 def _items(body: RunIn) -> list[pay.ItemIn]:
-    return [pay.ItemIn(i.kind, i.amount, i.vendor_invoice_id, i.reference) for i in body.items]
+    return [
+        pay.ItemIn(i.kind, i.amount, i.vendor_invoice_id, i.reference, i.payroll_run_id)
+        for i in body.items
+    ]
 
 
 async def _run(session: AsyncSession, rid: uuid.UUID, lock: bool = False) -> PaymentRun:

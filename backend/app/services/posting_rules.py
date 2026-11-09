@@ -166,6 +166,8 @@ RULES: dict[str, Rule] = {
                 Leg("net_salary", "credit", "2310", ("partner",)),
                 Leg("pph21", "credit", "2220"),
                 Leg("bpjs", "credit", "2240"),
+                # Payslip deductions recover employee advances/loans (1120).
+                Leg("deductions", "credit", "1120", ("partner",)),
             ),
             "payroll (07c)",
             {
@@ -181,7 +183,7 @@ RULES: dict[str, Rule] = {
             "Payment run dirilis",
             (
                 Leg("payable", "debit", "2110", ("partner",)),
-                Leg("salaries", "debit", "2310"),
+                Leg("salaries", "debit", "2310", ("partner",)),
                 Leg("bpjs", "debit", "2240"),
                 Leg("pph21", "debit", "2220"),
                 Leg("pph23", "debit", "2230"),

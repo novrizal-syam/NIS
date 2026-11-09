@@ -259,6 +259,8 @@ SYSTEM_ROLES: tuple[RoleDef, ...] = (
         "Cashier",
         g("treasury", (A.VIEW, A.EXPORT, A.POST), ALL),
         g("finance", A.VIEW, ALL),
+        # Payroll bank file (07c): employee account numbers, nothing else sensitive.
+        [(SENSITIVE_MODULE, "bank_account", str(Scope.ALL))],
         requires_2fa=True,
     ),
     _role(

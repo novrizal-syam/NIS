@@ -36,6 +36,7 @@ from app.maintenance.router import router as maintenance_router
 from app.master.router import router as master_router
 from app.notifications.router import router as notifications_router
 from app.operations.router import router as operations_router
+from app.payroll.router import router as payroll_router
 from app.procurement.po_router import router as po_router
 from app.procurement.router import router as procurement_router
 from app.project.budget_router import router as budget_router
@@ -151,6 +152,7 @@ def create_app() -> FastAPI:
     api.include_router(billing_router)
     api.include_router(ledger_router)
     api.include_router(treasury_router)
+    api.include_router(payroll_router)
     app.include_router(api)
     return app
 

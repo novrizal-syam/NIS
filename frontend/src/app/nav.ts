@@ -173,7 +173,13 @@ export const NAV: NavGroup[] = [
         ready: true,
         module: 'treasury',
       },
-      soon('payroll', 'badge', 'payroll'),
+      {
+        key: 'payroll',
+        path: '/keuangan/penggajian',
+        icon: 'badge',
+        ready: true,
+        module: 'payroll',
+      },
       soon('tax', 'percent', 'tax'),
       soon('capex', 'precision_manufacturing', 'capex'),
     ],
@@ -181,6 +187,7 @@ export const NAV: NavGroup[] = [
   {
     key: 'peopleDocs',
     items: [
+      { key: 'myPayslips', path: '/slip-gaji', icon: 'receipt_long', ready: true },
       soon('letters', 'mail', 'letters'),
       soon('dms', 'folder_open', 'dms'),
       soon('lms', 'school', 'lms'),

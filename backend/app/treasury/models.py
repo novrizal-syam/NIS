@@ -71,8 +71,9 @@ class PaymentRun(EntityMixin, Base):
 
 
 class PaymentRunItem(Base):
-    """One payment: an approved vendor invoice, or a liability paid from its GL balance
-    (net salaries 2310, BPJS 2240, PPh 21 2220, PPh 23 2230)."""
+    """One payment: an approved vendor invoice, an approved payroll run (net salaries per
+    employee), or a liability paid from its GL balance (2310, BPJS 2240, PPh 21 2220,
+    PPh 23 2230)."""
 
     __tablename__ = "payment_run_items"
 
@@ -89,6 +90,8 @@ class PaymentRunItem(Base):
     kind: Mapped[str] = mapped_column(String(20), nullable=False)
     vendor_invoice_id: Mapped[uuid.UUID | None] = _fk("vendor_invoices.id", index=True)
     vendor_code: Mapped[str | None] = mapped_column(String(20))
+    # Net salaries of an approved payroll run (07c); one transfer per employee in the bank file.
+    payroll_run_id: Mapped[uuid.UUID | None] = _fk("payroll_runs.id", index=True)
     payee: Mapped[str] = mapped_column(String(200), nullable=False)
     reference: Mapped[str | None] = mapped_column(String(120))
     amount: Mapped[Decimal] = _money()

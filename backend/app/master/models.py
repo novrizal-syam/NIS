@@ -104,6 +104,8 @@ class Employee(EntityMixin, Base):
     join_date: Mapped[date | None] = mapped_column(Date)
     # Sensitive (UU 27/2022 PDP): stripped without permission.
     basic_salary: Mapped[Decimal | None] = mapped_column(Numeric(18, 0))
+    # Fixed monthly allowances (tunjangan tetap; part of the BPJS wage) - 07c.
+    fixed_allowance: Mapped[Decimal | None] = mapped_column(Numeric(18, 0))
     nik: Mapped[str | None] = mapped_column(String(16))
     npwp: Mapped[str | None] = mapped_column(String(25))
     bank_name: Mapped[str | None] = mapped_column(String(60))

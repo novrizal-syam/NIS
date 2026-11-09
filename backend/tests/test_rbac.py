@@ -102,9 +102,11 @@ def test_seed_matches_doa_roles() -> None:
     assert not [g for g in by_code["admin"].grants if g[1] in {"approve", "post"}]
     # Cashier releases but never approves.
     assert not [g for g in by_code["cashier"].grants if g[1] == "approve"]
-    # Sensitive fields default to HCBP, Head of Finance, Director (and Super Admin).
+    # Sensitive fields default to HCBP, Head of Finance, Director (and Super Admin); the
+    # Cashier sees bank accounts only, for the payroll bank file (07c).
     sensitive = {r.code for r in SYSTEM_ROLES if any(g[0] == "sensitive" for g in r.grants)}
-    assert sensitive == {"super_admin", "director", "head_of_finance", "hcbp_officer"}
+    assert sensitive == {"super_admin", "director", "head_of_finance", "hcbp_officer", "cashier"}
+    assert [g[1] for g in by_code["cashier"].grants if g[0] == "sensitive"] == ["bank_account"]
     assert all(m in MODULES or m == "sensitive" for r in SYSTEM_ROLES for m, _, _ in r.grants)
 
 

@@ -66,7 +66,8 @@
       "auditTrail": "Audit Trail",
       "roles": "Roles & Permissions",
       "sod": "Segregation of Duties",
-      "accessReview": "Access Review"
+      "accessReview": "Access Review",
+      "myPayslips": "My payslips"
     }
   },
   "topbar": {
@@ -2330,5 +2331,75 @@
         "capex": "CAPEX milestones"
       }
     }
+  },
+  "payroll": {
+    "title": "Payroll",
+    "hint": "Monthly period with a 25th cut-off. Site days and overtime from approved DORs; BPJS and PPh 21 TER from data tables. Calculated by HCBP → approved by Head of Finance → journal → paid through a payment run.",
+    "year": "Year",
+    "month": "Month",
+    "calculate": "Calculate payroll",
+    "period": "Period",
+    "employees": "Employees",
+    "net": "Net pay",
+    "cost": "Employer cost",
+    "status": "Status",
+    "empty": "No payroll yet.",
+    "periodRange": "Period {{from}} - {{to}} · paid {{pay}}",
+    "rejected": "Returned",
+    "totals": {
+      "gross": "Gross",
+      "employerBpjs": "Employer BPJS",
+      "employeeBpjs": "Employee BPJS",
+      "pph21": "PPh 21",
+      "deductions": "Other deductions",
+      "net": "Net pay",
+      "cost": "Employer cost"
+    },
+    "allocation": "Field cost per project (by DOR days)",
+    "officeCost": "Office / no project",
+    "employee": "Employee",
+    "siteDays": "Site days",
+    "overtime": "Overtime (h)",
+    "field": "Field",
+    "office": "Office",
+    "recalculate": "Recalculate",
+    "reload": "Reload from DORs",
+    "submit": "Submit for approval",
+    "sod": "The payroll calculator cannot approve it. Per-employee amounts are visible only with the salary permission.",
+    "payslipPdf": "Payslip (PDF)",
+    "slip": {
+      "basic": "Basic salary",
+      "fixedAllowance": "Fixed allowance",
+      "fieldAllowance": "Field allowance",
+      "overtimePay": "Overtime",
+      "otherAllowances": "Other allowances",
+      "bpjsEmployee": "Employee BPJS",
+      "pph21": "PPh 21",
+      "deductions": "Other deductions",
+      "net": "Net pay"
+    },
+    "annualHint": "December: annual PPh 21 {{tax}} less {{withheld}} already withheld.",
+    "timesheet": "Timesheet",
+    "date": "Date",
+    "project": "Project",
+    "source": "Source",
+    "sources": {
+      "dor": "DOR",
+      "manual": "Edited by HCBP"
+    },
+    "removeDay": "Remove day",
+    "reason": "Reason for change",
+    "saveDays": "Save timesheet",
+    "items": "Other allowances & deductions",
+    "itemKind": "Kind",
+    "allowance": "Allowance",
+    "deduction": "Deduction",
+    "itemName": "Name",
+    "amount": "Amount",
+    "removeItem": "Remove",
+    "addItem": "Add",
+    "saveItems": "Save",
+    "mineHint": "Your approved payslips and the yearly 1721-A1 withholding slip.",
+    "mineEmpty": "No payslips yet."
   }
 }

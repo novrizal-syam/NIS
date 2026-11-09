@@ -26,6 +26,10 @@ from app.treasury.seed import BANK_ACCOUNTS
 TEST_DB_URL = os.environ.get("TEST_DATABASE_URL", get_settings().test_database_url)
 # Seeded configuration (system roles and their permissions) survives between tests.
 TABLES = (
+    "payslip_items",
+    "payslip_days",
+    "payslips",
+    "payroll_runs",
     "cash_advance_lines",
     "cash_advances",
     "payment_run_items",

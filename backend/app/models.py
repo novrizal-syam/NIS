@@ -80,6 +80,7 @@ from app.operations.models import (
     HseDaily,
     PayrollDay,
 )
+from app.payroll.models import PayrollRun, Payslip, PayslipDay, PayslipItem, Pph21TerRate
 from app.procurement.models import (
     PriceHistory,
     PurchaseOrder,
@@ -188,9 +189,14 @@ __all__ = [
     "PaymentRun",
     "PaymentRunItem",
     "PayrollDay",
+    "PayrollRun",
+    "Payslip",
+    "PayslipDay",
+    "PayslipItem",
     "Permit",
     "PmSchedule",
     "PmTask",
+    "Pph21TerRate",
     "PriceHistory",
     "PriceItem",
     "Project",

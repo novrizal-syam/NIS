@@ -66,7 +66,8 @@
       "auditTrail": "Jejak Audit",
       "roles": "Peran & Izin",
       "sod": "Pemisahan Tugas",
-      "accessReview": "Tinjauan Akses"
+      "accessReview": "Tinjauan Akses",
+      "myPayslips": "Slip gaji saya"
     }
   },
   "topbar": {
@@ -2330,5 +2331,75 @@
         "capex": "Termin CAPEX"
       }
     }
+  },
+  "payroll": {
+    "title": "Penggajian",
+    "hint": "Periode bulanan dengan cut-off tgl 25. Hari di lokasi dan lembur dari DOR yang disetujui; BPJS dan PPh 21 TER dari tabel data. Dihitung HCBP → disetujui Head of Finance → jurnal → dibayar lewat payment run.",
+    "year": "Tahun",
+    "month": "Bulan",
+    "calculate": "Hitung penggajian",
+    "period": "Periode",
+    "employees": "Karyawan",
+    "net": "Gaji bersih",
+    "cost": "Biaya perusahaan",
+    "status": "Status",
+    "empty": "Belum ada penggajian.",
+    "periodRange": "Periode {{from}} - {{to}} · dibayar {{pay}}",
+    "rejected": "Dikembalikan",
+    "totals": {
+      "gross": "Bruto",
+      "employerBpjs": "BPJS perusahaan",
+      "employeeBpjs": "BPJS karyawan",
+      "pph21": "PPh 21",
+      "deductions": "Potongan lain",
+      "net": "Gaji bersih",
+      "cost": "Biaya perusahaan"
+    },
+    "allocation": "Biaya lapangan per proyek (menurut hari DOR)",
+    "officeCost": "Kantor / tanpa proyek",
+    "employee": "Karyawan",
+    "siteDays": "Hari lokasi",
+    "overtime": "Lembur (jam)",
+    "field": "Lapangan",
+    "office": "Kantor",
+    "recalculate": "Hitung ulang",
+    "reload": "Muat ulang dari DOR",
+    "submit": "Ajukan persetujuan",
+    "sod": "Penghitung penggajian tidak dapat menyetujuinya. Nominal per karyawan hanya terlihat oleh pemegang izin gaji.",
+    "payslipPdf": "Slip gaji (PDF)",
+    "slip": {
+      "basic": "Gaji pokok",
+      "fixedAllowance": "Tunjangan tetap",
+      "fieldAllowance": "Tunjangan lapangan",
+      "overtimePay": "Lembur",
+      "otherAllowances": "Tunjangan lain",
+      "bpjsEmployee": "BPJS karyawan",
+      "pph21": "PPh 21",
+      "deductions": "Potongan lain",
+      "net": "Gaji bersih"
+    },
+    "annualHint": "Desember: PPh 21 setahun {{tax}} dikurangi yang sudah dipotong {{withheld}}.",
+    "timesheet": "Timesheet",
+    "date": "Tanggal",
+    "project": "Proyek",
+    "source": "Sumber",
+    "sources": {
+      "dor": "DOR",
+      "manual": "Diubah HCBP"
+    },
+    "removeDay": "Hapus hari",
+    "reason": "Alasan perubahan",
+    "saveDays": "Simpan timesheet",
+    "items": "Tunjangan & potongan lain",
+    "itemKind": "Jenis",
+    "allowance": "Tunjangan",
+    "deduction": "Potongan",
+    "itemName": "Nama",
+    "amount": "Nilai",
+    "removeItem": "Hapus",
+    "addItem": "Tambah",
+    "saveItems": "Simpan",
+    "mineHint": "Slip gaji Anda yang sudah disetujui, dan bukti potong 1721-A1 per tahun.",
+    "mineEmpty": "Belum ada slip gaji."
   }
 }
