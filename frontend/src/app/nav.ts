@@ -119,7 +119,7 @@ export const NAV: NavGroup[] = [
   {
     key: 'execution',
     items: [
-      soon('dor', 'engineering', 'operations'),
+      { key: 'dor', path: '/operasi/dor', icon: 'engineering', ready: true, module: 'operations' },
       soon('maintenance', 'build', 'maintenance'),
       soon('qhse', 'health_and_safety', 'qhse'),
     ],

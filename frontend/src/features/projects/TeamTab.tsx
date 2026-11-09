@@ -7,9 +7,60 @@ import { Icon } from '@/components/ui/icon';
 import { Select } from '@/components/ui/input';
 import { FormError } from '@/features/auth/AuthLayout';
 import { ApiError } from '@/lib/api';
-import { useAddMember, useRemoveMember, useTeam, useTeamCandidates } from './api';
+import {
+  useAddMember,
+  useDorTemplates,
+  useRemoveMember,
+  useSetOperations,
+  useTeam,
+  useTeamCandidates,
+  type ProjectDetail,
+} from './api';
 
 /** Project team: members get the project in their project-scoped rights (MR, DOR). */
+/** Service line (DOR approval route) and the DOR technical-data template. */
+export function OperationsCard({ p }: { p: ProjectDetail }) {
+  const { t } = useTranslation();
+  const save = useSetOperations(p.id);
+  const templates = useDorTemplates(true);
+  const [line, setLine] = useState(p.service_line ?? 'ofs');
+  const [type, setType] = useState(p.service_type ?? '');
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('dor.operations')}</CardTitle>
+        <CardDescription>{t('dor.operationsHelp')}</CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-wrap items-end gap-2">
+        <FormError message={save.error instanceof ApiError ? save.error.message : null} />
+        <Field label={t('dor.serviceLine')} className="w-56">
+          <Select value={line} onChange={(e) => setLine(e.target.value as 'ofs' | 'epcom')}>
+            <option value="ofs">OFS</option>
+            <option value="epcom">EPCOM</option>
+          </Select>
+        </Field>
+        <Field label={t('dor.serviceType')} className="w-64">
+          <Select value={type} onChange={(e) => setType(e.target.value)}>
+            <option value="">{t('dor.noTemplate')}</option>
+            {Object.entries(templates.data ?? {}).map(([k, v]) => (
+              <option key={k} value={k}>
+                {v.label}
+              </option>
+            ))}
+          </Select>
+        </Field>
+        <Button
+          variant="secondary"
+          disabled={save.isPending}
+          onClick={() => save.mutate({ service_line: line, service_type: type || null })}
+        >
+          <Icon name="save" /> {t('dor.saveOps')}
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
 export function TeamTab({ projectId }: { projectId: string }) {
   const { t } = useTranslation();
   const team = useTeam(projectId);

@@ -15,13 +15,22 @@ afterEach(() => vi.unstubAllGlobals());
 
 describe('AppShell', () => {
   it('shows only the menu items the user may view, with "Segera" on unbuilt ones', async () => {
-    mockApi();
+    mockApi({
+      me: makeMe({
+        permissions: {
+          procurement: { view: 'all' },
+          crm: { view: 'all' },
+          operations: { view: 'all' },
+          maintenance: { view: 'all' },
+        },
+      }),
+    });
     renderApp('/');
     const nav = (await screen.findAllByRole('navigation', { name: 'Menu utama' }))[0]!;
     expect(within(nav).getByText('Procure to Pay')).toBeInTheDocument();
     expect(within(nav).getByRole('link', { name: 'Lead' })).toHaveAttribute('href', '/lead');
-    const dor = within(nav).getByRole('link', { name: /Daily Operation Report\s*Segera/ });
-    expect(dor).toHaveAttribute('href', '/segera/dor');
+    const soon = within(nav).getByRole('link', { name: /Pemeliharaan\s*Segera/ });
+    expect(soon).toHaveAttribute('href', '/segera/maintenance');
     // No finance/payroll permission -> Keuangan group hidden entirely.
     expect(within(nav).queryByText('Keuangan')).not.toBeInTheDocument();
     expect(within(nav).queryByText('Penggajian')).not.toBeInTheDocument();

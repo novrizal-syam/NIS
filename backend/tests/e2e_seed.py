@@ -19,9 +19,11 @@ from app import models as _models  # noqa: F401
 from app.auth import service as auth_service
 from app.auth.models import User
 from app.auth.principal import PRIVACY_VERSION
+from app.contract.models import Contract, ContractRate
 from app.core.db import SessionLocal
+from app.crm.models import Opportunity
 from app.inventory import stock_service as stock
-from app.master.models import Item, PriceItem, Warehouse
+from app.master.models import Asset, Employee, Item, PriceItem, Warehouse
 from app.project.models import (
     BudgetVersion,
     BudgetVersionLine,
@@ -47,6 +49,7 @@ USERS = {
     "head_of_finance": ("hof@e2e.gek.co.id", "Sinta Head of Finance"),
     "field_engineer": ("fe@e2e.gek.co.id", "Eko Field Engineer"),
     "warehouse_head": ("wh@e2e.gek.co.id", "Hadi Kepala Gudang"),
+    "ofs_superintendent": ("sup@e2e.gek.co.id", "Rudi Superintendent"),
 }
 
 
@@ -187,17 +190,72 @@ async def _inventory(s: AsyncSession, manager_id: uuid.UUID) -> None:
     w = ProjectWbs(project_id=p.id, code="EXEC", name="Execution", seq=1)
     s.add(w)
     await s.flush()
-    s.add(
-        ProjectBudgetLine(
-            project_id=p.id,
-            version=0,
-            wbs_id=w.id,
-            cost_element_code="CONSUMABLE",
-            amount=Decimal(100_000_000),
-            source="quotation",
+    for ce in ("CONSUMABLE", "EQUIP-OWN", "MANPOWER"):
+        s.add(
+            ProjectBudgetLine(
+                project_id=p.id,
+                version=0,
+                wbs_id=w.id,
+                cost_element_code=ce,
+                amount=Decimal(100_000_000),
+                source="quotation",
+            )
         )
-    )
+    sup = (
+        await s.execute(select(User).where(User.email == USERS["ofs_superintendent"][0]))
+    ).scalar_one()
     s.add(ProjectMember(project_id=p.id, user_id=fe.id))
+    s.add(ProjectMember(project_id=p.id, user_id=sup.id))
+    # DOR flow (05a): contract rate schedule, a pump unit and a field crew member.
+    opp = Opportunity(
+        number="OPP-26-902",
+        company_name="PT KKKS E2E",
+        title="Well test Rokan",
+        owner_id=manager_id,
+    )
+    s.add(opp)
+    await s.flush()
+    contract = Contract(
+        number="CTR-26-902",
+        opportunity_id=opp.id,
+        company_name="PT KKKS E2E",
+        title="Well test Rokan",
+        owner_id=manager_id,
+        value=Decimal(500_000_000),
+    )
+    s.add(contract)
+    await s.flush()
+    s.add_all(
+        [
+            ContractRate(
+                contract_id=contract.id,
+                seq=1,
+                kind="equipment",
+                description="Pump unit 600 HP",
+                unit="hari",
+                rate=Decimal(14_000_000),
+                standby_rate=Decimal(7_000_000),
+                breakdown_rate=Decimal(0),
+            ),
+            ContractRate(
+                contract_id=contract.id,
+                seq=2,
+                kind="personnel",
+                description="Field engineer",
+                unit="hari",
+                rate=Decimal(3_000_000),
+            ),
+            Asset(
+                code="AST-E2E",
+                name="Pump unit E2E",
+                asset_class="Pumping unit",
+                criticality="A",
+                internal_day_rate=Decimal(9_500_000),
+            ),
+            Employee(code="E-E2E", full_name="Andi Operator", position="Operator", is_field=True),
+        ]
+    )
+    p.contract_id, p.service_type = contract.id, "well_test"
     s.add_all(
         [
             Item(

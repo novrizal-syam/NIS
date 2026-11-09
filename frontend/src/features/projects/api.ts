@@ -42,6 +42,8 @@ export interface ProjectDetail extends ProjectRow {
   margin_warning: boolean;
   manager_id: string | null;
   manager_name: string | null;
+  service_line?: 'ofs' | 'epcom';
+  service_type?: string | null;
   budget_request_id: string | null;
   budget_comment: string | null;
   locked_at: string | null;
@@ -266,3 +268,16 @@ export const useRemoveMember = (id: string) =>
   useProjectMutation((uid: string) =>
     api<{ items: TeamMember[] }>(`/projects/${id}/members/${uid}`, { method: 'DELETE' }),
   );
+
+export const useSetOperations = (id: string) =>
+  useProjectMutation((body: { service_line: string; service_type: string | null }) =>
+    api<ProjectDetail>(`/projects/${id}/operations`, { method: 'PUT', body: JSON.stringify(body) }),
+  );
+
+export const useDorTemplates = (enabled: boolean) =>
+  useQuery({
+    queryKey: ['projects', 'dor-templates'],
+    queryFn: () => api<Record<string, { label: string }>>('/operations/dor-templates'),
+    enabled,
+    staleTime: 300_000,
+  });

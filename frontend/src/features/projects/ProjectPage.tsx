@@ -10,6 +10,7 @@ import { StatusPill } from '@/components/ui/status-pill';
 import { Tabs } from '@/components/ui/tabs';
 import { HistoryPanel } from '@/features/audit/HistoryPanel';
 import { FormError } from '@/features/auth/AuthLayout';
+import { useAuth } from '@/features/auth/AuthProvider';
 import { AttachmentsPanel } from '@/features/dms/AttachmentsPanel';
 import { ApiError } from '@/lib/api';
 import { formatDate, formatDateTime, formatIDR } from '@/lib/format';
@@ -27,7 +28,7 @@ import { BudgetEditor } from './BudgetEditor';
 import { BudgetVersionsTab } from './BudgetVersionsTab';
 import { BudgetStatusTable } from './BudgetStatusTable';
 import { ProjectStatusPill } from './ProjectStatusPill';
-import { TeamTab } from './TeamTab';
+import { OperationsCard, TeamTab } from './TeamTab';
 
 const STEPS: ProjectStatus[] = ['draft', 'controller_review', 'awaiting_approval', 'locked'];
 const errText = (e: unknown, fallback: string) =>
@@ -62,6 +63,7 @@ export function Stepper({ status }: { status: ProjectStatus }) {
 
 export function ProjectPage() {
   const { t } = useTranslation();
+  const { can } = useAuth();
   const { id = '' } = useParams();
   const project = useProject(id);
   const [search] = useSearchParams();
@@ -190,7 +192,12 @@ export function ProjectPage() {
       )}
       {tab === 'versions' && <BudgetVersionsTab projectId={p.id} />}
       {tab === 'bcr' && <BcrTab p={p} />}
-      {tab === 'team' && <TeamTab projectId={p.id} />}
+      {tab === 'team' && (
+        <>
+          {can('project', 'edit') && <OperationsCard p={p} />}
+          <TeamTab projectId={p.id} />
+        </>
+      )}
       {tab === 'files' && (
         <AttachmentsPanel entityType="project" entityId={p.id} canWrite={p.can_edit_budget} />
       )}

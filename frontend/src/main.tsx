@@ -7,6 +7,13 @@ import '@/theme/index.css';
 const root = document.getElementById('root');
 if (!root) throw new Error('#root not found');
 
+// Installable PWA with an offline shell (DOR drafts work offline; see public/sw.js).
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  window.addEventListener('load', () => {
+    void navigator.serviceWorker.register('/sw.js').catch(() => undefined);
+  });
+}
+
 createRoot(root).render(
   <StrictMode>
     <App />

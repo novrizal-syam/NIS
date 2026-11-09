@@ -50,6 +50,7 @@ from app.master.models import (
     Warehouse,
 )
 from app.notifications.models import Notification
+from app.operations.models import AssetUsage, Dor, HseDaily, PayrollDay
 from app.procurement.models import PurchaseOrder, PurchaseRequisition, Rfq
 from app.project.models import (
     BudgetChangeRequest,
@@ -414,7 +415,12 @@ async def remove(session: AsyncSession, *, actor_id: uuid.UUID | None) -> Summar
             demo_projects = select(Project.id).where(Project.is_demo.is_(True))
             # Inventory and ledger rows of demo documents and demo warehouses (04c).
             demo_wh = select(Warehouse.code).where(Warehouse.is_demo.is_(True))
+            demo_dors = select(Dor.id).where(Dor.is_demo.is_(True))
+            ops_rows: tuple[Any, ...] = (AssetUsage, HseDaily, PayrollDay)
+            for ops_model in ops_rows:
+                await session.execute(delete(ops_model).where(ops_model.dor_id.in_(demo_dors)))
             inv_docs: tuple[Any, ...] = (
+                Dor,
                 VendorCreditNote,
                 VendorInvoice,
                 MaterialRequest,

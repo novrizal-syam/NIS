@@ -61,6 +61,9 @@ class Project(EntityMixin, Base):
     )
     budget_comment: Mapped[str | None] = mapped_column(String(1000))
     locked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Operations (05a): DOA route for DORs (ofs | epcom) and the technical-data template.
+    service_line: Mapped[str] = mapped_column(String(10), nullable=False, server_default="ofs")
+    service_type: Mapped[str | None] = mapped_column(String(30))
 
 
 class ProjectMember(Base):

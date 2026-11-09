@@ -37,6 +37,8 @@ class ExpiringDoc(BaseModel):
     name: str = Field(min_length=1, max_length=120)
     number: str | None = Field(default=None, max_length=60)
     expiry_date: date | None = None
+    # Mandatory certificates block crew/equipment selection on a DOR once expired (05a).
+    mandatory: bool = True
 
 
 @dataclass(frozen=True)

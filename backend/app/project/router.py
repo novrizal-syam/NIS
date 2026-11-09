@@ -261,6 +261,8 @@ async def _detail(session: AsyncSession, principal: Principal, p: Project) -> di
         "margin_warning": t.margin_pct < threshold,
         "manager_id": str(p.manager_id) if p.manager_id else None,
         "manager_name": manager,
+        "service_line": p.service_line,
+        "service_type": p.service_type,
         "budget_request_id": str(p.budget_request_id) if p.budget_request_id else None,
         "budget_comment": p.budget_comment,
         "locked_at": p.locked_at.isoformat() if p.locked_at else None,
@@ -444,6 +446,39 @@ async def set_manager(
         actor_id=principal.id,
         before={"manager_id": before},
         after={"manager_id": p.manager_id},
+    )
+    await session.commit()
+    return await _detail(session, principal, p)
+
+
+class OperationsBody(BaseModel):
+    service_line: str = Field(pattern="^(ofs|epcom)$")
+    service_type: str | None = Field(default=None, max_length=30)
+
+
+@router.put("/{pid}/operations")
+async def set_operations(
+    pid: uuid.UUID, body: OperationsBody, principal: CurrentUser, session: Session
+) -> dict[str, Any]:
+    """Service line (DOR approval route: OFS or EPCOM Superintendent) and DOR template."""
+    from app.operations.dor_service import templates
+
+    p = await _get(session, principal, pid, lock=True)
+    if not may(principal, "edit", p):
+        raise ForbiddenError("PERMISSION_DENIED", "Anda tidak berizin mengubah proyek ini.")
+    if body.service_type and body.service_type not in await templates(session):
+        raise AppError("TEMPLATE_INVALID", "Template data teknis tidak dikenal.", status_code=422)
+    before = {"service_line": p.service_line, "service_type": p.service_type}
+    p.service_line, p.service_type = body.service_line, body.service_type or None
+    await session.flush()
+    await audit.record(
+        session,
+        action=AuditAction.UPDATE,
+        entity_type="project",
+        entity_id=p.id,
+        actor_id=principal.id,
+        before=before,
+        after={"service_line": p.service_line, "service_type": p.service_type},
     )
     await session.commit()
     return await _detail(session, principal, p)

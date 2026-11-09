@@ -18,6 +18,8 @@ import { OpportunityDetailPage } from '@/features/crm/OpportunityDetailPage';
 import { ContractPage } from '@/features/contracts/ContractPage';
 import { ContractsPage } from '@/features/contracts/ContractsPage';
 import { DashboardPage } from '@/features/home/DashboardPage';
+import { DorFormPage, DorNewPage } from '@/features/dor/DorForm';
+import { DorListPage, DorPage } from '@/features/dor/DorPages';
 import {
   VendorInvoiceNewPage,
   VendorInvoicePage,
@@ -130,6 +132,10 @@ export function AppRoutes() {
           <Route path="gudang/mr/:id" element={<MrPage />} />
           <Route path="gudang/stok" element={<StockPage />} />
           <Route path="gudang/opname/:id" element={<CountPage />} />
+          <Route path="operasi/dor" element={<DorListPage />} />
+          <Route path="operasi/dor/baru" element={<DorNewPage />} />
+          <Route path="operasi/dor/isi/:clientId" element={<DorFormPage />} />
+          <Route path="operasi/dor/:id" element={<DorPage />} />
           <Route path="keuangan/tagihan-vendor" element={<VendorInvoicesPage />} />
           <Route path="keuangan/tagihan-vendor/baru" element={<VendorInvoiceNewPage />} />
           <Route path="keuangan/tagihan-vendor/:id" element={<VendorInvoicePage />} />
