@@ -48,6 +48,7 @@ COST_ELEMENTS: tuple[tuple[str, str, str | None], ...] = (
     ("SUBCONTRACT", "Subkontrak", "5500"),
     ("LOGISTICS", "Logistik & transport", "5600"),
     ("QHSE", "QHSE", "5700"),
+    ("CAPEX", "Investasi (AUC)", "1520"),
     ("CONTINGENCY", "Kontinjensi", None),
 )
 

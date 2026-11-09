@@ -20,6 +20,7 @@ from app.auth.roles_router import router as roles_router
 from app.auth.router import router as auth_router
 from app.auth.users_router import router as users_router
 from app.billing.router import router as billing_router
+from app.capex.router import router as capex_router
 from app.contract.router import router as contract_router
 from app.core.config import get_settings
 from app.core.db import get_session, session_scope, use_session_provider
@@ -157,6 +158,7 @@ def create_app() -> FastAPI:
     api.include_router(payroll_router)
     api.include_router(tax_router)
     api.include_router(close_router)
+    api.include_router(capex_router)
     app.include_router(api)
     return app
 

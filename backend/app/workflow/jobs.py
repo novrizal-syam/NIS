@@ -74,10 +74,17 @@ async def run_tax_alerts() -> int:
     return await _in_session(deadline_alerts)
 
 
+async def run_capex_reviews() -> int:
+    from app.capex.service import review_alerts
+
+    return await _in_session(review_alerts)
+
+
 JOBS: dict[str, Callable[[], Awaitable[int]]] = {
     "invoices": run_invoice_reminders,
     "advances": run_advance_alerts,
     "tax": run_tax_alerts,
+    "capex": run_capex_reviews,
     "pm": run_pm_scheduler,
     "capa": run_capa_alerts,
     "escalate": run_escalation,
@@ -94,7 +101,17 @@ async def scheduler_loop(interval_seconds: int = 900) -> None:
     while True:
         jobs = ["email"]
         if time.monotonic() - last_slow >= interval_seconds:
-            jobs += ["escalate", "expiry", "roles", "pm", "capa", "invoices", "advances", "tax"]
+            jobs += [
+                "escalate",
+                "expiry",
+                "roles",
+                "pm",
+                "capa",
+                "invoices",
+                "advances",
+                "tax",
+                "capex",
+            ]
             last_slow = time.monotonic()
         for name in jobs:
             try:

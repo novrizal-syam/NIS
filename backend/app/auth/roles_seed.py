@@ -156,6 +156,7 @@ SYSTEM_ROLES: tuple[RoleDef, ...] = (
         g(OPS_MODULES, (A.VIEW, A.EXPORT, A.APPROVE), ALL),
         g(("project", "operations", "procurement"), WORK, ALL),
         g("treasury", (A.VIEW, A.APPROVE), ALL),  # cash advance approval
+        g("capex", WORK, ALL),  # CAPEX proposals (08)
         g("tender", (A.VIEW, A.APPROVE), ALL),  # technical approval of tender packages
         g("reporting", READ, ALL),
     ),
@@ -208,6 +209,7 @@ SYSTEM_ROLES: tuple[RoleDef, ...] = (
         "asset_inventory_coordinator",
         "Asset & Inventory Coordinator",
         g(("asset", "inventory", "maintenance"), (*WORK, A.DELETE), ALL),
+        g("capex", (A.VIEW, A.CREATE, A.EDIT, A.SUBMIT), ALL),  # proposals, commissioning
         g("procurement", A.VIEW, ALL),
     ),
     _role(
@@ -221,6 +223,7 @@ SYSTEM_ROLES: tuple[RoleDef, ...] = (
         "Lead Controller",
         g(("project", "budget"), (A.VIEW, A.EXPORT, A.APPROVE), ALL),
         g("finance", (*WORK, A.APPROVE, A.POST), ALL),
+        g("capex", (A.VIEW, A.EXPORT, A.POST), ALL),  # AUC milestones, capitalisation (08)
         g(("reporting", "audit"), READ, ALL),
         # Approves stock opname variances; reconciles inventory valuation to 1310 (04c).
         g("inventory", (A.VIEW, A.EXPORT, A.APPROVE), ALL),

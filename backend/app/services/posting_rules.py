@@ -245,7 +245,7 @@ RULES: dict[str, Rule] = {
             "capex_milestone",
             "Termin CAPEX dibayar",
             (
-                Leg("auc", "debit", "1520", ("asset",)),
+                Leg("auc", "debit", "1520", ("asset", *PJ)),
                 Leg("bank", "credit", "1110"),
                 Leg("payable", "credit", "2110", ("partner",)),
             ),
@@ -255,9 +255,12 @@ RULES: dict[str, Rule] = {
         Rule(
             "asset_capitalised",
             "Aset dikapitalisasi",
-            (Leg("cost", "debit", "1510", ("asset",)), Leg("cost", "credit", "1520", ("asset",))),
+            (
+                Leg("cost", "debit", "1510", ("asset",)),
+                Leg("auc", "credit", "1520", ("asset", *PJ)),
+            ),
             "capex (08)",
-            {"cost": D(1000)},
+            {"cost": D(1000), "auc": D(1000)},
         ),
         Rule(
             "depreciation",

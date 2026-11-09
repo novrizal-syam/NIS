@@ -20,6 +20,7 @@ from app.billing.models import (
     TicketDor,
     TicketLine,
 )
+from app.capex.models import CapexChange, CapexProposal, CapexReview
 from app.contract.models import Contract, ContractRate
 from app.core.models import Base
 from app.crm.models import BidDecision, Lead, Opportunity, Quotation, QuotationLine
@@ -143,6 +144,9 @@ __all__ = [
     "BudgetVersion",
     "BudgetVersionLine",
     "Capa",
+    "CapexChange",
+    "CapexProposal",
+    "CapexReview",
     "CashAdvance",
     "CashAdvanceLine",
     "Client",

@@ -63,6 +63,10 @@ class Project(EntityMixin, Base):
     locked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     # Operations (05a): DOA route for DORs (ofs | epcom) and the technical-data template.
     service_line: Mapped[str] = mapped_column(String(10), nullable=False, server_default="ofs")
+    # operation (client work) | capex (locked CAPEX plan, 08)
+    project_type: Mapped[str] = mapped_column(
+        String(10), nullable=False, server_default="operation"
+    )
     service_type: Mapped[str | None] = mapped_column(String(30))
 
 

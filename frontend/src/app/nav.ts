@@ -188,7 +188,13 @@ export const NAV: NavGroup[] = [
         ready: true,
         module: 'finance',
       },
-      soon('capex', 'precision_manufacturing', 'capex'),
+      {
+        key: 'capex',
+        path: '/capex',
+        icon: 'precision_manufacturing',
+        ready: true,
+        module: 'capex',
+      },
     ],
   },
   {
