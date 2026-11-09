@@ -24,7 +24,14 @@ from app.capex.models import CapexChange, CapexProposal, CapexReview
 from app.contract.models import Contract, ContractRate
 from app.core.models import Base
 from app.crm.models import BidDecision, Lead, Opportunity, Quotation, QuotationLine
-from app.dms.models import Attachment
+from app.dms.models import (
+    AccessLog,
+    Attachment,
+    ControlledDocument,
+    DocumentRevision,
+    LibraryDocument,
+    ShareLink,
+)
 from app.finance.models import (
     JournalEntry,
     JournalLine,
@@ -45,7 +52,7 @@ from app.inventory.models import (
     StockTransfer,
     StockTransferLine,
 )
-from app.letters.models import OutgoingLetter
+from app.letters.models import IncomingLetter, LetterDisposition, LetterTemplate, OutgoingLetter
 from app.maintenance.models import (
     AssetAllocation,
     Downtime,
@@ -127,6 +134,7 @@ from app.workflow.models import (
 )
 
 __all__ = [
+    "AccessLog",
     "Account",
     "ApprovalRequest",
     "ApprovalStep",
@@ -152,6 +160,7 @@ __all__ = [
     "Client",
     "Contract",
     "ContractRate",
+    "ControlledDocument",
     "CostCenter",
     "CostElement",
     "Currency",
@@ -163,6 +172,7 @@ __all__ = [
     "DoaRuleChange",
     "DoaRuleStep",
     "DocCounter",
+    "DocumentRevision",
     "Dor",
     "DorConsumable",
     "DorCrew",
@@ -177,12 +187,16 @@ __all__ = [
     "GoodsReceiptLine",
     "HseDaily",
     "Incident",
+    "IncomingLetter",
     "Inspection",
     "InvoiceTicket",
     "Item",
     "JournalEntry",
     "JournalLine",
     "Lead",
+    "LetterDisposition",
+    "LetterTemplate",
+    "LibraryDocument",
     "ManualJournal",
     "MaterialRequest",
     "MaterialRequestLine",
@@ -227,6 +241,7 @@ __all__ = [
     "Role",
     "RolePermission",
     "ServiceTicket",
+    "ShareLink",
     "SodException",
     "SodRule",
     "StockBalance",

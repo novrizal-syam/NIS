@@ -9,6 +9,7 @@ import logging
 import sys
 import time
 from collections.abc import Awaitable, Callable
+from typing import Any
 
 from app import models as _models  # noqa: F401  (register every model)
 from app.core.config import get_settings
@@ -80,11 +81,26 @@ async def run_capex_reviews() -> int:
     return await _in_session(review_alerts)
 
 
+async def run_dms_alerts() -> int:
+    from app.dms import controlled, library
+    from app.letters.service import disposition_reminders
+
+    async def all_(session: Any) -> int:
+        return (
+            await library.expiry_alerts(session)
+            + await controlled.review_alerts(session)
+            + await disposition_reminders(session)
+        )
+
+    return await _in_session(all_)
+
+
 JOBS: dict[str, Callable[[], Awaitable[int]]] = {
     "invoices": run_invoice_reminders,
     "advances": run_advance_alerts,
     "tax": run_tax_alerts,
     "capex": run_capex_reviews,
+    "dms": run_dms_alerts,
     "pm": run_pm_scheduler,
     "capa": run_capa_alerts,
     "escalate": run_escalation,

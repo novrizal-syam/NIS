@@ -37,8 +37,21 @@ def run_migrations_offline() -> None:
         context.run_migrations()
 
 
+# Expression indexes managed by hand in migrations (not representable in the models).
+MANUAL_INDEXES = {"ix_attachments_fts"}
+
+
+def _include(obj: object, name: str | None, type_: str, reflected: bool, compare_to: object) -> bool:
+    return not (type_ == "index" and name in MANUAL_INDEXES)
+
+
 def _run(connection: Connection) -> None:
-    context.configure(connection=connection, target_metadata=target_metadata, compare_type=True)
+    context.configure(
+        connection=connection,
+        target_metadata=target_metadata,
+        compare_type=True,
+        include_object=_include,
+    )
     with context.begin_transaction():
         context.run_migrations()
 

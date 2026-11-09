@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.principal import Principal
 from app.core.errors import AppError, NotFoundError
+from app.dms import textract
 from app.dms.models import Attachment
 from app.services import audit
 from app.services.storage import Storage
@@ -95,6 +96,7 @@ async def upload(
         storage_key=key,
         note=(note or "").strip() or None,
         created_by=principal.id,
+        text_content=textract.extract(data, content_type),
     )
     session.add(row)
     await session.flush()

@@ -613,7 +613,7 @@ async def send(
             company=opp.company_name,
             sender_company=str(company.get("legal_name", "")),
             subject=f"{subject} ({letter.number})",
-            letter=letter.number,
+            letter=letter.number or "",
             message=body.message,
             signer=signer,
         )

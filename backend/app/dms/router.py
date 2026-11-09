@@ -13,8 +13,8 @@ from app.auth.principal import CurrentUser, Principal, ensure_onboarded, get_pri
 from app.core import access
 from app.core.db import get_session
 from app.core.errors import AppError, NotFoundError
-from app.dms import service
-from app.dms.models import Attachment
+from app.dms import library, service
+from app.dms.models import AccessLog, Attachment, LibraryDocument
 from app.services.storage import Storage, get_storage
 
 router = APIRouter(prefix="/attachments", tags=["dms"])
@@ -148,6 +148,12 @@ async def content(
     att = await _get(session, principal, attachment_id, "read")
     obj = await storage.get(att.storage_key)
     disposition = "attachment" if download else "inline"
+    session.add(
+        AccessLog(
+            attachment_id=att.id, user_id=principal.id, action="download" if download else "view"
+        )
+    )
+    await session.commit()
     return Response(
         obj.data,
         media_type=att.content_type,
@@ -164,6 +170,10 @@ async def archive(attachment_id: uuid.UUID, principal: CurrentUser, session: Ses
     att = await _get(session, principal, attachment_id, "write")
     if att.archived_at is not None:
         raise AppError("ALREADY_ARCHIVED", "Lampiran sudah diarsipkan.", status_code=409)
+    if att.entity_type == library.DOC:
+        reason = library.protected(await session.get(LibraryDocument, uuid.UUID(att.entity_id)))
+        if reason:
+            raise AppError("RETENTION_ACTIVE", reason, status_code=409)
     await service.archive(session, principal, att)
     await session.commit()
     return Response(status_code=204)

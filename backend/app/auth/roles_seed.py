@@ -147,6 +147,7 @@ SYSTEM_ROLES: tuple[RoleDef, ...] = (
         "qhse_coordinator",
         "QHSE Coordinator",
         g("qhse", (*WORK, A.DELETE, A.APPROVE), ALL),
+        g("dms", (A.VIEW, A.CREATE, A.EDIT, A.SUBMIT), ALL),  # owns the HSE SOPs (09)
         g(("operations", "asset"), A.VIEW, ALL),
         g("lms", (A.VIEW, A.CREATE, A.EDIT), ALL),
     ),
