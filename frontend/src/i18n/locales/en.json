@@ -71,7 +71,8 @@
       "periodClose": "Period close",
       "integrations": "Integrations",
       "portal": "Client & vendor portal",
-      "pdp": "Personal data (PDP)"
+      "pdp": "Personal data (PDP)",
+      "goLive": "Go-live"
     }
   },
   "topbar": {
@@ -2994,5 +2995,26 @@
     "none": "No reports yet.",
     "consents": "Privacy notice consent",
     "consentsHint": "Current version {{version}}; {{pending}} users have not accepted it yet (asked at sign-in)."
+  },
+  "golive": {
+    "checklist": "Go-live checklist",
+    "checklistHint": "Every item must be green before real data goes in. Blue items are checked outside the application.",
+    "ready": "Ready to go live.",
+    "progress": "{{done}} of {{total}} items done.",
+    "ok": "Done",
+    "todo": "Open",
+    "manual": "Check manually",
+    "open": "Open",
+    "opening": "Opening balance",
+    "openingHint": "Once per go-live date: download the template, fill it from the old system, check, then post. If any row is wrong nothing is saved.",
+    "step1": "1. Go-live date and template",
+    "step2": "2. Upload and check",
+    "step3": "3. Review and post",
+    "step3Hint": "The summary appears here after a successful check.",
+    "template": "Download Excel template",
+    "check": "Check",
+    "preview": "Balanced: total {{total}} in {{gl}} journal lines as of {{date}} — AR {{ar}}, AP {{ap}}, stock {{stock}}, assets {{assets}}. Nothing saved yet.",
+    "post": "Post opening balance",
+    "openingByFinance": "The opening balance is posted by the Lead Controller or Head of Finance (finance approval permission), here or in Ledger & Reports → Opening balance."
   }
 }

@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { matchPath, useLocation } from 'react-router-dom';
 import { useMeta } from '@/features/master/api';
-import { findNavItem } from './nav';
+import { NAV, findNavItem } from './nav';
 
 export interface PageMeta {
   title: string;
@@ -142,5 +142,26 @@ export function usePageMeta(): PageMeta {
   if (pathname === '/dev/komponen') {
     return { title: t('pages.components.title'), description: t('pages.components.description') };
   }
+  // Pages without their own entry take the title of the menu item they belong to.
+  const item = navItemFor(pathname);
+  if (item) {
+    return {
+      title: t(`nav.items.${item.key}`),
+      description: t(`pages.${item.key}.description`, { defaultValue: '' }),
+    };
+  }
   return { title: t('pages.notFound.title'), description: t('pages.notFound.description') };
+}
+
+/** The menu item whose path is the longest prefix of `pathname` (on a segment boundary). */
+export function navItemFor(pathname: string) {
+  let best: { key: string; path: string } | undefined;
+  for (const g of NAV)
+    for (const i of g.items) {
+      const path = i.path.split('?')[0] ?? i.path;
+      if (!i.ready || path === '/') continue;
+      if (pathname === path || pathname.startsWith(`${path}/`))
+        if (!best || path.length > best.path.length) best = { key: i.key, path };
+    }
+  return best;
 }

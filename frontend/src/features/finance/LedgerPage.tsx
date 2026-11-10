@@ -11,6 +11,7 @@ import { Tabs } from '@/components/ui/tabs';
 import { TBody, TD, TH, THead, TR, Table } from '@/components/ui/table';
 import { FormError } from '@/features/auth/AuthLayout';
 import { useAuth } from '@/features/auth/AuthProvider';
+import { OpeningWizard } from '@/features/golive/GoLivePage';
 import { moneyToApi } from '@/features/crm/api';
 import { qs } from '@/features/inventory/api';
 import { ApiError, api, downloadFile, postJson } from '@/lib/api';
@@ -604,80 +605,8 @@ function ManualTab() {
 // ---------------------------------------------------------------- opening balance
 
 function OpeningTab() {
-  const { t } = useTranslation();
-  const { can } = useAuth();
-  const qc = useQueryClient();
-  const status = useQuery({
-    queryKey: ['ledger', 'opening'],
-    queryFn: () => api<{ opening_date: string | null }>('/ledger/opening'),
-  });
-  const [asOf, setAsOf] = useState(today());
-  const imp = useMutation({
-    mutationFn: (file: File) => {
-      const form = new FormData();
-      form.append('file', file);
-      form.append('as_of', asOf);
-      return api<{
-        journal: string;
-        total: string;
-        ar_items: number;
-        ap_items: number;
-        stock_rows: number;
-        assets: number;
-      }>('/ledger/opening', { method: 'POST', body: form });
-    },
-    onSuccess: () => void qc.invalidateQueries({ queryKey: ['ledger'] }),
-  });
-  const errors =
-    imp.error instanceof ApiError
-      ? (imp.error.details as { errors?: string[] } | undefined)?.errors
-      : undefined;
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('ledger.openingTitle')}</CardTitle>
-        <CardDescription>{t('ledger.openingHelp')}</CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-2">
-        {status.data?.opening_date ? (
-          <p role="status" className="text-small text-success">
-            {t('ledger.openingDone', { date: formatDate(status.data.opening_date) })}
-          </p>
-        ) : (
-          can('finance', 'approve') && (
-            <div className="flex flex-wrap items-end gap-2">
-              <Field label={t('ledger.goLive')} className="w-44">
-                <Input type="date" value={asOf} onChange={(e) => setAsOf(e.target.value)} />
-              </Field>
-              <input
-                type="file"
-                accept=".xlsx"
-                aria-label={t('ledger.openingFile')}
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) imp.mutate(f);
-                  e.target.value = '';
-                }}
-              />
-            </div>
-          )
-        )}
-        <FormError message={errText(imp.error, t('auth.unexpected'))} />
-        {errors && (
-          <ul className="list-disc pl-6 text-small text-danger">
-            {errors.slice(0, 30).map((x) => (
-              <li key={x}>{x}</li>
-            ))}
-          </ul>
-        )}
-        {imp.data && (
-          <p role="status" className="text-small text-success">
-            {t('ledger.openingPosted', imp.data)}
-          </p>
-        )}
-      </CardContent>
-    </Card>
-  );
+  // The same guided import as Pengaturan -> Go-live (10f): template, check, then post.
+  return <OpeningWizard />;
 }
 
 // ---------------------------------------------------------------- posting rules

@@ -1,0 +1,15 @@
+# Production API image: runtime dependencies only, non-root, no reload.
+FROM python:3.12-slim
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 TZ=Asia/Jakarta
+RUN apt-get update && apt-get install -y --no-install-recommends curl postgresql-client \
+    && rm -rf /var/lib/apt/lists/* \
+    && useradd --system --uid 10001 --home /app erp
+WORKDIR /app
+COPY backend/pyproject.toml ./
+RUN mkdir -p app && touch app/__init__.py && pip install . && rm -rf app build *.egg-info
+COPY backend/ ./
+RUN chown -R erp /app
+USER erp
+EXPOSE 8000
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 CMD curl -fsS http://localhost:8000/api/health || exit 1
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2", "--proxy-headers", "--forwarded-allow-ips", "*"]

@@ -225,6 +225,8 @@ async def sessionmaker(engine: AsyncEngine) -> AsyncIterator[async_sessionmaker[
     async with engine.begin() as conn:
         await conn.execute(text(f"TRUNCATE {', '.join(TABLES)} RESTART IDENTITY CASCADE"))
         await conn.execute(text("DELETE FROM roles WHERE NOT is_system"))
+        # Imported once per installation; each test starts before go-live.
+        await conn.execute(text("DELETE FROM system_settings WHERE key = 'ledger.opening_date'"))
         # Keep the configuration seed (COA, cost elements, currencies); drop test additions.
         await conn.execute(
             text("DELETE FROM cost_elements WHERE NOT code = ANY(:c)"),

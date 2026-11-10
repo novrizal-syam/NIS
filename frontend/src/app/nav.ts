@@ -232,6 +232,13 @@ export const NAV: NavGroup[] = [
       { key: 'auditTrail', path: '/audit', icon: 'policy', ready: true, module: 'audit' },
       { key: 'pdp', path: '/pengaturan/pdp', icon: 'shield_person', ready: true },
       {
+        key: 'goLive',
+        path: '/pengaturan/go-live',
+        icon: 'rocket_launch',
+        ready: true,
+        module: 'settings',
+      },
+      {
         key: 'accessReview',
         path: '/pengaturan/tinjauan-akses',
         icon: 'fact_check',

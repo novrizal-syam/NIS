@@ -873,6 +873,11 @@
       "title": "As Of",
       "type": "string"
      },
+     "dry_run": {
+      "default": false,
+      "title": "Dry Run",
+      "type": "boolean"
+     },
      "file": {
       "contentMediaType": "application/octet-stream",
       "title": "File",
@@ -18982,6 +18987,57 @@
     ]
    }
   },
+  "/api/go-live/checklist": {
+   "get": {
+    "operationId": "checklist_api_go_live_checklist_get",
+    "parameters": [
+     {
+      "in": "header",
+      "name": "x-active-role",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Active-Role"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Checklist Api Go Live Checklist Get",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Checklist",
+    "tags": [
+     "admin"
+    ]
+   }
+  },
   "/api/health": {
    "get": {
     "operationId": "health_api_health_get",
@@ -21566,6 +21622,7 @@
     ]
    },
    "post": {
+    "description": "Import the opening balance. With dry_run the workbook is checked and the journal is\nbuilt, then everything is rolled back: the wizard shows the preview before posting.",
     "operationId": "opening_import_api_ledger_opening_post",
     "parameters": [
      {
@@ -21620,6 +21677,54 @@
      }
     },
     "summary": "Opening Import",
+    "tags": [
+     "ledger"
+    ]
+   }
+  },
+  "/api/ledger/opening/template": {
+   "get": {
+    "description": "The go-live workbook: one sheet per source with the expected columns, plus the\npostable accounts and master codes to copy from (10f).",
+    "operationId": "opening_template_api_ledger_opening_template_get",
+    "parameters": [
+     {
+      "in": "header",
+      "name": "x-active-role",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Active-Role"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Opening Template",
     "tags": [
      "ledger"
     ]

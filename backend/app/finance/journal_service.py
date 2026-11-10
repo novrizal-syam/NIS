@@ -19,7 +19,7 @@ from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 from typing import Any
 
-from openpyxl import load_workbook
+from openpyxl import Workbook, load_workbook
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -259,6 +259,55 @@ def _sheet(wb: Any, name: str) -> list[tuple[int, dict[str, Any]]]:
         if any(c not in (None, "") for c in r):
             out.append((i, {head[k]: r[k] for k in range(min(len(head), len(r)))}))
     return out
+
+
+TEMPLATE_SHEETS: dict[str, list[str]] = {
+    "GL": ["account", "debit", "credit", "memo"],
+    "AR": ["client", "invoice_no", "invoice_date", "due_date", "amount"],
+    "AP": ["vendor", "invoice_no", "invoice_date", "due_date", "amount"],
+    "Stock": ["warehouse", "item", "qty", "value"],
+    "Assets": ["asset", "cost", "accumulated_depreciation"],
+}
+TEMPLATE_HELP = [
+    "Isi saldo per tanggal go-live (penutupan sistem lama). Satu baris per saldo.",
+    "GL: semua akun kecuali piutang 1210, utang 2110, persediaan 1310, aset 1510/1590.",
+    "AR/AP: satu baris per invoice yang belum lunas; kode klien/vendor dari Data Master.",
+    "Stock: qty dan nilai (Rp) per gudang dan item; Assets: harga perolehan dan akumulasi.",
+    "Tanggal YYYY-MM-DD; angka tanpa titik ribuan. Selisih debit-kredit diisi ke 3200.",
+    "Unggah di Pengaturan -> Go-live -> Saldo awal: periksa dulu, lalu posting.",
+]
+
+
+async def opening_template(session: AsyncSession) -> bytes:
+    wb = Workbook()
+    help_ws = wb.active
+    assert help_ws is not None
+    help_ws.title = "Petunjuk"
+    for line in TEMPLATE_HELP:
+        help_ws.append([line])
+    for name, head in TEMPLATE_SHEETS.items():
+        wb.create_sheet(name).append(head)
+    ref = wb.create_sheet("Referensi")
+    ref.append(["jenis", "kode", "nama"])
+    accounts = await session.execute(
+        select(Account.code, Account.name).where(Account.is_postable).order_by(Account.code)
+    )
+    for code, name in accounts.tuples():
+        if code not in CONTROL:
+            ref.append(["akun", code, name])
+    for kind, model in (
+        ("klien", Client),
+        ("vendor", Vendor),
+        ("gudang", Warehouse),
+        ("item", Item),
+        ("aset", Asset),
+    ):
+        rows = await session.execute(select(model.code, model.name).order_by(model.code))
+        for code, name in rows.tuples():
+            ref.append([kind, code, name])
+    out = io.BytesIO()
+    wb.save(out)
+    return out.getvalue()
 
 
 async def import_opening(

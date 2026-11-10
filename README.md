@@ -96,6 +96,16 @@ Password for every demo user: `Demo-GEK-2026` (override with `DEMO_PASSWORD` bef
 | Client Representative | `client.rep@demo.gek.co.id` | Thomas Siregar |  |
 | Vendor | `vendor@demo.gek.co.id` | Ahmad Fauzi |  |
 
+## Production and go-live
+
+- Production deployment (Docker on a Jakarta-region VM or managed Postgres, HTTPS via Caddy,
+  daily backups, monitoring): `docs/deploy/PRODUKSI.md`, files in `deploy/prod/`,
+  `deploy/backup/`, `deploy/monitoring/`, environments in `deploy/env/`.
+- Go-live steps for admins (demo data removal, checklist, opening balance wizard at
+  Pengaturan → Go-live): `docs/admin/README.md`.
+- User guides per role in Bahasa Indonesia: `docs/panduan/`.
+- API reference: `docs/api/`. Performance results: `docs/performance.md`.
+
 ## How to use
 1. Create an empty Git repository, copy the kit into its root, commit.
 2. Open a terminal in the repo and run `claude`.

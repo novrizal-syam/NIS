@@ -71,7 +71,8 @@
       "periodClose": "Tutup buku",
       "integrations": "Integrasi",
       "portal": "Portal klien & vendor",
-      "pdp": "Data pribadi (PDP)"
+      "pdp": "Data pribadi (PDP)",
+      "goLive": "Go-live"
     }
   },
   "topbar": {
@@ -2994,5 +2995,26 @@
     "none": "Belum ada laporan.",
     "consents": "Persetujuan pemberitahuan privasi",
     "consentsHint": "Versi berlaku {{version}}; {{pending}} pengguna belum menyetujui versi ini (diminta saat masuk)."
+  },
+  "golive": {
+    "checklist": "Daftar periksa go-live",
+    "checklistHint": "Semua butir harus hijau sebelum data nyata dimasukkan. Butir biru diperiksa di luar aplikasi.",
+    "ready": "Siap go-live.",
+    "progress": "{{done}} dari {{total}} butir selesai.",
+    "ok": "Selesai",
+    "todo": "Belum",
+    "manual": "Periksa manual",
+    "open": "Buka",
+    "opening": "Saldo awal",
+    "openingHint": "Satu kali per tanggal go-live: unduh templat, isi dari sistem lama, periksa, lalu posting. Bila ada baris salah, tidak ada yang disimpan.",
+    "step1": "1. Tanggal go-live dan templat",
+    "step2": "2. Unggah dan periksa",
+    "step3": "3. Tinjau dan posting",
+    "step3Hint": "Ringkasan muncul di sini setelah pemeriksaan berhasil.",
+    "template": "Unduh templat Excel",
+    "check": "Periksa",
+    "preview": "Seimbang: total {{total}} dalam {{gl}} baris jurnal per {{date}} — AR {{ar}}, AP {{ap}}, stok {{stock}}, aset {{assets}}. Belum ada yang disimpan.",
+    "post": "Posting saldo awal",
+    "openingByFinance": "Saldo awal diposting oleh Lead Controller atau Head of Finance (izin menyetujui Keuangan), di sini atau di Buku Besar & Laporan → Saldo awal."
   }
 }

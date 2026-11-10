@@ -258,13 +258,28 @@ async def opening_status(_: Viewer, session: Session) -> dict[str, Any]:
     return {"opening_date": await settings_store.get(session, js.OPENING_KEY, None)}
 
 
+@router.get("/opening/template")
+async def opening_template(_: Approver, session: Session) -> StreamingResponse:
+    """The go-live workbook: one sheet per source with the expected columns, plus the
+    postable accounts and master codes to copy from (10f)."""
+    data = await js.opening_template(session)
+    return StreamingResponse(
+        io.BytesIO(data),
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": 'attachment; filename="saldo-awal.xlsx"'},
+    )
+
+
 @router.post("/opening")
 async def opening_import(
     actor: Approver,
     session: Session,
     file: Annotated[UploadFile, File()],
     as_of: Annotated[date, Form()],
+    dry_run: Annotated[bool, Form()] = False,
 ) -> dict[str, Any]:
+    """Import the opening balance. With dry_run the workbook is checked and the journal is
+    built, then everything is rolled back: the wizard shows the preview before posting."""
     data = await file.read()
     if len(data) > 10 * 1024 * 1024:
         raise AppError("FILE_TOO_LARGE", "Berkas maksimal 10 MB.", status_code=413)
@@ -277,8 +292,11 @@ async def opening_import(
             status_code=422,
             details={"errors": res.errors[:200]},
         )
+    if dry_run:
+        await session.rollback()
+        return {**{k: _json(v) for k, v in res.__dict__.items()}, "journal": None, "dry_run": True}
     await session.commit()
-    return {k: _json(v) for k, v in res.__dict__.items()}
+    return {**{k: _json(v) for k, v in res.__dict__.items()}, "dry_run": False}
 
 
 # ---------------------------------------------------------------- posting rules

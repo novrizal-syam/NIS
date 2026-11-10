@@ -35,6 +35,7 @@ from app.dms.docs_router import router as dms_docs_router
 from app.dms.router import router as dms_router
 from app.finance.ledger_router import router as ledger_router
 from app.finance.router import router as finance_router
+from app.golive.router import router as golive_router
 from app.integrations.router import router as integrations_router
 from app.inventory.router import router as inventory_router
 from app.letters.router import router as letters_router
@@ -195,6 +196,7 @@ def create_app() -> FastAPI:
     api.include_router(integrations_router)
     api.include_router(portal_router)
     api.include_router(pdp_router)
+    api.include_router(golive_router)
     app.include_router(api)
     return app
 

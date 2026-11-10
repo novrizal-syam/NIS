@@ -35,6 +35,7 @@ import {
 } from '@/features/dms/DmsPages';
 import { IntegrationsPage } from '@/features/integrations/IntegrationsPage';
 import { LmsPage } from '@/features/lms/LmsPage';
+import { GoLivePage } from '@/features/golive/GoLivePage';
 import { PdpPage } from '@/features/pdp/PdpPage';
 import { PortalPage } from '@/features/portal/PortalPage';
 import { CapexDetailPage, CapexFormPage, CapexListPage } from '@/features/capex/CapexPages';
@@ -198,6 +199,7 @@ export function AppRoutes() {
           <Route path="pengaturan/doa" element={<DoaRulesPage />} />
           <Route path="pengaturan/integrasi" element={<IntegrationsPage />} />
           <Route path="pengaturan/pdp" element={<PdpPage />} />
+          <Route path="pengaturan/go-live" element={<GoLivePage />} />
           <Route path="master" element={<MasterIndexPage />} />
           <Route path="master/:entity" element={<MasterListPage />} />
           <Route path="audit" element={<AuditPage />} />

@@ -1,0 +1,100 @@
+# Production stack (10f). Run from the repository root on the server:
+#   docker compose -f deploy/prod/docker-compose.prod.yml --env-file .env up -d --build
+# Managed PostgreSQL: point DATABASE_URL and PG* at it and leave out the `local-db` profile.
+# VM-hosted PostgreSQL: add `--profile local-db`. See docs/deploy/PRODUKSI.md.
+name: nustrad-erp-prod
+
+x-api: &api
+  build:
+    context: ../..
+    dockerfile: deploy/prod/Dockerfile.api
+  image: nustrad-erp-api:${RELEASE:-latest}
+  env_file: ../../.env
+  restart: unless-stopped
+  logging:
+    driver: json-file
+    options: { max-size: "20m", max-file: "10" }
+
+services:
+  migrate:
+    <<: *api
+    command: ["alembic", "upgrade", "head"]
+    restart: "no"
+    depends_on:
+      db:
+        condition: service_healthy
+        required: false
+
+  api:
+    <<: *api
+    environment:
+      SCHEDULER_ENABLED: "false" # jobs run once, in `scheduler`
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  scheduler:
+    <<: *api
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
+    environment:
+      SCHEDULER_ENABLED: "true"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  web:
+    build:
+      context: ../..
+      dockerfile: deploy/prod/Dockerfile.web
+    image: nustrad-erp-web:${RELEASE:-latest}
+    restart: unless-stopped
+    environment:
+      ERP_DOMAIN: ${ERP_DOMAIN:?set ERP_DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL:?set ACME_EMAIL}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - api
+
+  backup:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    env_file: ../../.env
+    environment:
+      BACKUP_DIR: /backups
+      TZ: Asia/Jakarta
+    volumes:
+      - ../backup:/opt/backup:ro
+      - ${BACKUP_HOST_DIR:-/srv/nustrad-backups}:/backups
+    # Daily at 01:30 WIB; a marker file lets monitoring check the age of the last backup.
+    entrypoint: >
+      sh -c 'apk add --no-cache bash coreutils findutils >/dev/null &&
+      echo "30 1 * * * bash /opt/backup/backup.sh >> /backups/backup.log 2>&1 && touch /backups/last-ok" | crontab - &&
+      crond -f -l 8'
+
+  db:
+    profiles: ["local-db"]
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${PGUSER:-nustrad}
+      POSTGRES_PASSWORD: ${PGPASSWORD:?set PGPASSWORD}
+      POSTGRES_DB: ${PGDATABASE:-nustrad}
+      TZ: Asia/Jakarta
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PGUSER:-nustrad}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  caddy-data:
+  caddy-config:
+  db-data:
