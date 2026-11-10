@@ -2754,5 +2754,108 @@
     "scan": "Certificate scan",
     "renewBtn": "Save renewal",
     "renewed": "Certificate updated."
+  },
+  "dash": {
+    "map": {
+      "title": "Process map",
+      "hint": "Live counts per stream and stage; click to open the list. Gold = needs action."
+    },
+    "phases": {
+      "plan": "Plan",
+      "commit": "Commit",
+      "execute": "Execute",
+      "record": "Record",
+      "settle": "Settle",
+      "review": "Review"
+    },
+    "lanes": {
+      "revenue": "Revenue & cash in",
+      "spend": "Spend & cash out",
+      "people": "People",
+      "finance": "Finance"
+    },
+    "cells": {
+      "leads": "Active leads",
+      "opportunities": "Open opportunities",
+      "contracts": "Active contracts",
+      "dors_pending": "DORs pending",
+      "tickets_unsigned": "Unsigned tickets",
+      "invoices_overdue": "Overdue invoices",
+      "bank_unmatched": "Unmatched bank lines",
+      "projects_draft": "Project budgets in progress",
+      "pr_pending": "PRs pending / blocked",
+      "po_open": "Open POs",
+      "mr_week": "MRs last 7 days",
+      "gr_draft": "Draft GRs",
+      "vi_exception": "Vendor invoice exceptions",
+      "runs_to_release": "Payment runs to release",
+      "capex_open": "CAPEX in progress",
+      "certs_expiring": "Certificates expiring",
+      "training_overdue": "Training overdue",
+      "advances_open": "Open cash advances",
+      "payroll_unpaid": "Payroll unpaid",
+      "incidents_open": "Open incidents",
+      "approvals_pending": "Approvals pending",
+      "journals_month": "Journals this month",
+      "tax_open": "Tax due ≤ 7 days",
+      "periods_open": "Open periods"
+    },
+    "roles": {
+      "director": "Director dashboard",
+      "sales": "Sales dashboard",
+      "operation": "Operations dashboard",
+      "finance": "Finance dashboard",
+      "hc": "HC & HSE dashboard"
+    },
+    "pickDashboard": "Pick dashboard",
+    "tiles": {
+      "cash": "Cash",
+      "lowest_13w": "Lowest balance 13 weeks",
+      "ar_open": "Open receivables",
+      "dso": "DSO",
+      "ap_due_7d": "Payables due 7 days",
+      "tax_due_7d": "Tax due 7 days",
+      "bank_unreconciled": "Unreconciled bank lines",
+      "pipeline_count": "Open opportunities",
+      "pipeline_value": "Pipeline value",
+      "dors_pending": "DORs pending",
+      "dors_late": "Late DORs 30 days",
+      "projects_locked": "Running projects",
+      "employees": "Active employees",
+      "training_overdue": "Training overdue",
+      "certs_expiring": "Certificates expiring",
+      "payroll_status": "Latest payroll"
+    },
+    "days": "{{n}} days",
+    "okr": {
+      "title": "OKR {{year}}",
+      "hint": "Actuals from live data; yearly targets in settings (Director).",
+      "targets": "Set targets",
+      "pack": "Management pack (PDF)",
+      "objective": "Objective",
+      "actual": "Actual",
+      "target": "Target",
+      "status": "Status",
+      "yearTarget": "full year {{v}}",
+      "save": "Save targets",
+      "rows": {
+        "revenue": "Revenue YTD vs RJPP",
+        "new_contracts": "New contracts",
+        "win_rate_pct": "Win rate",
+        "invoice_to_cash_days": "Invoice-to-cash (days)",
+        "cost_overrun_change_pct": "Cost overrun change",
+        "utilisation_pct": "Equipment utilisation",
+        "downtime_pct": "Downtime",
+        "net_margin_pct": "Net margin",
+        "cash_months_opex": "Cash / monthly opex",
+        "tax_penalties": "Tax penalties",
+        "accidents": "Accidents (LTI)"
+      },
+      "statuses": {
+        "on_track": "On track",
+        "off_track": "Needs action",
+        "na": "No data yet"
+      }
+    }
   }
 }

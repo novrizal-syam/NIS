@@ -48,6 +48,7 @@ from app.project.budget_router import router as budget_router
 from app.project.router import router as project_router
 from app.qhse.router import router as qhse_router
 from app.reporting.access_review import router as reports_router
+from app.reporting.dashboard_router import router as dashboard_router
 from app.services.storage import get_storage, use_storage_provider
 from app.setup import service as setup_service
 from app.setup.router import router as setup_router
@@ -167,6 +168,7 @@ def create_app() -> FastAPI:
     api.include_router(dms_public_router)
     api.include_router(letters_router)
     api.include_router(lms_router)
+    api.include_router(dashboard_router)
     app.include_router(api)
     return app
 

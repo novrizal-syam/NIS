@@ -2754,5 +2754,108 @@
     "scan": "Scan sertifikat",
     "renewBtn": "Simpan perpanjangan",
     "renewed": "Sertifikat diperbarui."
+  },
+  "dash": {
+    "map": {
+      "title": "Peta proses",
+      "hint": "Hitungan langsung per alur dan tahap; klik untuk membuka daftar. Kuning = perlu tindakan."
+    },
+    "phases": {
+      "plan": "Rencana",
+      "commit": "Komitmen",
+      "execute": "Eksekusi",
+      "record": "Pencatatan",
+      "settle": "Penyelesaian",
+      "review": "Tinjauan"
+    },
+    "lanes": {
+      "revenue": "Pendapatan & kas masuk",
+      "spend": "Belanja & kas keluar",
+      "people": "SDM",
+      "finance": "Keuangan"
+    },
+    "cells": {
+      "leads": "Lead aktif",
+      "opportunities": "Peluang terbuka",
+      "contracts": "Kontrak aktif",
+      "dors_pending": "DOR menunggu",
+      "tickets_unsigned": "Tiket belum ditandatangani",
+      "invoices_overdue": "Invoice lewat tempo",
+      "bank_unmatched": "Mutasi belum cocok",
+      "projects_draft": "Anggaran proyek diproses",
+      "pr_pending": "PR menunggu / terblokir",
+      "po_open": "PO terbuka",
+      "mr_week": "MR 7 hari",
+      "gr_draft": "GR draf",
+      "vi_exception": "Invoice vendor exception",
+      "runs_to_release": "Payment run siap rilis",
+      "capex_open": "CAPEX berjalan",
+      "certs_expiring": "Sertifikat akan habis",
+      "training_overdue": "Pelatihan lewat tempo",
+      "advances_open": "Uang muka terbuka",
+      "payroll_unpaid": "Penggajian belum dibayar",
+      "incidents_open": "Insiden terbuka",
+      "approvals_pending": "Persetujuan menunggu",
+      "journals_month": "Jurnal bulan ini",
+      "tax_open": "SPT tenggat ≤ 7 hari",
+      "periods_open": "Periode terbuka"
+    },
+    "roles": {
+      "director": "Dasbor Direktur",
+      "sales": "Dasbor Penjualan",
+      "operation": "Dasbor Operasi",
+      "finance": "Dasbor Keuangan",
+      "hc": "Dasbor SDM & HSE"
+    },
+    "pickDashboard": "Pilih dasbor",
+    "tiles": {
+      "cash": "Saldo kas",
+      "lowest_13w": "Saldo terendah 13 minggu",
+      "ar_open": "Piutang terbuka",
+      "dso": "DSO",
+      "ap_due_7d": "Utang jatuh tempo 7 hari",
+      "tax_due_7d": "SPT tenggat 7 hari",
+      "bank_unreconciled": "Mutasi belum rekonsiliasi",
+      "pipeline_count": "Peluang terbuka",
+      "pipeline_value": "Nilai pipeline",
+      "dors_pending": "DOR menunggu",
+      "dors_late": "DOR terlambat 30 hari",
+      "projects_locked": "Proyek berjalan",
+      "employees": "Karyawan aktif",
+      "training_overdue": "Pelatihan lewat tempo",
+      "certs_expiring": "Sertifikat akan habis",
+      "payroll_status": "Penggajian terakhir"
+    },
+    "days": "{{n}} hari",
+    "okr": {
+      "title": "OKR {{year}}",
+      "hint": "Aktual dari data langsung; target tahunan di setelan (Direktur).",
+      "targets": "Atur target",
+      "pack": "Laporan manajemen (PDF)",
+      "objective": "Sasaran",
+      "actual": "Aktual",
+      "target": "Target",
+      "status": "Status",
+      "yearTarget": "setahun {{v}}",
+      "save": "Simpan target",
+      "rows": {
+        "revenue": "Pendapatan YTD vs RJPP",
+        "new_contracts": "Kontrak baru",
+        "win_rate_pct": "Win rate",
+        "invoice_to_cash_days": "Invoice-to-cash (hari)",
+        "cost_overrun_change_pct": "Perubahan cost overrun",
+        "utilisation_pct": "Utilisasi peralatan",
+        "downtime_pct": "Downtime",
+        "net_margin_pct": "Margin bersih",
+        "cash_months_opex": "Kas / opex bulanan",
+        "tax_penalties": "Denda pajak",
+        "accidents": "Kecelakaan (LTI)"
+      },
+      "statuses": {
+        "on_track": "Sesuai",
+        "off_track": "Perlu tindakan",
+        "na": "Belum ada data"
+      }
+    }
   }
 }
