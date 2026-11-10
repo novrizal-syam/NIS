@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { Navigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { StatusPill } from '@/components/ui/status-pill';
 import { useAuth } from '@/features/auth/AuthProvider';
@@ -11,8 +12,12 @@ import { formatDate } from '@/lib/format';
 
 export function DashboardPage() {
   const { t } = useTranslation();
-  const { can } = useAuth();
+  const { can, me } = useAuth();
   const health = useQuery({ queryKey: ['health'], queryFn: getHealth, refetchInterval: 30_000 });
+
+  const external =
+    !!me?.roles.length && me.roles.every((r) => r.code === 'client_rep' || r.code === 'vendor');
+  if (external) return <Navigate to="/portal" replace />;
 
   let pill = <StatusPill tone="info">{t('dashboard.apiChecking')}</StatusPill>;
   if (health.isError) pill = <StatusPill tone="danger">{t('dashboard.apiError')}</StatusPill>;

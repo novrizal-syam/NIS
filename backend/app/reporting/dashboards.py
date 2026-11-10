@@ -35,6 +35,7 @@ M = 1_000_000
 PHASES = ("plan", "commit", "execute", "record", "settle", "review")
 LANES = ("revenue", "spend", "people", "finance")
 TARGETS_KEY = "okr.targets"
+EXTERNAL_ROLES = frozenset({"client_rep", "vendor"})
 # OKR 2026 (RJPP); later years are set in Settings.
 DEFAULT_TARGETS: dict[str, Any] = {
     "revenue": 25_000 * M,
@@ -313,7 +314,10 @@ async def process_map(
     session: AsyncSession, p: Principal, today: date | None = None
 ) -> dict[str, Any]:
     today = today or today_jakarta()
-    cells = []
+    cells: list[dict[str, Any]] = []
+    if p.role_codes and p.role_codes <= EXTERNAL_ROLES:
+        # Clients and vendors see only their own records (portal), never company-wide counts.
+        return {"lanes": list(LANES), "phases": list(PHASES), "cells": cells}
     for cell in _cells(today):
         if not p.can(cell.module, "view"):
             continue

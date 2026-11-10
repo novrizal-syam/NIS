@@ -58,6 +58,7 @@ MODULES: dict[str, str] = {
     "audit": "Jejak Audit",
     "workflow": "Persetujuan (DOA)",
     "reporting": "Laporan",
+    "portal": "Portal klien & vendor",
 }
 
 ACTION_LABELS: dict[Action, str] = {

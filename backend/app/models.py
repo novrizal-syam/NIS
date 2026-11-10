@@ -98,6 +98,7 @@ from app.operations.models import (
     PayrollDay,
 )
 from app.payroll.models import PayrollRun, Payslip, PayslipDay, PayslipItem, Pph21TerRate
+from app.portal.models import VendorSubmission
 from app.procurement.models import (
     PriceHistory,
     PurchaseOrder,
@@ -279,6 +280,7 @@ __all__ = [
     "VendorCreditNote",
     "VendorInvoice",
     "VendorInvoiceLine",
+    "VendorSubmission",
     "Warehouse",
     "WhatsAppMessage",
     "WorkOrder",

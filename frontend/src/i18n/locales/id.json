@@ -69,7 +69,8 @@
       "accessReview": "Tinjauan Akses",
       "myPayslips": "Slip gaji saya",
       "periodClose": "Tutup buku",
-      "integrations": "Integrasi"
+      "integrations": "Integrasi",
+      "portal": "Portal klien & vendor"
     }
   },
   "topbar": {
@@ -2885,6 +2886,71 @@
       "manual": "Kirim manual",
       "sent": "Terkirim",
       "failed": "Gagal"
+    }
+  },
+  "portal": {
+    "notLinked": "Akun ini belum terhubung ke klien atau vendor. Hubungi administrator.",
+    "number": "Nomor",
+    "period": "Periode",
+    "value": "Nilai",
+    "status": "Status",
+    "due": "Jatuh tempo",
+    "total": "Jumlah",
+    "outstanding": "Sisa tagihan",
+    "none": "Tidak ada data.",
+    "client": {
+      "tickets": "Service ticket {{name}}",
+      "ticketsHint": "Tinjau dan tanda tangani service ticket; baris yang tidak disetujui dapat diajukan keberatan lewat tautan tanda tangan.",
+      "sign": "Tanda tangani",
+      "signer": "Nama penanda tangan",
+      "confirmSign": "Tanda tangani tiket",
+      "invoices": "Invoice",
+      "pack": "Paket invoice"
+    },
+    "vendor": {
+      "rfqs": "Undangan RFQ {{name}}",
+      "quote": "Ajukan penawaran",
+      "quoteStatus": {
+        "invited": "Diundang",
+        "quoted": "Sudah ditawar",
+        "declined": "Ditolak"
+      },
+      "upload": "Kirim invoice",
+      "uploadHint": "Lampirkan PDF invoice terhadap PO kami; tim AP memverifikasi dan mencatatnya.",
+      "po": "No. PO",
+      "invoiceNo": "No. invoice",
+      "date": "Tanggal invoice",
+      "taxInvoice": "No. faktur pajak",
+      "file": "File PDF",
+      "send": "Kirim",
+      "status": "Status invoice & pembayaran",
+      "subStatus": {
+        "submitted": "Dikirim, menunggu verifikasi",
+        "registered": "Dicatat AP",
+        "rejected": "Dikembalikan"
+      },
+      "paidOn": "dibayar {{date}}",
+      "unitPrice": "Harga satuan",
+      "deliveryDays": "Waktu kirim (hari)",
+      "submitQuote": "Kirim penawaran",
+      "decline": "Tidak menawar"
+    },
+    "ap": {
+      "title": "Invoice dari portal vendor",
+      "hint": "Buat invoice vendor dari PDF ini (Pengadaan > Tagihan Vendor), lalu tautkan nomornya; atau kembalikan dengan alasan.",
+      "viNumber": "No. VI / alasan",
+      "register": "Tautkan VI",
+      "reject": "Kembalikan",
+      "defaultReject": "Data invoice tidak lengkap"
+    },
+    "link": {
+      "title": "Hubungkan akun portal",
+      "hint": "Pengguna eksternal (peran Client Representative atau Vendor) dihubungkan ke satu kode klien atau vendor.",
+      "user": "Pengguna eksternal",
+      "client": "Kode klien",
+      "vendor": "Kode vendor",
+      "save": "Simpan",
+      "saved": "Tersimpan."
     }
   }
 }

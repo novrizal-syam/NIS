@@ -69,7 +69,8 @@
       "accessReview": "Access Review",
       "myPayslips": "My payslips",
       "periodClose": "Period close",
-      "integrations": "Integrations"
+      "integrations": "Integrations",
+      "portal": "Client & vendor portal"
     }
   },
   "topbar": {
@@ -2885,6 +2886,71 @@
       "manual": "Send manually",
       "sent": "Sent",
       "failed": "Failed"
+    }
+  },
+  "portal": {
+    "notLinked": "This account is not linked to a client or vendor. Contact the administrator.",
+    "number": "Number",
+    "period": "Period",
+    "value": "Value",
+    "status": "Status",
+    "due": "Due",
+    "total": "Amount",
+    "outstanding": "Outstanding",
+    "none": "No data.",
+    "client": {
+      "tickets": "Service tickets {{name}}",
+      "ticketsHint": "Review and sign service tickets; lines you do not accept can be disputed through the signature link.",
+      "sign": "Sign",
+      "signer": "Signer name",
+      "confirmSign": "Sign ticket",
+      "invoices": "Invoices",
+      "pack": "Invoice pack"
+    },
+    "vendor": {
+      "rfqs": "RFQ invitations {{name}}",
+      "quote": "Submit quote",
+      "quoteStatus": {
+        "invited": "Invited",
+        "quoted": "Quoted",
+        "declined": "Declined"
+      },
+      "upload": "Send invoice",
+      "uploadHint": "Attach the invoice PDF against our PO; AP verifies and records it.",
+      "po": "PO no.",
+      "invoiceNo": "Invoice no.",
+      "date": "Invoice date",
+      "taxInvoice": "Tax invoice no.",
+      "file": "PDF file",
+      "send": "Send",
+      "status": "Invoice & payment status",
+      "subStatus": {
+        "submitted": "Sent, awaiting verification",
+        "registered": "Recorded by AP",
+        "rejected": "Returned"
+      },
+      "paidOn": "paid {{date}}",
+      "unitPrice": "Unit price",
+      "deliveryDays": "Delivery (days)",
+      "submitQuote": "Send quote",
+      "decline": "Decline"
+    },
+    "ap": {
+      "title": "Invoices from the vendor portal",
+      "hint": "Create the vendor invoice from this PDF (Procurement > Vendor invoices), then link its number; or return it with a reason.",
+      "viNumber": "VI no. / reason",
+      "register": "Link VI",
+      "reject": "Return",
+      "defaultReject": "Invoice data incomplete"
+    },
+    "link": {
+      "title": "Link portal accounts",
+      "hint": "External users (Client Representative or Vendor role) are linked to one client or vendor code.",
+      "user": "External user",
+      "client": "Client code",
+      "vendor": "Vendor code",
+      "save": "Save",
+      "saved": "Saved."
     }
   }
 }

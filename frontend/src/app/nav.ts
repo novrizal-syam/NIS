@@ -201,6 +201,7 @@ export const NAV: NavGroup[] = [
     key: 'peopleDocs',
     items: [
       { key: 'myPayslips', path: '/slip-gaji', icon: 'receipt_long', ready: true },
+      { key: 'portal', path: '/portal', icon: 'storefront', ready: true, module: 'portal' },
       { key: 'letters', path: '/surat', icon: 'mail', ready: true, module: 'letters' },
       { key: 'dms', path: '/dokumen', icon: 'folder_open', ready: true, module: 'dms' },
       { key: 'lms', path: '/pelatihan', icon: 'school', ready: true, module: 'lms' },

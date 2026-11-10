@@ -44,6 +44,7 @@ from app.master.router import router as master_router
 from app.notifications.router import router as notifications_router
 from app.operations.router import router as operations_router
 from app.payroll.router import router as payroll_router
+from app.portal.router import router as portal_router
 from app.procurement.po_router import router as po_router
 from app.procurement.router import router as procurement_router
 from app.project.budget_router import router as budget_router
@@ -176,6 +177,7 @@ def create_app() -> FastAPI:
     api.include_router(lms_router)
     api.include_router(dashboard_router)
     api.include_router(integrations_router)
+    api.include_router(portal_router)
     app.include_router(api)
     return app
 

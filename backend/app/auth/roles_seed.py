@@ -293,10 +293,17 @@ SYSTEM_ROLES: tuple[RoleDef, ...] = (
         "client_rep",
         "Client Representative",
         g(("operations", "billing"), A.VIEW, PRJ),
+        g("portal", (A.VIEW, A.CREATE), OWN),  # client portal (10c)
         base=False,
         is_external=True,
     ),
-    _role("vendor", "Vendor", base=False, is_external=True),
+    _role(
+        "vendor",
+        "Vendor",
+        g("portal", (A.VIEW, A.CREATE), OWN),  # vendor portal (10c)
+        base=False,
+        is_external=True,
+    ),
 )
 
 ROLE_CODES = frozenset(r.code for r in SYSTEM_ROLES)

@@ -35,6 +35,7 @@ import {
 } from '@/features/dms/DmsPages';
 import { IntegrationsPage } from '@/features/integrations/IntegrationsPage';
 import { LmsPage } from '@/features/lms/LmsPage';
+import { PortalPage } from '@/features/portal/PortalPage';
 import { CapexDetailPage, CapexFormPage, CapexListPage } from '@/features/capex/CapexPages';
 import { ClosePage, TaxPage } from '@/features/tax/TaxPages';
 import { TreasuryPage } from '@/features/treasury/TreasuryPage';
@@ -176,6 +177,7 @@ export function AppRoutes() {
           <Route path="dokumen" element={<DocumentsPage />} />
           <Route path="dokumen/terkendali/:id" element={<ControlledDetailPage />} />
           <Route path="pelatihan" element={<LmsPage />} />
+          <Route path="portal" element={<PortalPage />} />
           <Route path="capex" element={<CapexListPage />} />
           <Route path="capex/baru" element={<CapexFormPage />} />
           <Route path="capex/:id" element={<CapexDetailPage />} />

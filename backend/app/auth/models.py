@@ -54,6 +54,13 @@ class User(EntityMixin, Base):
     privacy_accepted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     privacy_version: Mapped[str | None] = mapped_column(String(20))
     phone: Mapped[str | None] = mapped_column(String(40))
+    # External portal users (10c): the client or vendor they act for.
+    client_code: Mapped[str | None] = mapped_column(
+        String(20), ForeignKey("clients.code", ondelete="RESTRICT")
+    )
+    vendor_code: Mapped[str | None] = mapped_column(
+        String(20), ForeignKey("vendors.code", ondelete="RESTRICT")
+    )
     profile_completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     tour_done_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     photo_attachment_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))

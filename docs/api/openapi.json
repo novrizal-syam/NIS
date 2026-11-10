@@ -1007,6 +1007,65 @@
     "title": "Body_upload_api_attachments_post",
     "type": "object"
    },
+   "Body_vendor_upload_api_portal_vendor_invoices_post": {
+    "properties": {
+     "amount": {
+      "anyOf": [
+       {
+        "exclusiveMinimum": 0.0,
+        "type": "number"
+       },
+       {
+        "type": "string"
+       }
+      ],
+      "title": "Amount"
+     },
+     "file": {
+      "contentMediaType": "application/octet-stream",
+      "title": "File",
+      "type": "string"
+     },
+     "invoice_date": {
+      "format": "date",
+      "title": "Invoice Date",
+      "type": "string"
+     },
+     "invoice_no": {
+      "maxLength": 60,
+      "minLength": 1,
+      "title": "Invoice No",
+      "type": "string"
+     },
+     "po_number": {
+      "maxLength": 30,
+      "minLength": 3,
+      "title": "Po Number",
+      "type": "string"
+     },
+     "tax_invoice_no": {
+      "anyOf": [
+       {
+        "maxLength": 30,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Tax Invoice No"
+     }
+    },
+    "required": [
+     "po_number",
+     "invoice_no",
+     "invoice_date",
+     "amount",
+     "file"
+    ],
+    "title": "Body_vendor_upload_api_portal_vendor_invoices_post",
+    "type": "object"
+   },
    "BudgetBody": {
     "properties": {
      "cells": {
@@ -2289,6 +2348,36 @@
      "ppn_months_after"
     ],
     "title": "DeadlinesIn",
+    "type": "object"
+   },
+   "DecideIn": {
+    "properties": {
+     "reject_reason": {
+      "anyOf": [
+       {
+        "maxLength": 500,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Reject Reason"
+     },
+     "vendor_invoice_number": {
+      "anyOf": [
+       {
+        "maxLength": 20,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Vendor Invoice Number"
+     }
+    },
+    "title": "DecideIn",
     "type": "object"
    },
    "DecisionIn": {
@@ -4203,6 +4292,36 @@
     "title": "LinkBody",
     "type": "object"
    },
+   "LinkIn": {
+    "properties": {
+     "client_code": {
+      "anyOf": [
+       {
+        "maxLength": 20,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Client Code"
+     },
+     "vendor_code": {
+      "anyOf": [
+       {
+        "maxLength": 20,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Vendor Code"
+     }
+    },
+    "title": "LinkIn",
+    "type": "object"
+   },
    "LoginIn": {
     "properties": {
      "email": {
@@ -6068,74 +6187,6 @@
      "answers"
     ],
     "title": "QuizIn",
-    "type": "object"
-   },
-   "QuoteIn": {
-    "properties": {
-     "declined": {
-      "default": false,
-      "title": "Declined",
-      "type": "boolean"
-     },
-     "delivery_days": {
-      "default": 0,
-      "maximum": 3650.0,
-      "minimum": 0.0,
-      "title": "Delivery Days",
-      "type": "integer"
-     },
-     "note": {
-      "anyOf": [
-       {
-        "maxLength": 1000,
-        "type": "string"
-       },
-       {
-        "type": "null"
-       }
-      ],
-      "title": "Note"
-     },
-     "payment_terms": {
-      "anyOf": [
-       {
-        "maxLength": 200,
-        "type": "string"
-       },
-       {
-        "type": "null"
-       }
-      ],
-      "title": "Payment Terms"
-     },
-     "unit_prices": {
-      "additionalProperties": {
-       "anyOf": [
-        {
-         "type": "number"
-        },
-        {
-         "type": "string"
-        }
-       ]
-      },
-      "title": "Unit Prices",
-      "type": "object"
-     },
-     "valid_until": {
-      "anyOf": [
-       {
-        "format": "date",
-        "type": "string"
-       },
-       {
-        "type": "null"
-       }
-      ],
-      "title": "Valid Until"
-     }
-    },
-    "title": "QuoteIn",
     "type": "object"
    },
    "RatesIn": {
@@ -9295,6 +9346,142 @@
      "reason"
     ],
     "title": "CancelBody",
+    "type": "object"
+   },
+   "app__portal__router__QuoteIn": {
+    "properties": {
+     "declined": {
+      "default": false,
+      "title": "Declined",
+      "type": "boolean"
+     },
+     "delivery_days": {
+      "default": 0,
+      "maximum": 365.0,
+      "minimum": 0.0,
+      "title": "Delivery Days",
+      "type": "integer"
+     },
+     "note": {
+      "anyOf": [
+       {
+        "maxLength": 1000,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Note"
+     },
+     "payment_terms": {
+      "anyOf": [
+       {
+        "maxLength": 200,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Payment Terms"
+     },
+     "unit_prices": {
+      "additionalProperties": {
+       "anyOf": [
+        {
+         "type": "number"
+        },
+        {
+         "type": "string"
+        }
+       ]
+      },
+      "title": "Unit Prices",
+      "type": "object"
+     },
+     "valid_until": {
+      "anyOf": [
+       {
+        "format": "date",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Valid Until"
+     }
+    },
+    "title": "QuoteIn",
+    "type": "object"
+   },
+   "app__procurement__po_router__QuoteIn": {
+    "properties": {
+     "declined": {
+      "default": false,
+      "title": "Declined",
+      "type": "boolean"
+     },
+     "delivery_days": {
+      "default": 0,
+      "maximum": 3650.0,
+      "minimum": 0.0,
+      "title": "Delivery Days",
+      "type": "integer"
+     },
+     "note": {
+      "anyOf": [
+       {
+        "maxLength": 1000,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Note"
+     },
+     "payment_terms": {
+      "anyOf": [
+       {
+        "maxLength": 200,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Payment Terms"
+     },
+     "unit_prices": {
+      "additionalProperties": {
+       "anyOf": [
+        {
+         "type": "number"
+        },
+        {
+         "type": "string"
+        }
+       ]
+      },
+      "title": "Unit Prices",
+      "type": "object"
+     },
+     "valid_until": {
+      "anyOf": [
+       {
+        "format": "date",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Valid Until"
+     }
+    },
+    "title": "QuoteIn",
     "type": "object"
    },
    "app__procurement__po_router__ReviseIn": {
@@ -27982,6 +28169,862 @@
     ]
    }
   },
+  "/api/portal/client/invoices": {
+   "get": {
+    "operationId": "client_invoices_api_portal_client_invoices_get",
+    "parameters": [
+     {
+      "in": "header",
+      "name": "x-active-role",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Active-Role"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "additionalProperties": true,
+          "type": "object"
+         },
+         "title": "Response Client Invoices Api Portal Client Invoices Get",
+         "type": "array"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Client Invoices",
+    "tags": [
+     "portal"
+    ]
+   }
+  },
+  "/api/portal/client/invoices/{iid}/pack": {
+   "get": {
+    "operationId": "client_pack_api_portal_client_invoices__iid__pack_get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "iid",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Iid",
+       "type": "string"
+      }
+     },
+     {
+      "in": "header",
+      "name": "x-active-role",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Active-Role"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Client Pack",
+    "tags": [
+     "portal"
+    ]
+   }
+  },
+  "/api/portal/client/tickets": {
+   "get": {
+    "operationId": "client_tickets_api_portal_client_tickets_get",
+    "parameters": [
+     {
+      "in": "header",
+      "name": "x-active-role",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Active-Role"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "additionalProperties": true,
+          "type": "object"
+         },
+         "title": "Response Client Tickets Api Portal Client Tickets Get",
+         "type": "array"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Client Tickets",
+    "tags": [
+     "portal"
+    ]
+   }
+  },
+  "/api/portal/client/tickets/{tid}": {
+   "get": {
+    "operationId": "client_ticket_api_portal_client_tickets__tid__get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "tid",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Tid",
+       "type": "string"
+      }
+     },
+     {
+      "in": "header",
+      "name": "x-active-role",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Active-Role"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Client Ticket Api Portal Client Tickets  Tid  Get",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Client Ticket",
+    "tags": [
+     "portal"
+    ]
+   }
+  },
+  "/api/portal/client/tickets/{tid}/sign": {
+   "post": {
+    "operationId": "client_sign_api_portal_client_tickets__tid__sign_post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "tid",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Tid",
+       "type": "string"
+      }
+     },
+     {
+      "in": "header",
+      "name": "x-active-role",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Active-Role"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/SignBody"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Client Sign Api Portal Client Tickets  Tid  Sign Post",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Client Sign",
+    "tags": [
+     "portal"
+    ]
+   }
+  },
+  "/api/portal/links/{user_id}": {
+   "put": {
+    "operationId": "link_user_api_portal_links__user_id__put",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "user_id",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "User Id",
+       "type": "string"
+      }
+     },
+     {
+      "in": "header",
+      "name": "x-active-role",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Active-Role"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/LinkIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Link User Api Portal Links  User Id  Put",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Link User",
+    "tags": [
+     "portal"
+    ]
+   }
+  },
+  "/api/portal/me": {
+   "get": {
+    "operationId": "me_api_portal_me_get",
+    "parameters": [
+     {
+      "in": "header",
+      "name": "x-active-role",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Active-Role"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Me Api Portal Me Get",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Me",
+    "tags": [
+     "portal"
+    ]
+   }
+  },
+  "/api/portal/submissions": {
+   "get": {
+    "operationId": "submissions_api_portal_submissions_get",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "status",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "default": "submitted",
+       "title": "Status"
+      }
+     },
+     {
+      "in": "header",
+      "name": "x-active-role",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Active-Role"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "additionalProperties": true,
+          "type": "object"
+         },
+         "title": "Response Submissions Api Portal Submissions Get",
+         "type": "array"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Submissions",
+    "tags": [
+     "portal"
+    ]
+   }
+  },
+  "/api/portal/submissions/{sid}/decide": {
+   "post": {
+    "description": "AP links the vendor invoice it registered, or rejects with a reason the vendor sees.",
+    "operationId": "decide_api_portal_submissions__sid__decide_post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "sid",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Sid",
+       "type": "string"
+      }
+     },
+     {
+      "in": "header",
+      "name": "x-active-role",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Active-Role"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/DecideIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Decide Api Portal Submissions  Sid  Decide Post",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Decide",
+    "tags": [
+     "portal"
+    ]
+   }
+  },
+  "/api/portal/vendor/invoices": {
+   "get": {
+    "operationId": "vendor_invoices_api_portal_vendor_invoices_get",
+    "parameters": [
+     {
+      "in": "header",
+      "name": "x-active-role",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Active-Role"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Vendor Invoices Api Portal Vendor Invoices Get",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Vendor Invoices",
+    "tags": [
+     "portal"
+    ]
+   },
+   "post": {
+    "operationId": "vendor_upload_api_portal_vendor_invoices_post",
+    "parameters": [
+     {
+      "in": "header",
+      "name": "x-active-role",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Active-Role"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "$ref": "#/components/schemas/Body_vendor_upload_api_portal_vendor_invoices_post"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Vendor Upload Api Portal Vendor Invoices Post",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Vendor Upload",
+    "tags": [
+     "portal"
+    ]
+   }
+  },
+  "/api/portal/vendor/rfqs": {
+   "get": {
+    "operationId": "vendor_rfqs_api_portal_vendor_rfqs_get",
+    "parameters": [
+     {
+      "in": "header",
+      "name": "x-active-role",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Active-Role"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "additionalProperties": true,
+          "type": "object"
+         },
+         "title": "Response Vendor Rfqs Api Portal Vendor Rfqs Get",
+         "type": "array"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Vendor Rfqs",
+    "tags": [
+     "portal"
+    ]
+   }
+  },
+  "/api/portal/vendor/rfqs/{qid}": {
+   "get": {
+    "operationId": "vendor_rfq_api_portal_vendor_rfqs__qid__get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "qid",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Qid",
+       "type": "string"
+      }
+     },
+     {
+      "in": "header",
+      "name": "x-active-role",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Active-Role"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Vendor Rfq Api Portal Vendor Rfqs  Qid  Get",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Vendor Rfq",
+    "tags": [
+     "portal"
+    ]
+   },
+   "put": {
+    "operationId": "vendor_quote_api_portal_vendor_rfqs__qid__put",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "qid",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Qid",
+       "type": "string"
+      }
+     },
+     {
+      "in": "header",
+      "name": "x-active-role",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Active-Role"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/app__portal__router__QuoteIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Vendor Quote Api Portal Vendor Rfqs  Qid  Put",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Vendor Quote",
+    "tags": [
+     "portal"
+    ]
+   }
+  },
   "/api/procurement/pos": {
    "get": {
     "operationId": "list_pos_api_procurement_pos_get",
@@ -29565,7 +30608,7 @@
      "content": {
       "application/json": {
        "schema": {
-        "$ref": "#/components/schemas/QuoteIn"
+        "$ref": "#/components/schemas/app__procurement__po_router__QuoteIn"
        }
       }
      },
