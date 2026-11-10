@@ -53,8 +53,39 @@ async def notify(
     stmt = insert(Notification).values(rows)
     if dedupe_key:
         stmt = stmt.on_conflict_do_nothing(index_elements=["user_id", "dedupe_key"])
-    result = await session.execute(stmt)
-    return int(result.rowcount or 0)  # type: ignore[attr-defined]
+    inserted = list((await session.execute(stmt.returning(Notification.user_id))).scalars())
+    if inserted:
+        await _whatsapp(session, inserted, kind=kind, title=title, body=body, link=link)
+    return len(inserted)
+
+
+async def _whatsapp(
+    session: AsyncSession,
+    user_ids: list[uuid.UUID],
+    *,
+    kind: str,
+    title: str,
+    body: str,
+    link: str | None,
+) -> None:
+    """Also send to WhatsApp for the kinds chosen in setting `whatsapp.notify_kinds` (10b)."""
+    from app.core.config import get_settings
+    from app.integrations import whatsapp
+
+    if kind not in await whatsapp.notify_kinds(session):
+        return
+    phones = (
+        await session.execute(
+            select(User.phone).where(User.id.in_(user_ids), User.phone.is_not(None))
+        )
+    ).scalars()
+    url = f"{get_settings().app_base_url}{link}" if link else ""
+    for phone in phones:
+        if not phone:
+            continue
+        await whatsapp.queue(
+            session, phone, f"*{title}*\n{body}\n{url}".strip(), kind=kind, link=link
+        )
 
 
 # --- workflow events --------------------------------------------------------------------------

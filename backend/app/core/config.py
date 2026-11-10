@@ -59,6 +59,13 @@ class Settings(BaseSettings):
     app_base_url: str = "http://localhost:5173"  # links in emails
     email_interval_seconds: int = 30
 
+    # Integrations (10b). Secrets only from the environment; empty = manual/file mode.
+    pjap_base_url: str = ""  # PJAP (Coretax partner) REST endpoint
+    pjap_api_key: str = ""
+    whatsapp_phone_number_id: str = ""  # WhatsApp Business Cloud API
+    whatsapp_token: str = ""
+    whatsapp_api_url: str = "https://graph.facebook.com/v20.0"
+
     @field_validator("cors_origins", mode="before")
     @classmethod
     def _split_origins(cls, value: object) -> object:

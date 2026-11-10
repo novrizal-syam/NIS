@@ -22,6 +22,7 @@ from app.auth.users_router import router as users_router
 from app.billing.router import router as billing_router
 from app.capex.router import router as capex_router
 from app.contract.router import router as contract_router
+from app.core import openapi_meta
 from app.core.config import get_settings
 from app.core.db import get_session, session_scope, use_session_provider
 from app.core.errors import install_error_handlers
@@ -34,6 +35,7 @@ from app.dms.docs_router import router as dms_docs_router
 from app.dms.router import router as dms_router
 from app.finance.ledger_router import router as ledger_router
 from app.finance.router import router as finance_router
+from app.integrations.router import router as integrations_router
 from app.inventory.router import router as inventory_router
 from app.letters.router import router as letters_router
 from app.lms.router import router as lms_router
@@ -82,7 +84,11 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
         title=settings.app_name,
         version="0.1.0",
+        description=openapi_meta.DESCRIPTION,
+        openapi_tags=openapi_meta.openapi_tags(),
+        # Interactive docs only outside production; the spec is exported to docs/api/.
         docs_url=None if settings.is_production else "/api/docs",
+        redoc_url=None,
         openapi_url=None if settings.is_production else "/api/openapi.json",
     )
     install_error_handlers(app)
@@ -169,6 +175,7 @@ def create_app() -> FastAPI:
     api.include_router(letters_router)
     api.include_router(lms_router)
     api.include_router(dashboard_router)
+    api.include_router(integrations_router)
     app.include_router(api)
     return app
 

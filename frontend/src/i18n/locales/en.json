@@ -68,7 +68,8 @@
       "sod": "Segregation of Duties",
       "accessReview": "Access Review",
       "myPayslips": "My payslips",
-      "periodClose": "Period close"
+      "periodClose": "Period close",
+      "integrations": "Integrations"
     }
   },
   "topbar": {
@@ -2856,6 +2857,34 @@
         "off_track": "Needs action",
         "na": "No data yet"
       }
+    }
+  },
+  "integrations": {
+    "title": "Integrations",
+    "hint": "Every integration runs in manual/file mode until credentials are set in the server environment (secrets are never stored in the database).",
+    "name": "Integration",
+    "mode": "Mode",
+    "detail": "Detail",
+    "config": "Configuration",
+    "modes": {
+      "live": "Live",
+      "manual": "Manual",
+      "file": "File"
+    },
+    "waKinds": "Notifications also sent to WhatsApp",
+    "waKindsHint": "Comma-separated kinds, e.g. disposition, approval_request",
+    "save": "Save",
+    "apiDocs": "REST API documentation: docs/api/README.md and openapi.json; outside production also at /api/docs.",
+    "outbox": "WhatsApp outbox",
+    "outboxHint": "Manual mode: open the wa.me link, send, then mark it sent.",
+    "openWa": "Open WhatsApp",
+    "markSent": "Mark sent",
+    "empty": "No messages yet.",
+    "msg": {
+      "queued": "Queued",
+      "manual": "Send manually",
+      "sent": "Sent",
+      "failed": "Failed"
     }
   }
 }

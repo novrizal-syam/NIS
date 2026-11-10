@@ -40,6 +40,7 @@ from app.finance.models import (
     VendorInvoice,
     VendorInvoiceLine,
 )
+from app.integrations.models import WhatsAppMessage
 from app.inventory.models import (
     GoodsReceipt,
     GoodsReceiptLine,
@@ -279,6 +280,7 @@ __all__ = [
     "VendorInvoice",
     "VendorInvoiceLine",
     "Warehouse",
+    "WhatsAppMessage",
     "WorkOrder",
     "WorkOrderPart",
 ]

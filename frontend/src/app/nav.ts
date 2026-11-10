@@ -221,6 +221,13 @@ export const NAV: NavGroup[] = [
       },
       { key: 'sod', path: '/pengaturan/sod', icon: 'gpp_maybe', ready: true, module: 'users' },
       { key: 'doaRules', path: '/pengaturan/doa', icon: 'rule', ready: true, module: 'workflow' },
+      {
+        key: 'integrations',
+        path: '/pengaturan/integrasi',
+        icon: 'hub',
+        ready: true,
+        module: 'settings',
+      },
       { key: 'auditTrail', path: '/audit', icon: 'policy', ready: true, module: 'audit' },
       {
         key: 'accessReview',

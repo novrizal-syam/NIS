@@ -101,6 +101,12 @@ async def run_lms_assignments() -> int:
     return await _in_session(run_auto)
 
 
+async def run_whatsapp() -> int:
+    from app.integrations.whatsapp import deliver
+
+    return await _in_session(deliver)
+
+
 JOBS: dict[str, Callable[[], Awaitable[int]]] = {
     "invoices": run_invoice_reminders,
     "advances": run_advance_alerts,
@@ -108,6 +114,7 @@ JOBS: dict[str, Callable[[], Awaitable[int]]] = {
     "capex": run_capex_reviews,
     "dms": run_dms_alerts,
     "lms": run_lms_assignments,
+    "whatsapp": run_whatsapp,
     "pm": run_pm_scheduler,
     "capa": run_capa_alerts,
     "escalate": run_escalation,
@@ -122,7 +129,7 @@ async def scheduler_loop(interval_seconds: int = 900) -> None:
     email_every = get_settings().email_interval_seconds
     last_slow = 0.0
     while True:
-        jobs = ["email"]
+        jobs = ["email", "whatsapp"]
         if time.monotonic() - last_slow >= interval_seconds:
             jobs += [
                 "escalate",

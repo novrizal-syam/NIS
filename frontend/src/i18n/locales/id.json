@@ -68,7 +68,8 @@
       "sod": "Pemisahan Tugas",
       "accessReview": "Tinjauan Akses",
       "myPayslips": "Slip gaji saya",
-      "periodClose": "Tutup buku"
+      "periodClose": "Tutup buku",
+      "integrations": "Integrasi"
     }
   },
   "topbar": {
@@ -2856,6 +2857,34 @@
         "off_track": "Perlu tindakan",
         "na": "Belum ada data"
       }
+    }
+  },
+  "integrations": {
+    "title": "Integrasi",
+    "hint": "Setiap integrasi berjalan manual/file sampai kredensial dipasang di variabel lingkungan server (rahasia tidak disimpan di basis data).",
+    "name": "Integrasi",
+    "mode": "Mode",
+    "detail": "Keterangan",
+    "config": "Konfigurasi",
+    "modes": {
+      "live": "Langsung",
+      "manual": "Manual",
+      "file": "File"
+    },
+    "waKinds": "Notifikasi yang juga dikirim ke WhatsApp",
+    "waKindsHint": "Jenis dipisah koma, mis. disposition, approval_request",
+    "save": "Simpan",
+    "apiDocs": "Dokumentasi REST API: docs/api/README.md dan openapi.json; di luar produksi juga di /api/docs.",
+    "outbox": "Outbox WhatsApp",
+    "outboxHint": "Mode manual: buka tautan wa.me, kirim, lalu tandai terkirim.",
+    "openWa": "Buka WhatsApp",
+    "markSent": "Tandai terkirim",
+    "empty": "Belum ada pesan.",
+    "msg": {
+      "queued": "Antre",
+      "manual": "Kirim manual",
+      "sent": "Terkirim",
+      "failed": "Gagal"
     }
   }
 }
