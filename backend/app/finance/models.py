@@ -67,6 +67,7 @@ class JournalLine(Base):
         ),
         Index("ix_journal_lines_account", "account_code"),
         Index("ix_journal_lines_project", "project_id", "wbs_id", "cost_element_code"),
+        Index("ix_journal_lines_partner", "partner_type", "partner_code"),  # statements (10e)
     )
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -119,6 +120,7 @@ class VendorInvoice(EntityMixin, Base):
             unique=True,
             postgresql_where=text("status <> 'cancelled'"),
         ),
+        Index("ix_vendor_invoices_status_due", "status", "due_date"),  # payables, aging (10e)
     )
 
     number: Mapped[str] = mapped_column(String(20), nullable=False, unique=True)

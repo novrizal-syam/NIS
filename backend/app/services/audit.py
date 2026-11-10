@@ -31,6 +31,7 @@ class AuditLog(Base):
     __table_args__ = (
         Index("ix_audit_log_entity", "entity_type", "entity_id"),
         Index("ix_audit_log_actor_at", "actor_id", "at"),
+        Index("ix_audit_log_at", "at"),  # audit screen, newest first (10e)
     )
 
     id: Mapped[uuid.UUID] = mapped_column(

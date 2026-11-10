@@ -129,6 +129,7 @@ class TicketLine(Base):
 
 class CustomerInvoice(EntityMixin, Base):
     __tablename__ = "customer_invoices"
+    __table_args__ = (Index("ix_customer_invoices_status_due", "status", "due_date"),)  # aging
 
     number: Mapped[str] = mapped_column(String(20), nullable=False, unique=True)
     # Nullable for opening-balance AR items (07a).

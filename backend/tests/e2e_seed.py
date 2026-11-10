@@ -23,7 +23,7 @@ from app.contract.models import Contract, ContractRate
 from app.core.db import SessionLocal
 from app.crm.models import Opportunity
 from app.inventory import stock_service as stock
-from app.master.models import Asset, Employee, Item, PriceItem, Warehouse
+from app.master.models import Asset, Client, Employee, Item, PriceItem, Vendor, Warehouse
 from app.project.models import (
     BudgetVersion,
     BudgetVersionLine,
@@ -51,6 +51,15 @@ USERS = {
     "field_engineer": ("fe@e2e.gek.co.id", "Eko Field Engineer"),
     "warehouse_head": ("wh@e2e.gek.co.id", "Hadi Kepala Gudang"),
     "ofs_superintendent": ("sup@e2e.gek.co.id", "Rudi Superintendent"),
+    # Whole scenario (10e): the remaining hands in the money chain, CAPEX and SOP training.
+    "procurement_officer": ("proc@e2e.gek.co.id", "Lina Procurement"),
+    "billing_admin": ("billing@e2e.gek.co.id", "Maya Billing"),
+    "ap_accountant": ("ap@e2e.gek.co.id", "Tono AP"),
+    "cashier": ("cashier@e2e.gek.co.id", "Wati Kasir"),
+    "hcbp_officer": ("hcbp@e2e.gek.co.id", "Rina HCBP"),
+    "tax_specialist": ("tax@e2e.gek.co.id", "Fajar Pajak"),
+    "qhse_coordinator": ("qhse@e2e.gek.co.id", "Sari QHSE"),
+    "asset_inventory_coordinator": ("aic@e2e.gek.co.id", "Joko Aset"),
 }
 
 
@@ -165,6 +174,7 @@ async def main() -> None:
             )
         await s.flush()
         await _inventory(s, planner.id)
+        await _scenario(s, planner.id)
         await s.commit()
     print("e2e seed ok")
 
@@ -297,6 +307,220 @@ async def _inventory(s: AsyncSession, manager_id: uuid.UUID) -> None:
         source_id="e2e",
         by=None,
     )
+
+
+async def _scenario(s: AsyncSession, manager_id: uuid.UUID) -> None:
+    """Whole scenario (10e): PRJ-26-903 for client C-E2E with a three-line rate schedule,
+    Rp 200 jt rental budget, its own pump, crew and site stock; three qualified rental vendors;
+    salaries for payroll and Rp 2 M in the operating bank account."""
+    users = {
+        u.email: u
+        for u in (
+            await s.execute(
+                select(User).where(
+                    User.email.in_([USERS["field_engineer"][0], USERS["ofs_superintendent"][0]])
+                )
+            )
+        ).scalars()
+    }
+    await settings_store.put(
+        s,
+        settings_store.COMPANY,
+        {**settings_store.DEFAULT_COMPANY, "npwp": "01.234.567.8-901.000"},
+        None,
+    )
+    s.add(
+        Client(
+            code="C-E2E",
+            name="PT KKKS Skenario",
+            npwp="02.345.678.9-012.000",
+            email="ap@kkks-e2e.co.id",
+            address="Jakarta",
+        )
+    )
+    s.add_all(
+        Vendor(
+            code=code,
+            name=name,
+            category="equipment_rental",
+            status="qualified",
+            rating=Decimal(rating),
+            npwp="01.111.222.3-444.000",
+            bank_name="Mandiri",
+            bank_account_no=f"12300{i}",
+            bank_account_name=name,
+        )
+        for i, (code, name, rating) in enumerate(
+            (("V-E2E-A", "PT Alfa Sewa", "4.0"), ("V-E2E-B", "PT Beta Rental", "5.0")), start=1
+        )
+    )
+    s.add(
+        Vendor(
+            code="V-E2E-C",
+            name="PT Citra Genset",
+            category="equipment_rental",
+            status="qualified",
+            rating=Decimal(3),
+            npwp="01.111.222.3-555.000",
+            bank_name="BCA",
+            bank_account_no="555000",
+            bank_account_name="PT Citra Genset",
+        )
+    )
+    opp = Opportunity(
+        number="OPP-26-903", company_name="PT KKKS Skenario", title="Skenario", owner_id=manager_id
+    )
+    s.add(opp)
+    await s.flush()
+    contract = Contract(
+        number="CTR-26-903",
+        opportunity_id=opp.id,
+        client_code="C-E2E",
+        company_name="PT KKKS Skenario",
+        title="Well test skenario",
+        owner_id=manager_id,
+        value=Decimal(1_000_000_000),
+    )
+    s.add(contract)
+    await s.flush()
+    s.add_all(
+        [
+            ContractRate(
+                contract_id=contract.id,
+                seq=1,
+                kind="equipment",
+                description="Pump unit 600 HP",
+                unit="hari",
+                rate=Decimal(14_000_000),
+                standby_rate=Decimal(7_000_000),
+                breakdown_rate=Decimal(0),
+            ),
+            ContractRate(
+                contract_id=contract.id,
+                seq=2,
+                kind="personnel",
+                description="Field engineer",
+                unit="hari",
+                rate=Decimal(3_000_000),
+            ),
+            ContractRate(
+                contract_id=contract.id,
+                seq=3,
+                kind="consumable",
+                description="Demulsifier",
+                unit="drum",
+                rate=Decimal(6_600_000),
+                unit_cost=Decimal(6_000_000),
+                markup_pct=Decimal(10),
+            ),
+        ]
+    )
+    p = Project(
+        number="PRJ-26-903",
+        name="Skenario E2E Blok Mahakam",
+        company_name="PT KKKS Skenario",
+        client_code="C-E2E",
+        contract_id=contract.id,
+        status="locked",
+        revenue=Decimal(1_000_000_000),
+        budget_total=Decimal(520_000_000),
+        contingency_pct=Decimal(5),
+        manager_id=manager_id,
+        locked_at=datetime.now(UTC),
+        service_line="ofs",
+        service_type="well_test",
+    )
+    s.add(p)
+    await s.flush()
+    w = ProjectWbs(project_id=p.id, code="EXEC", name="Execution", seq=1)
+    s.add(w)
+    await s.flush()
+    for ce, amount in (
+        ("EQUIP-RENT", 200_000_000),
+        ("EQUIP-OWN", 100_000_000),
+        ("MANPOWER", 100_000_000),
+        ("CONSUMABLE", 100_000_000),
+        ("CONTINGENCY", 20_000_000),
+    ):
+        s.add(
+            ProjectBudgetLine(
+                project_id=p.id,
+                version=0,
+                wbs_id=w.id,
+                cost_element_code=ce,
+                amount=Decimal(amount),
+                source="quotation",
+                locked_reserve=ce == "CONTINGENCY",
+            )
+        )
+    for u in users.values():
+        s.add(ProjectMember(project_id=p.id, user_id=u.id))
+    s.add(
+        RiskAssessment(
+            number="HRA-26-903",
+            project_id=p.id,
+            kind="hiradc",
+            title="HIRADC well testing Mahakam",
+            status="approved",
+            hazards=[],
+        )
+    )
+    s.add_all(
+        [
+            Asset(
+                code="AST-E2E-3",
+                name="Pump unit skenario",
+                asset_class="Pumping unit",
+                criticality="A",
+                internal_day_rate=Decimal(9_500_000),
+            ),
+            Employee(
+                code="E-E2E-3",
+                full_name="Bima Operator",
+                position="Operator",
+                is_field=True,
+                basic_salary=Decimal(10_000_000),
+                fixed_allowance=Decimal(2_000_000),
+                ptkp_status="TK/0",
+                npwp="0123456789012000",
+                bank_name="Mandiri",
+                bank_account_no="1230009998887",
+            ),
+            Warehouse(
+                code="WH-903", name="Site Mahakam E2E", kind="site", project_code="PRJ-26-903"
+            ),
+        ]
+    )
+    await s.flush()
+    doc = stock.Doc("opening", "e2e-903", "Saldo awal", None)
+    await stock.receive(s, "ITM-E2E", "WH-903", Decimal(4), Decimal(24_000_000), doc)
+    for lines, desc, sid in (
+        (
+            [
+                ledger.JLine("1310", debit=Decimal(24_000_000)),
+                ledger.JLine("3200", credit=Decimal(24_000_000)),
+            ],
+            "Saldo awal persediaan skenario (e2e)",
+            "e2e-903",
+        ),
+        (
+            [
+                ledger.JLine("1110", debit=Decimal(2_000_000_000)),
+                ledger.JLine("3100", credit=Decimal(2_000_000_000)),
+            ],
+            "Setoran modal (e2e)",
+            "e2e-capital",
+        ),
+    ):
+        await ledger.post_journal(
+            s,
+            entry_date=today_jakarta(),
+            description=desc,
+            lines=lines,
+            source_type="opening",
+            source_id=sid,
+            by=None,
+        )
 
 
 if __name__ == "__main__":

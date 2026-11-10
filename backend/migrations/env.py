@@ -41,7 +41,9 @@ def run_migrations_offline() -> None:
 MANUAL_INDEXES = {"ix_attachments_fts"}
 
 
-def _include(obj: object, name: str | None, type_: str, reflected: bool, compare_to: object) -> bool:
+def _include(
+    obj: object, name: str | None, type_: str, reflected: bool, compare_to: object
+) -> bool:
     return not (type_ == "index" and name in MANUAL_INDEXES)
 
 
