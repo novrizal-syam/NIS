@@ -70,7 +70,8 @@
       "myPayslips": "Slip gaji saya",
       "periodClose": "Tutup buku",
       "integrations": "Integrasi",
-      "portal": "Portal klien & vendor"
+      "portal": "Portal klien & vendor",
+      "pdp": "Data pribadi (PDP)"
     }
   },
   "topbar": {
@@ -2952,5 +2953,46 @@
       "save": "Simpan",
       "saved": "Tersimpan."
     }
+  },
+  "pdp": {
+    "report": "Laporkan dugaan kebocoran data pribadi",
+    "reportHint": "Siapa pun yang mengetahui kebocoran data pribadi wajib melapor segera. Pejabat PDP harus memberi tahu subjek data dan otoritas dalam 3×24 jam (UU 27/2022 pasal 46).",
+    "detectedAt": "Diketahui pada",
+    "severity": "Tingkat",
+    "severities": {
+      "low": "Rendah",
+      "medium": "Sedang",
+      "high": "Tinggi"
+    },
+    "categories": "Jenis data",
+    "cats": {
+      "nik": "NIK",
+      "salary": "Gaji",
+      "bank_account": "Rekening bank",
+      "tax_id": "NPWP pribadi",
+      "contact": "Kontak",
+      "health": "Kesehatan",
+      "other": "Lainnya"
+    },
+    "description": "Uraian kejadian",
+    "send": "Kirim laporan",
+    "reported": "Laporan terkirim ke pejabat PDP.",
+    "log": "Log kebocoran data",
+    "logHint": "Batas pemberitahuan 72 jam sejak diketahui; pengingat 12 jam sebelum dan saat terlewati.",
+    "number": "Nomor",
+    "notifyBy": "Beri tahu sebelum",
+    "status": "Status",
+    "statuses": {
+      "reported": "Dilaporkan",
+      "investigating": "Investigasi",
+      "notified": "Sudah diberitahukan",
+      "closed": "Ditutup"
+    },
+    "overdue": "Terlewati",
+    "subjectsNotified": "Subjek data diberi tahu",
+    "authorityNotified": "Otoritas diberi tahu",
+    "none": "Belum ada laporan.",
+    "consents": "Persetujuan pemberitahuan privasi",
+    "consentsHint": "Versi berlaku {{version}}; {{pending}} pengguna belum menyetujui versi ini (diminta saat masuk)."
   }
 }

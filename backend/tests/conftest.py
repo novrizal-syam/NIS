@@ -26,6 +26,7 @@ from app.treasury.seed import BANK_ACCOUNTS
 TEST_DB_URL = os.environ.get("TEST_DATABASE_URL", get_settings().test_database_url)
 # Seeded configuration (system roles and their permissions) survives between tests.
 TABLES = (
+    "data_breaches",
     "vendor_submissions",
     "whatsapp_outbox",
     "training_assignments",

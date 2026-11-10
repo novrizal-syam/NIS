@@ -70,7 +70,8 @@
       "myPayslips": "My payslips",
       "periodClose": "Period close",
       "integrations": "Integrations",
-      "portal": "Client & vendor portal"
+      "portal": "Client & vendor portal",
+      "pdp": "Personal data (PDP)"
     }
   },
   "topbar": {
@@ -2952,5 +2953,46 @@
       "save": "Save",
       "saved": "Saved."
     }
+  },
+  "pdp": {
+    "report": "Report a suspected personal data breach",
+    "reportHint": "Anyone aware of a personal data breach must report it at once. The PDP officers must notify data subjects and the authority within 3×24 hours (UU 27/2022 art. 46).",
+    "detectedAt": "Detected at",
+    "severity": "Severity",
+    "severities": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    },
+    "categories": "Data categories",
+    "cats": {
+      "nik": "NIK",
+      "salary": "Salary",
+      "bank_account": "Bank account",
+      "tax_id": "Personal tax ID",
+      "contact": "Contact",
+      "health": "Health",
+      "other": "Other"
+    },
+    "description": "What happened",
+    "send": "Send report",
+    "reported": "Report sent to the PDP officers.",
+    "log": "Breach log",
+    "logHint": "Notification deadline 72 hours after detection; reminders 12 hours before and when missed.",
+    "number": "Number",
+    "notifyBy": "Notify by",
+    "status": "Status",
+    "statuses": {
+      "reported": "Reported",
+      "investigating": "Investigating",
+      "notified": "Notified",
+      "closed": "Closed"
+    },
+    "overdue": "Overdue",
+    "subjectsNotified": "Subjects notified",
+    "authorityNotified": "Authority notified",
+    "none": "No reports yet.",
+    "consents": "Privacy notice consent",
+    "consentsHint": "Current version {{version}}; {{pending}} users have not accepted it yet (asked at sign-in)."
   }
 }

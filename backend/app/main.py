@@ -44,6 +44,7 @@ from app.master.router import router as master_router
 from app.notifications.router import router as notifications_router
 from app.operations.router import router as operations_router
 from app.payroll.router import router as payroll_router
+from app.pdp.router import router as pdp_router
 from app.portal.router import router as portal_router
 from app.procurement.po_router import router as po_router
 from app.procurement.router import router as procurement_router
@@ -96,6 +97,21 @@ def create_app() -> FastAPI:
     # Background tasks and middleware resolve sessions like endpoints (overridable in tests).
     use_session_provider(lambda: app.dependency_overrides.get(get_session, get_session))
     use_storage_provider(lambda: app.dependency_overrides.get(get_storage, get_storage))
+
+    @app.middleware("http")
+    async def security_headers(request: Request, call_next: Any) -> Any:
+        """Baseline headers on every response (10d); HSTS once served over HTTPS."""
+        response = await call_next(request)
+        h = response.headers
+        h.setdefault("X-Content-Type-Options", "nosniff")
+        h.setdefault("X-Frame-Options", "DENY")
+        h.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+        h.setdefault("Permissions-Policy", "camera=(self), geolocation=(self), microphone=()")
+        if request.url.path.startswith("/api/") and not request.url.path.startswith("/api/docs"):
+            h.setdefault("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'")
+        if settings.is_hardened:
+            h.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+        return response
 
     @app.middleware("http")
     async def setup_guard(request: Request, call_next: Any) -> Any:
@@ -178,6 +194,7 @@ def create_app() -> FastAPI:
     api.include_router(dashboard_router)
     api.include_router(integrations_router)
     api.include_router(portal_router)
+    api.include_router(pdp_router)
     app.include_router(api)
     return app
 

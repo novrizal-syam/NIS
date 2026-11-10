@@ -18,6 +18,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
+from app.core.crypto import EncryptedString
 from app.core.models import Base, EntityMixin
 
 
@@ -108,10 +109,11 @@ class Employee(EntityMixin, Base):
     basic_salary: Mapped[Decimal | None] = mapped_column(Numeric(18, 0))
     # Fixed monthly allowances (tunjangan tetap; part of the BPJS wage) - 07c.
     fixed_allowance: Mapped[Decimal | None] = mapped_column(Numeric(18, 0))
-    nik: Mapped[str | None] = mapped_column(String(16))
-    npwp: Mapped[str | None] = mapped_column(String(25))
+    # Personal data: encrypted at rest (10d).
+    nik: Mapped[str | None] = mapped_column(EncryptedString())
+    npwp: Mapped[str | None] = mapped_column(EncryptedString())
     bank_name: Mapped[str | None] = mapped_column(String(60))
-    bank_account_no: Mapped[str | None] = mapped_column(String(40))
+    bank_account_no: Mapped[str | None] = mapped_column(EncryptedString())
     ptkp_status: Mapped[str] = mapped_column(String(5), nullable=False, server_default="TK/0")
     bpjs_kesehatan_no: Mapped[str | None] = mapped_column(String(20))
     bpjs_tk_no: Mapped[str | None] = mapped_column(String(20))

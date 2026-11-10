@@ -6368,6 +6368,59 @@
     "title": "RenewIn",
     "type": "object"
    },
+   "ReportIn": {
+    "properties": {
+     "affected_count": {
+      "anyOf": [
+       {
+        "minimum": 0.0,
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Affected Count"
+     },
+     "data_categories": {
+      "items": {
+       "type": "string"
+      },
+      "maxItems": 7,
+      "minItems": 1,
+      "title": "Data Categories",
+      "type": "array"
+     },
+     "description": {
+      "maxLength": 5000,
+      "minLength": 10,
+      "title": "Description",
+      "type": "string"
+     },
+     "detected_at": {
+      "format": "date-time",
+      "title": "Detected At",
+      "type": "string"
+     },
+     "severity": {
+      "default": "medium",
+      "enum": [
+       "low",
+       "medium",
+       "high"
+      ],
+      "title": "Severity",
+      "type": "string"
+     }
+    },
+    "required": [
+     "detected_at",
+     "description",
+     "data_categories"
+    ],
+    "title": "ReportIn",
+    "type": "object"
+   },
    "RequestDetail": {
     "properties": {
      "amount": {
@@ -8339,74 +8392,6 @@
     "title": "TransferBody",
     "type": "object"
    },
-   "UpdateIn": {
-    "properties": {
-     "department_code": {
-      "anyOf": [
-       {
-        "type": "string"
-       },
-       {
-        "type": "null"
-       }
-      ],
-      "title": "Department Code"
-     },
-     "employee_code": {
-      "anyOf": [
-       {
-        "type": "string"
-       },
-       {
-        "type": "null"
-       }
-      ],
-      "title": "Employee Code"
-     },
-     "full_name": {
-      "anyOf": [
-       {
-        "maxLength": 120,
-        "minLength": 3,
-        "type": "string"
-       },
-       {
-        "type": "null"
-       }
-      ],
-      "title": "Full Name"
-     },
-     "roles": {
-      "anyOf": [
-       {
-        "items": {
-         "type": "string"
-        },
-        "minItems": 1,
-        "type": "array"
-       },
-       {
-        "type": "null"
-       }
-      ],
-      "title": "Roles"
-     },
-     "sod_reason": {
-      "anyOf": [
-       {
-        "maxLength": 500,
-        "type": "string"
-       },
-       {
-        "type": "null"
-       }
-      ],
-      "title": "Sod Reason"
-     }
-    },
-    "title": "UpdateIn",
-    "type": "object"
-   },
    "UserLookup": {
     "properties": {
      "email": {
@@ -8651,6 +8636,74 @@
      "roles"
     ],
     "title": "CreateIn",
+    "type": "object"
+   },
+   "app__auth__users_router__UpdateIn": {
+    "properties": {
+     "department_code": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Department Code"
+     },
+     "employee_code": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Employee Code"
+     },
+     "full_name": {
+      "anyOf": [
+       {
+        "maxLength": 120,
+        "minLength": 3,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Full Name"
+     },
+     "roles": {
+      "anyOf": [
+       {
+        "items": {
+         "type": "string"
+        },
+        "minItems": 1,
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Roles"
+     },
+     "sod_reason": {
+      "anyOf": [
+       {
+        "maxLength": 500,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Sod Reason"
+     }
+    },
+    "title": "UpdateIn",
     "type": "object"
    },
    "app__billing__router__InvoiceBody": {
@@ -9346,6 +9399,87 @@
      "reason"
     ],
     "title": "CancelBody",
+    "type": "object"
+   },
+   "app__pdp__router__UpdateIn": {
+    "properties": {
+     "authority_notified": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Authority Notified"
+     },
+     "authority_reference": {
+      "anyOf": [
+       {
+        "maxLength": 120,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Authority Reference"
+     },
+     "containment": {
+      "anyOf": [
+       {
+        "maxLength": 5000,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Containment"
+     },
+     "lessons": {
+      "anyOf": [
+       {
+        "maxLength": 5000,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Lessons"
+     },
+     "status": {
+      "anyOf": [
+       {
+        "enum": [
+         "reported",
+         "investigating",
+         "notified",
+         "closed"
+        ],
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Status"
+     },
+     "subjects_notified": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Subjects Notified"
+     }
+    },
+    "title": "UpdateIn",
     "type": "object"
    },
    "app__portal__router__QuoteIn": {
@@ -28169,6 +28303,243 @@
     ]
    }
   },
+  "/api/pdp/breaches": {
+   "get": {
+    "operationId": "breaches_api_pdp_breaches_get",
+    "parameters": [
+     {
+      "in": "header",
+      "name": "x-active-role",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Active-Role"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "additionalProperties": true,
+          "type": "object"
+         },
+         "title": "Response Breaches Api Pdp Breaches Get",
+         "type": "array"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Breaches",
+    "tags": [
+     "admin"
+    ]
+   },
+   "post": {
+    "description": "Anyone can report a suspected breach; the PDP officers are alerted at once.",
+    "operationId": "report_api_pdp_breaches_post",
+    "parameters": [
+     {
+      "in": "header",
+      "name": "x-active-role",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Active-Role"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ReportIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Report Api Pdp Breaches Post",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Report",
+    "tags": [
+     "admin"
+    ]
+   }
+  },
+  "/api/pdp/breaches/{bid}": {
+   "put": {
+    "operationId": "update_api_pdp_breaches__bid__put",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "bid",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "title": "Bid",
+       "type": "string"
+      }
+     },
+     {
+      "in": "header",
+      "name": "x-active-role",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Active-Role"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/app__pdp__router__UpdateIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Update Api Pdp Breaches  Bid  Put",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Update",
+    "tags": [
+     "admin"
+    ]
+   }
+  },
+  "/api/pdp/consents": {
+   "get": {
+    "description": "Who accepted which privacy notice version and when (accepted at first sign-in).",
+    "operationId": "consents_api_pdp_consents_get",
+    "parameters": [
+     {
+      "in": "header",
+      "name": "x-active-role",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "X-Active-Role"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Consents Api Pdp Consents Get",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Consents",
+    "tags": [
+     "admin"
+    ]
+   }
+  },
   "/api/portal/client/invoices": {
    "get": {
     "operationId": "client_invoices_api_portal_client_invoices_get",
@@ -39781,7 +40152,7 @@
      "content": {
       "application/json": {
        "schema": {
-        "$ref": "#/components/schemas/UpdateIn"
+        "$ref": "#/components/schemas/app__auth__users_router__UpdateIn"
        }
       }
      },

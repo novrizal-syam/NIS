@@ -98,6 +98,7 @@ from app.operations.models import (
     PayrollDay,
 )
 from app.payroll.models import PayrollRun, Payslip, PayslipDay, PayslipItem, Pph21TerRate
+from app.pdp.models import DataBreach
 from app.portal.models import VendorSubmission
 from app.procurement.models import (
     PriceHistory,
@@ -178,6 +179,7 @@ __all__ = [
     "CourseSession",
     "Currency",
     "CustomerInvoice",
+    "DataBreach",
     "Delegation",
     "Department",
     "DepreciationRun",

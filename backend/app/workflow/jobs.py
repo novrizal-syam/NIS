@@ -107,6 +107,12 @@ async def run_whatsapp() -> int:
     return await _in_session(deliver)
 
 
+async def run_pdp_alerts() -> int:
+    from app.pdp.router import deadline_alerts
+
+    return await _in_session(deadline_alerts)
+
+
 JOBS: dict[str, Callable[[], Awaitable[int]]] = {
     "invoices": run_invoice_reminders,
     "advances": run_advance_alerts,
@@ -115,6 +121,7 @@ JOBS: dict[str, Callable[[], Awaitable[int]]] = {
     "dms": run_dms_alerts,
     "lms": run_lms_assignments,
     "whatsapp": run_whatsapp,
+    "pdp": run_pdp_alerts,
     "pm": run_pm_scheduler,
     "capa": run_capa_alerts,
     "escalate": run_escalation,

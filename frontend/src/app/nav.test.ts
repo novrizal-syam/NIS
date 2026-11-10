@@ -37,9 +37,15 @@ describe('navigation', () => {
 describe('permission filtering', () => {
   it('drops items without view permission and empty groups', () => {
     const groups = visibleNav(false, (m) => m === 'procurement');
-    // "Slip gaji saya" (07c) is for every signed-in user, so its group always shows.
-    expect(groups.map((g) => g.key)).toEqual(['overview', 'procureToPay', 'peopleDocs']);
+    // "Slip gaji saya" (07c) and the PDP breach report (10d) are for every signed-in user.
+    expect(groups.map((g) => g.key)).toEqual([
+      'overview',
+      'procureToPay',
+      'peopleDocs',
+      'settings',
+    ]);
     expect(groups[2]!.items.map((i) => i.key)).toEqual(['myPayslips']);
+    expect(groups[3]!.items.map((i) => i.key)).toEqual(['pdp']);
     expect(groups[1]!.items.map((i) => i.key)).toEqual([
       'purchaseRequisitions',
       'rfq',

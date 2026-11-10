@@ -66,6 +66,10 @@ class Settings(BaseSettings):
     whatsapp_token: str = ""
     whatsapp_api_url: str = "https://graph.facebook.com/v20.0"
 
+    # Column encryption of personal data (10d): Fernet keys, newest first, comma-separated.
+    # Required in staging/production; development derives one from SECRET_KEY.
+    data_encryption_keys: str = ""
+
     @field_validator("cors_origins", mode="before")
     @classmethod
     def _split_origins(cls, value: object) -> object:
@@ -75,13 +79,31 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def _require_real_secret_in_production(self) -> "Settings":
-        if self.is_production and (self.secret_key == DEV_SECRET or len(self.secret_key) < 32):
-            raise ValueError("SECRET_KEY must be set to a random value of 32+ chars in production.")
+        if not self.is_hardened:
+            return self
+        problems = []
+        if self.secret_key == DEV_SECRET or len(self.secret_key) < 32:
+            problems.append("SECRET_KEY must be a random value of 32+ chars")
+        if not self.data_encryption_keys:
+            problems.append("DATA_ENCRYPTION_KEYS must be set (Fernet key)")
+        if not self.app_base_url.startswith("https://"):
+            problems.append("APP_BASE_URL must use https")
+        if any(not o.startswith("https://") for o in self.cors_origins):
+            problems.append("CORS_ORIGINS must use https")
+        if self.s3_secret_key == "nustrad-secret":  # noqa: S105 - the dev default
+            problems.append("S3_SECRET_KEY must not be the development default")
+        if problems:
+            raise ValueError(f"Insecure {self.app_env} configuration: " + "; ".join(problems))
         return self
 
     @property
     def is_production(self) -> bool:
         return self.app_env == "production"
+
+    @property
+    def is_hardened(self) -> bool:
+        """Staging and production run with the same security rules (10d)."""
+        return self.app_env in ("staging", "production")
 
 
 @lru_cache

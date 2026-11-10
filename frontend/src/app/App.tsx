@@ -35,6 +35,7 @@ import {
 } from '@/features/dms/DmsPages';
 import { IntegrationsPage } from '@/features/integrations/IntegrationsPage';
 import { LmsPage } from '@/features/lms/LmsPage';
+import { PdpPage } from '@/features/pdp/PdpPage';
 import { PortalPage } from '@/features/portal/PortalPage';
 import { CapexDetailPage, CapexFormPage, CapexListPage } from '@/features/capex/CapexPages';
 import { ClosePage, TaxPage } from '@/features/tax/TaxPages';
@@ -196,6 +197,7 @@ export function AppRoutes() {
           <Route path="pengaturan/peran/:id" element={<RoleDetailPage />} />
           <Route path="pengaturan/doa" element={<DoaRulesPage />} />
           <Route path="pengaturan/integrasi" element={<IntegrationsPage />} />
+          <Route path="pengaturan/pdp" element={<PdpPage />} />
           <Route path="master" element={<MasterIndexPage />} />
           <Route path="master/:entity" element={<MasterListPage />} />
           <Route path="audit" element={<AuditPage />} />

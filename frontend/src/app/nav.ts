@@ -230,6 +230,7 @@ export const NAV: NavGroup[] = [
         module: 'settings',
       },
       { key: 'auditTrail', path: '/audit', icon: 'policy', ready: true, module: 'audit' },
+      { key: 'pdp', path: '/pengaturan/pdp', icon: 'shield_person', ready: true },
       {
         key: 'accessReview',
         path: '/pengaturan/tinjauan-akses',
